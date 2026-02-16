@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechGadgets NG - ONTROPP Portfolio</title>
+  <link rel="stylesheet" href="/css/CORE.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages/portfolio.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Hero Section - Matching UIX Screenshot Layout -->
+  <header class="portfolio-hero">
+    <!-- Green gradient header area -->
+    <div class="hero-header-bg"></div>
+    
+    <!-- White content area -->
+    <div class="hero-content-wrapper">
+      <!-- Avatar overlapping -->
+      <div class="hero-avatar-container">
+        <div class="shop-avatar-large" id="shopAvatar">
+          <i class="fas fa-store"></i>
+        </div>
+      </div>
+      
+      <!-- Info content -->
+      <div class="hero-info-main">
+        <!-- Name with verified badge -->
+        <div class="shop-name-row">
+          <h1 class="shop-name" id="shopName">TechGadgets NG</h1>
+          <span class="verified-badge">
+            <i class="fas fa-check-circle"></i>
+          </span>
+        </div>
+        
+        <!-- Rating -->
+        <div class="rating-row">
+          <i class="fas fa-star"></i>
+          <span id="ratingValue">5.0</span>
+        </div>
+        
+        <!-- Stats: followers • products -->
+        <div class="hero-stats">
+          <div class="stat-item-inline">
+            <span class="stat-number" id="followerCount">61k</span>
+            <span class="stat-label">followers</span>
+          </div>
+          <span class="stat-dot">•</span>
+          <div class="stat-item-inline">
+            <span class="stat-number" id="productCount">146</span>
+            <span class="stat-label">products</span>
+          </div>
+        </div>
+        
+        <!-- Tagline -->
+        <p class="shop-tagline" id="shopTagline">
+          Your trusted source for authentic tech gadgets
+        </p>
+        
+        <!-- Category Tags -->
+        <div class="hero-tags"> 
+          <span class="hero-tag">Electronics category</span>
+          <span class="hero-tag">Location</span>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="hero-actions">
+          <button class="action-btn follow" id="followBtn">
+            <i class="fas fa-user-plus"></i> Follow
+          </button>
+          <button class="action-btn whatsapp" id="contactBtn">
+            <i class="fab fa-whatsapp"></i> Contact on whatsapp
+          </button>
+          <button class="action-btn share" id="shareBtn" title="Share">
+            <i class="fas fa-share-alt"></i>
+          </button>
+        </div>
+        
+        <!-- Info Banner -->
+        <div class="hero-banner" id="heroBanner">
+          Banner for any info, this banner is ment to hold any information needed to be passed across. Banner for any info, this banner is ment to hold any information needed to be passed across. Banner for any info, this banner is ment to hold any information needed to be passed across.
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs Navigation -->
+  <div class="portfolio-tabs-container">
+    <div class="portfolio-tabs">
+      <button class="portfolio-tab active" data-tab="products">
+        <i class="fas fa-box"></i> Products
+      </button>
+      <button class="portfolio-tab" data-tab="about">
+        <i class="fas fa-store"></i> About Shop
+      </button>
+      <button class="portfolio-tab" data-tab="reviews">
+        <i class="fas fa-star"></i> Reviews
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="portfolio-container">
+    
+    <!-- Products Tab -->
+    <div class="tab-content active" id="productsTab">
+      <div class="loading-products" id="loadingProducts">
+        <div class="loading-spinner"></div>
+        <p>Loading products...</p>
+      </div>
+      <div class="products-grid-portfolio" id="productsGrid"></div>
+    </div>
+
+    <!-- About Tab -->
+    <div class="tab-content" id="aboutTab">
+      <div class="about-section">
+        <h2>About This Shop</h2>
+        <p id="shopBio">Welcome to TechGadgets NG! We specialize in authentic tech gadgets, mobile accessories, and electronics. With over 5 years of experience, we bring you quality products with warranty and excellent customer service.</p>
+      </div>
+    </div>
+
+    <!-- Reviews Tab -->
+    <div class="tab-content" id="reviewsTab">
+      <div class="reviews-section">
+        <h2>Customer Reviews</h2>
+        <div id="reviewsGrid">
+          <p style="color: var(--hash); text-align: center; padding: 40px;">No reviews yet</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+<!-- View All Products Button -->
+<div class="view-all-container">
+  <button class="view-all-btn" id="viewAllProductsBtn">
+    <span>View All Products</span>
+    <i class="fas fa-arrow-right"></i>
+  </button>
+</div>
+
+<!-- Simple Footer -->
+<footer class="portfolio-footer">
+  <div class="footer-content">
+    <p class="footer-copyright">© 2026 ONTROPP. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">About</a>
+      <span class="footer-separator">•</span>
+      <a href="#">Terms</a>
+      <span class="footer-separator">•</span>
+      <a href="#">Privacy</a>
+      <span class="footer-separator">•</span>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+  <script type="module" src="js/portfolio.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONTROPP - Explore Products</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">ONTROPP</a>
+                <a href="signup.html" class="btn btn-primary btn-small" style="display: none;">Join ONTROP now</a> <!-- shouldn't show when logged in-->
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Search products...">
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-chips">
+                <button class="chip active">All</button>
+                <div class="chip">Electronics</div>
+                <div class="chip">Clothing</div>
+                <div class="chip">Home & Garden</div>
+                <div class="chip">Beauty</div>
+                <div class="chip">Others</div>
+            </div>
+            
+            <div class="price-filter">
+                <input type="number" placeholder="Min price">
+                <span>to</span>
+                <input type="number" placeholder="Max price">
+            </div>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+            <!-- Products will be loaded here by JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>ONTROPP - Simple portfolio marketplace for sellers</p>
+        </div>
+    </footer>
+    <script src="db.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

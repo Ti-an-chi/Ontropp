@@ -1,0 +1,145 @@
+/* ===== pages/seller-signup.css ===== */
+/* Seller Signup Page Specific Styles */
+
+.seller-signup-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.seller-signup-header {
+  text-align: center;
+  margin: 32px 0;
+}
+
+.seller-signup-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.seller-signup-header p {
+  color: var(--hash);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.seller-signup-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 40px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Benefits Section */
+.seller-benefits {
+  background-color: var(--background);
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.seller-benefits h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.benefit-item {
+  text-align: center;
+}
+
+.benefit-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background-color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 24px;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+
+.benefit-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.benefit-description {
+  font-size: 14px;
+  color: var(--hash);
+  line-height: 1.5;
+}
+
+/* WhatsApp Note */
+.whatsapp-note {
+  background-color: rgba(46, 204, 113, 0.1);
+  border: 1px solid var(--secondary);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.whatsapp-note i {
+  color: var(--secondary);
+  font-size: 16px;
+}
+
+.btn-success {
+  background-color: var(--success);
+  color: var(--white);
+}
+
+.btn-success:hover {
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .seller-signup-card {
+    padding: 24px 16px;
+  }
+  
+  .benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 768px) {
+  .benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .benefits-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

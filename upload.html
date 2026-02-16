@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product - ONTROPP</title>
+  <link rel="stylesheet" href="/css/CORE.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages/upload.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-container">
+      <div class="logo">ONTROPP.</div>
+      <div class="header-actions">
+        <a href="dashboard.html" class="icon-btn" aria-label="Back to Dashboard">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main class="upload-container">
+    <!-- Header -->
+    <div class="upload-header">
+      <h1>Add New Product</h1>
+      <p>Quickly list your product to start selling</p>
+    </div>
+  
+    <!-- Upload Form -->
+    <div class="upload-card">
+      <form id="productForm" class="upload-form">
+        <!-- Product Name -->
+        <div class="form-group">
+          <label for="productName" class="required">
+            <i class="fas fa-tag"></i>
+            Product Name
+          </label>
+          <input 
+            type="text" 
+            id="productName" 
+            class="form-control" 
+            placeholder="e.g., Wireless Bluetooth Headphones" 
+            required
+            maxlength="100"
+            autofocus
+          >
+          <div class="form-help">
+            <i class="fas fa-lightbulb"></i>
+            Be specific and clear. Buyers search by product names.
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="productDescription" class="required">
+            <i class="fas fa-align-left"></i>
+            Description
+          </label>
+          <textarea 
+            id="productDescription" 
+            class="form-control" 
+            placeholder="Describe your product features, condition, size, color, etc."
+            required
+            maxlength="1000"
+          ></textarea>
+          <div class="form-help">
+            <i class="fas fa-lightbulb"></i>
+            Include key details that help buyers decide. Mention any flaws if used.
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div class="form-group">
+          <label for="productPrice" class="required">
+            <i class="fas fa-naira-sign"></i>
+            Price (₦)
+          </label>
+          <input 
+            type="number" 
+            id="productPrice" 
+            class="form-control" 
+            placeholder="e.g., 24000"
+            min="0"
+            step="100"
+            required
+          >
+          <div class="form-help">
+            <i class="fas fa-lightbulb"></i>
+            Price in Nigerian Naira. Consider similar products when pricing.
+          </div>
+        </div>
+        
+        <!-- Category -->
+        <div class="form-group">
+          <label for="productCategory" class="required">
+            <i class="fas fa-tags"></i>
+            Category
+          </label>
+          <select id="productCategory" class="form-control" required>
+            <option value="">Select category</option>
+            <option value="electronics">Electronics</option>
+            <option value="clothing">Clothing</option>
+            <option value="home">Home & Garden</option>
+            <option value="beauty">Beauty</option>
+            <option value="other">Other</option>
+          </select>
+          <div class="form-help">
+            <i class="fas fa-lightbulb"></i>
+            Choose the most relevant category for better visibility.
+          </div>
+        </div>
+        
+        <!-- Images -->
+        <div class="form-group">
+          <label for="productImages">
+            <i class="fas fa-images"></i>
+            Product Images
+          </label>
+          <div class="image-upload-section" id="imageUploadArea">
+            <div class="image-upload-content" id="imageUploadContent">
+              <div class="image-upload-icon">
+                <i class="fas fa-camera"></i>
+              </div>
+              <div class="image-upload-text">
+                <h4>Upload Product Images</h4>
+                <p>Click to upload or drag and drop</p>
+                <p class="form-help" style="margin-top: 8px;">
+                  <i class="fas fa-info-circle"></i>
+                  5 images max. First image will be the cover.
+                </p>
+              </div>
+              <button type="button" class="image-upload-btn" id="imageUploadBtn">
+                <i class="fas fa-upload"></i>
+                Choose Files
+              </button>
+              <input type="file" id="imageFileInput" accept="image/*" multiple style="display: none;">
+            </div>
+            <div class="image-preview-grid" id="imagePreviewGrid">
+              <!-- Image previews will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Tips -->
+        <div class="quick-tips">
+          <h4><i class="fas fa-bolt"></i> Quick Selling Tips</h4>
+          <ul>
+            <li><i class="fas fa-check-circle"></i> Use clear, well-lit photos from multiple angles</li>
+            <li><i class="fas fa-check-circle"></i> Price competitively by checking similar products</li>
+            <li><i class="fas fa-check-circle"></i> Be honest about product condition</li>
+            <li><i class="fas fa-check-circle"></i> Include measurements/sizes when applicable</li>
+          </ul>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <a href="dashboard.html" class="upload-btn upload-btn-secondary">
+            <i class="fas fa-times"></i>
+            Cancel
+          </a>
+          <button type="submit" class="upload-btn upload-btn-primary" id="submitBtn">
+            <i class="fas fa-upload"></i>
+            List Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+  
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2023 ONTROPP. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Terms</a>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Help</a>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- JavaScript -->
+  <script type="module" src="/js/upload.js"></script>
+</body>
+</html>

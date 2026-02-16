@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONTROPP - Become a Seller</title>
+  <link rel="stylesheet" href="/css/CORE.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages/signupSeller.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/signupSeller.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-container">
+      <div class="logo">ONTROPP</div>
+      <div class="header-actions">
+        <!-- No cart/notification buttons needed here -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="seller-signup-container">
+    <!-- Header Section -->
+    <div class="seller-signup-header">
+      <h1>Start Selling On ONTROPP</h1>
+      <p>Turn your passion into profit. Create your business profile and reach thousands of customers.</p>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="seller-signup-card">
+      <form id="sellerSignupForm" class="seller-signup-form">
+        <!-- Shop Name -->
+        <div class="form-group">
+          <label for="shopName" class="required">
+             <i class="fas fa-store"></i>
+              Shop Name
+          </label>
+          <input 
+            class="form-control"
+            type="text" 
+            id="shopName" 
+            name="shopName" 
+            placeholder="Enter your shop name" 
+            required
+            maxlength="50">
+          <p class="form-help">This will be displayed as your business name on the marketplace</p>
+        </div>
+
+        <!-- Logo Upload -->
+        <div class="form-group">
+          <label for="shopLogo">
+            <i class="fas fa-image"></i>
+            Shop Logo
+          </label>
+          <div class="logo-upload-section" id="logoUploadArea">
+            <div class="logo-upload-content" id="logoUploadContent">
+              <div class="logo-upload-icon">
+                 <i class="fas fa-camera"></i>
+              </div>
+              <div class="logo-upload-text">
+                <h4>Upload Shop Logo</h4>
+                <p>Click to upload or drag and drop</p>
+              </div>
+              <button type="button" class="logo-upload-btn" id="logoUploadBtn">
+                <i class="fas fa-upload"></i>
+                Choose File
+              </button>
+              <input type="file" id="logoFileInput" accept="image/*" style="display: none;">
+            </div>
+            <div class="logo-preview" id="logoPreview">
+              <div class="logo-preview-image">
+                <img id="logoPreviewImage" src="" alt="Logo Preview">
+              </div>
+              <button type="button" class="logo-change-btn" id="logoChangeBtn">
+                <i class="fas fa-sync-alt"></i>
+                Change Logo
+              </button>
+            </div>
+          </div>
+          <p class="form-help">Recommended: Square image, 500x500px, PNG or JPG</p>
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+          <label for="shopBio" class="required">
+            <i class="fas fa-pen"></i>
+            Shop Bio
+          </label>
+          <textarea 
+            class="form-control"
+            id="shopBio" 
+            name="shopBio" 
+            placeholder="Tell buyers about your business, what you sell, and your story..." 
+            required
+            maxlength="500">
+          </textarea>
+          <div class="form-help">
+            <i class="fas fa-lightbulb"></i>
+            A good bio helps build trust with customers. Keep it professional and friendly.
+          </div>
+        </div>
+        
+        <!-- WhatsApp Number -->
+        <div class="form-group">
+          <label for="whatsappNumber" class="required">
+          <i class="fab fa-whatsapp"></i>
+            WhatsApp Number
+          </label>
+          <input 
+            class="form-control"
+            type="tel" 
+            id="whatsappNumber" 
+            name="whatsappNumber" 
+            placeholder="e.g., 08012345678" 
+            required
+            pattern="[0-9]{11}">
+          <div class="whatsapp-note">
+            <i class="fas fa-info-circle"></i>
+            This number will be used for customers communication. Include country code if international.
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label class="required">
+            <i class="fas fa-tags"></i>
+            What do you sell?
+          </label>
+        <div class="category-grid" id="categoryGrid">
+          <!-- Categories will be populated by JavaScript -->
+        </div>
+        <input type="hidden" id="selectedCategory" name="category" required>
+      </div>
+      
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <a href="dashboard.html" class="btn btn-outline">
+          <i class="fas fa-arrow-left"></i>
+          Back to Dashboard
+        </a>
+        <button type="submit" class="btn btn-success" id="submitBtn">
+          <i class="fas fa-check-circle"></i>
+          Become a Seller
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Benefits Section -->
+  <div class="seller-benefits">
+    <h3>Why Sell on ONTROPP?</h3>
+    <div class="benefits-grid">
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h4 class="benefit-title">Reach More Buyers</h4>
+        <p class="benefit-description">Access thousands of active customers looking for unique products</p>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h4 class="benefit-title">Safe & Secure</h4>
+        <p class="benefit-description">Protected payments and secure transactions</p>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h4 class="benefit-title">Grow Your Business</h4>
+        <p class="benefit-description">Tools and insights to help you succeed</p>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-headset"></i>
+        </div>
+        <h4 class="benefit-title">Seller Support</h4>
+          <p class="benefit-description">Dedicated support to help you grow</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2023 ONTROPP. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Terms</a>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script type="module" src="/js/sellerSignup.js"></script>
+</body>
+</html>
