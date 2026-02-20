@@ -2,7 +2,9 @@
 import API from '../api.js';
 import { renderProducts } from './shared.js';
 
-export async function initHomeTab() {
+let seller = null;
+
+export async function initHomeTab(user) {
   try {
     // Load categories
     const categories = await API.getCategories();
@@ -17,14 +19,12 @@ export async function initHomeTab() {
     if (emptyRecEl) {
       emptyRecEl.style.display = products.length === 0 ? 'block' : 'none';
     }
-
-    // Load seller products if user is seller
-    const userData = localStorage.getItem('userData');
-    let user = null;
-    user = userData ? JSON.parse(userData) : null;
+    
+    seller = user.sellerProfile;
     if (user?.role === 'seller') {
-      const resp = await API.getSellerProducts();
-      const sellerProducts = resp.products && [];
+      const resp = await API.getSellerProducts(seller.id);
+      const sellerProducts = resp.products || [];
+      console.log(sellerProducts)
       renderProducts(sellerProducts, 'seller-products-grid', 'seller');
     }
     

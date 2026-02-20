@@ -38,7 +38,7 @@ async function initDashboard() {
 // User Data Management
 async function loadUserData() {
   try {
-    const userData = await API.getUserData();
+    const userData = currentUser || await API.getUserData();
     currentUser = userData;
     
     localStorage.setItem('userData', JSON.stringify(userData));
@@ -155,7 +155,7 @@ async function loadTabContent(tabId) {
   try {
     switch(tabId) {
       case 'tab-home':
-        await initHomeTab();
+        await initHomeTab(currentUser);
         break;
       case 'tab-explore':
         await initExploreTab();
@@ -189,6 +189,7 @@ function setupGlobalEventListeners() {
   const editAvatarInput = document.getElementById("edit-avatar-input");
   const editAvatarBtn = document.getElementById('edit -avatar-btn');
   const addProductButton = document.getElementById('add-product-btn');
+  const logoutBtn = document.getElementById('logout-btn');
   
   if (kebabBtn && dropdown) {
     kebabBtn.addEventListener('click', function(e) {
@@ -246,6 +247,11 @@ function setupGlobalEventListeners() {
     
       uploadProfileImage(file);
     });
+  }
+  
+  if (logoutBtn) {
+    API.clearTokens()
+    window.location.href = 'signup.html'
   }
 }
 

@@ -44,13 +44,13 @@ const API = {
         msg = data.message || msg;
       } catch {}
       
-      if ((msg === 'Invalid or expired token' || resp.status === 401) && !_retry) {
+      if ((msg === 'Invalid or expired token') && !_retry) {
         try {
           await this.refresh();
           return await this._fetch(path, options, true);
         } catch {
-          this.clearTokens();
-          location.href = 'signup.html';
+          // this.clearTokens();
+          // location.href = 'signup.html';
           throw new Error('Session expired. Please login again.');
         }
       }
@@ -213,6 +213,14 @@ const API = {
     // Using search param to filter by category
     return this.searchProducts('', page, limit, { categories: category });
   },
+  
+  async getProductById(productId){
+    const response = await this._fetch(`/product/${productId}`, {
+      method: 'GET',
+    });
+    
+    return response;
+  }, 
   
   // 3. ACTIONS
   async addToFavourites(productId) {

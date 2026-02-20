@@ -24,7 +24,7 @@ export function renderProducts(products, containerId, type = 'product') {
       detailsClass: 'product-details',
       titleClass: 'product-title',
       priceClass: 'product-price',
-      showActions: true
+      showActions: true,
     },
     product: {
       tag: 'div',
@@ -33,7 +33,8 @@ export function renderProducts(products, containerId, type = 'product') {
       detailsClass: 'item-details',
       titleClass: 'item-title',
       priceClass: 'item-price',
-      showSeller: true
+      showSeller: true,
+      isClickable: true
     }
   };
   
@@ -45,6 +46,7 @@ export function renderProducts(products, containerId, type = 'product') {
     
     if (cfg.isClickable) {
       card.href = '#';
+      
       card.addEventListener('click', (e) => {
         e.preventDefault();
         viewProductDetails(product.id);
@@ -121,9 +123,10 @@ function setupSellerProductActions() {
   });
 }
 
-function viewProductDetails(productId) {
+export function viewProductDetails(productId) {
   // Navigate to product details page
   console.log('View product:', productId);
+  window.location.href = `product.html?id=${productId}`;
 }
 
 export function formatPrice(price) {

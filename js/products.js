@@ -15,16 +15,16 @@ document.addEventListener('DOMContentLoaded', async function() {
   const urlParams = new URLSearchParams(window.location.search);
   productId = urlParams.get('id');
   
-  if (!productId) {
+  /*if (!productId) {
     showError('No product specified');
     return;
-  }
+  }*/
   
   await loadProductData();
   setupEventListeners();
 });
 
-async function loadProductData() {
+/*async function loadProductData() {
   try {
     productData = await API.getProductById(productId);
     renderProduct();
@@ -34,6 +34,17 @@ async function loadProductData() {
     
   } catch (error) {
     console.error('Failed to load product:', error);
+    showError('Failed to load product details');
+  }
+}
+*/
+async function loadProductData() {
+  try {
+    productData = getFakeProduct();
+    renderProduct();
+    loadRelatedProducts();
+  } catch (error) {
+    console.error(error);
     showError('Failed to load product details');
   }
 }
@@ -110,11 +121,9 @@ function renderSpecifications() {
 }
 
 function renderShipping() {
-  const shipping = productData.shipping || {};
+  const locations = productData.locations || [];
   
-  document.getElementById('shippingFee').textContent = shipping.fee ? `₦${formatPrice(shipping.fee)}` : 'Free';
-  document.getElementById('shippingTime').textContent = shipping.estimatedDays || '2-3 business days';
-  document.getElementById('shippingLocations').textContent = shipping.locations?.join(', ') || 'Nationwide';
+  document.getElementById('shippingLocations').textContent = locations?.join(', ') || 'Nationwide';
 }
 
 function renderGallery() {
@@ -129,7 +138,7 @@ function renderGallery() {
   }
   
   // Set main image
-  mainImage.src = images[0];
+  mainImage.src = productData.cover_image || images[0];
   mainImage.alt = productData.name;
   
   // Create thumbnails
@@ -322,4 +331,41 @@ function timeAgo(dateString) {
 // Add showNotification if not in shared.js
 if (typeof window.showNotification !== 'function') {
   window.showNotification = showNotification;
+}
+
+function getFakeProduct() {
+  return {
+    id: "prod_001",
+    name: "iPhone 13 Pro Max",
+    category: "Electronics",
+    price: 850000,
+    condition: "Used - Like New",
+    description: "Clean device. No cracks. Face ID working perfectly. Comes with charger.",
+    views: 124,
+    likes: 32,
+    dateCreated: new Date().toISOString(),
+    locations: ["Lagos", "Abuja", "Ibadan"],
+
+    images: [
+      "https://via.placeholder.com/600x600",
+      "https://via.placeholder.com/600x600?text=Side+View",
+      "https://via.placeholder.com/600x600?text=Back+View"
+    ],
+    
+    specifications: {
+      Brand: "Apple",
+      Storage: "256GB",
+      Color: "Graphite"
+    },
+    
+    seller: {
+      id: "seller_001",
+      shopName: "ONTROPP Gadgets",
+      rating: 4.8,
+      followers: 1290,
+      responseTime: "< 1 hour",
+      isVerified: true,
+      phone: "2348123456789"
+    }
+  };
 }

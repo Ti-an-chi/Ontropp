@@ -46,7 +46,6 @@ async function loadSellers() {
     
     await new Promise(resolve => setTimeout(resolve, 50));
     const sellers = await API.getSellers(categoryId);
-    console.log(sellers[0])
     
     // Hide loading
     loadingEl.style.display = 'none';
@@ -122,7 +121,7 @@ function renderSellers(sellers) {
           ${seller.isFollowing ? 'Following' : 'Follow'}
         </button>
         
-        <a href="/shop/${seller.id}" class="view-btn">
+        <a href="/portfolio.html?id=${seller.id}" class="view-btn">
           <i class="fas fa-eye"></i>
           View Shop
         </a>
@@ -187,7 +186,7 @@ async function handleFollowSeller(sellerId, button) {
 }
 
 // Navigate to seller profile
-function viewSellerProfile(sellerId) {
+export function viewSellerProfile(sellerId) {
   // Update URL without reloading if using SPA, or redirect
-  window.location.href = `/shop/${sellerId}`;
+  window.location.href = `/portfolio.html?id=${sellerId}`;
 }
