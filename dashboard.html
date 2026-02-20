@@ -97,7 +97,6 @@
   </style>
 </head>
 <body>
-  <!-- All content lives here, tabs are toggled via CSS/JS -->
   <div class="app-container">
     <!-- Header - Always visible -->
     <header class="dashboard-header">
@@ -143,8 +142,8 @@
           </div>
       </div>
     </header>
-
-    <!-- Home Tab Content (Default active) -->
+      
+    <!-- Home Tab Content -->
     <main class="tab-content active" id="tab-home">
       <!-- User Welcome Section -->
       <section class="user-welcome-section">
@@ -158,18 +157,16 @@
           </div>
         </div>
       </section>
-      <!----- Seller Board (Hidden by default) ---->
+      <!----- Seller Board ---->
       <section class="seller-board" id="seller-board" style="display: none;">
         <div class="section-header">
           <h2 class="section-title">Seller Dashboard</h2>
           <button class="add-product-btn" id="add-product-btn">
             <i class="fas fa-plus"></i>
-            
             Add Product
-            
           </button>
         </div>
-
+        
         <!-- Seller Stats -->
         <div class="seller-stats">
           <div class="stat-card">
@@ -177,17 +174,17 @@
               <i class="fas fa-eye"></i>
             </div>
             <div class="stat-details">
-              <h3 class="stat-title">Profile Views</h3>
-              <p class="stat-value" id="profile-views">0</p>
+              <h3 class="stat-title">followers</h3>
+              <p class="stat-value" id="followers">0</p>
             </div>
           </div>
-
+          
           <div class="stat-card">
             <div class="stat-icon">
               <i class="fas fa-shopping-bag"></i>
             </div>
             <div class="stat-details">
-              <h3 class="stat-title">Total Orders</h3>
+              <h3 class="stat-title">Orders</h3>
               <p class="stat-value" id="total-orders">0</p>
             </div>
           </div>
@@ -537,8 +534,8 @@
                 <span class="stat-label">Orders</span>
               </div>
               <div class="stat-item">
-                <span class="stat-value" id="cart-count">0</span>
-                <span class="stat-label">In Cart</span>
+                <span class="stat-value" id="following-count">0</span>
+                <span class="stat-label">following</span>
               </div>
               <div class="stat-item">
                 <span class="stat-value" id="favorites-count">0</span>
@@ -549,7 +546,7 @@
         </div>
       </section>
 
-      <!-- Seller Dashboard Section (only for sellers) -->
+      <!-- Seller Dashboard -->
       <section class="profile-seller-dashboard" id="profile-seller-dashboard" style="display: none;">
         <div class="section-header">
           <h2 class="section-title">Seller Dashboard</h2>

@@ -4,6 +4,7 @@ import { initHomeTab } from '/js/home.js';
 import { initExploreTab } from '/js/explore.js';
 import { initFavouritesTab } from '/js/favourites.js';
 import { initProfileTab } from '/js/profile.js';
+import { updateElement, changeDisplay } from '/js/reconfig.js'
 
 // Global state
 let currentUser = null;
@@ -60,58 +61,39 @@ async function loadUserData() {
 }
 
 function updateUserUI(userData) {
-  // Update header user info
-  const userNameEl = document.getElementById('user-name');
-  const userEmailEl = document.getElementById('user-email');
-  const userAvatarEl = document.getElementById('user-avatar-img');
-  const profileAvatarImage = document.getElementById('profile-avatar-img');
-  const profileNameEl = document.getElementById('profile-display-name');
-  const profileEmailEl = document.getElementById('profile-display-email');
-  const profileRoleEl = document.getElementById('profile-role');
-  
-  if (userNameEl) userNameEl.textContent = userData.username;
-  if (userEmailEl) userEmailEl.textContent = userData.email;
-  if (profileNameEl) profileNameEl.textContent = userData.username;
-  if (profileEmailEl) profileEmailEl.textContent = userData.email;
-  if (profileRoleEl) profileRoleEl.textContent = userData.role === 'seller' ? 'Seller' : 'Buyer';
-  
-  // Update avatar if available
-  if (userAvatarEl && userData.avatar_url) {
-    userAvatarEl.src = userData.avatar_url;
-  }
-  if (profileAvatarImage && userData.avatar_url) {
-    profileAvatarImage.src = userData.avatar_url;
-  }
-  
-  // Update buyer stats
+  updateElement('user-name', userData.username);
+  updateElement('user-email', userData.email);
+  updateElement('profile-display-name', userData.username);
+  updateElement('profile-display-email', userData.email);
+  updateElement(
+    'profile-role',
+    userData.role === 'seller' ? 'Seller' : 'Buyer'
+  );
+
+  updateElement('user-avatar-img', userData.avatar_url, 'src');
+  updateElement('profile-avatar-img', userData.avatar_url, 'src');
+
   if (userData.role !== 'seller') {
     updateBuyerStats(userData);
   }
 }
 
 function updateBuyerStats(userData) {
-  const ordersCountEl = document.getElementById('orders-count');
-  const cartCountEl = document.getElementById('cart-count');
-  const favoritesCountEl = document.getElementById('favorites-count');
-  
-  if (ordersCountEl) ordersCountEl.textContent = userData.ordersCount || 0;
-  if (cartCountEl) cartCountEl.textContent = userData.cartCount || 0;
-  if (favoritesCountEl) favoritesCountEl.textContent = userData.favoritesCount || 0;
+  updateElement('orders-count', userData.ordersCount || 0);
+  updateElement('followings-count', userData.followingsCount || 0);
+  updateElement('favorites-count', userData.favoritesCount || 0);
 }
 
 function updateSellerDashboard(userData) {
-  const sellerBoardEl = document.getElementById('seller-board');
-  if (sellerBoardEl) {
-    sellerBoardEl.style.display = 'block';
-  }
+  changeDisplay('seller-board', 'block');
   // Update seller stats
-  const profileViewsEl = document.getElementById('seller-profile-views');
-  const totalOrdersEl = document.getElementById('total-orders');
-
-  if (profileViewsEl) profileViewsEl.textContent = userData.profileViews || 0;
-  if (totalOrdersEl) totalOrdersEl.textContent = userData.sellerOrders || 0;
+  updateElement('seller-profole-views', userData.profileViews || 0);
+  updateElement('total-orders', userData.sellerOrders || 0);
   
   // Show seller profile link in profile tab
+  changeDisplay('seller-profile-link', 'block');
+  updateElement('profile-link-url', userData.profileLink || '');
+  
   const profileLinkEl = document.getElementById('seller-profile-link');
   if (profileLinkEl) {
     profileLinkEl.style.display = 'block';
@@ -119,15 +101,7 @@ function updateSellerDashboard(userData) {
   }
   
   // Hide become seller button
-  const becomeSellerBtn = document.getElementById('become-seller-btn');
-  if (becomeSellerBtn) becomeSellerBtn.style.display = 'none';
-  
-  console.log('updating seller...');
-  // Hide kebab menu for sellers
-  const profileActions = document.querySelector('.profile-actions');
-  if (profileActions) {
-    profileActions.style.display = 'none';
-  }
+  changeDisplay('become-seller-btn', 'none');
 }
 
 // Tab Management
@@ -302,11 +276,6 @@ async function uploadProfileImage(file) {
   }
 }
 
-// Helper Functions
-function formatPrice(price) {
-  return new Intl.NumberFormat('en-NG').format(price);
-}
-
 // UI Feedback Functions
 function showSuccessMessage(message) {
   const messageEl = document.createElement('div');
@@ -337,7 +306,6 @@ function showErrorMessage(message) {
 export { 
   currentUser, 
   searchTimeout,
-  formatPrice,
   showSuccessMessage,
   showErrorMessage,
   switchToTab,

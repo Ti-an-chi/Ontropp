@@ -12,8 +12,6 @@ function setupImageUpload() {
   const imageUploadArea = document.getElementById('imageUploadArea');
   const imageUploadBtn = document.getElementById('imageUploadBtn');
   const imageFileInput = document.getElementById('imageFileInput');
-  //const imagePreviewGrid = document.getElementById('imagePreviewGrid');
-  //const imageUploadContent = document.getElementById('imageUploadContent');
   
   if (!imageUploadArea || !imageFileInput) return;
   
@@ -95,7 +93,6 @@ function setupImageUpload() {
   });
 }
 
-// New function - mirrors uploadSellerLogo exactly but for products
 async function uploadProductImage(file) {
   const UPLOAD_PRESET = 'product_images_unsigned'; 
   const formData = new FormData();
@@ -203,7 +200,7 @@ function setupFormSubmission() {
       description: document.getElementById('productDescription').value.trim(),
       price: parseFloat(document.getElementById('productPrice').value),
       category: document.getElementById('productCategory').value,
-      coverImage,
+      cover_image: coverImage,
       images: completedImages
     };
     
@@ -238,3 +235,4 @@ function setupFormSubmission() {
   
   document.getElementById('productName')?.focus();
 }
+

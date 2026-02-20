@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details - ONTROPP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/CORE.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages/product.css">
+  <link rel="stylesheet" href="/css/pages/product.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-container">
+      <a href="javascript:history.back()" class="icon-btn" aria-label="Go back">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <div class="logo">ONTROPP.</div>
+      <div class="header-actions">
+        <button class="icon-btn" id="shareProductBtn" aria-label="Share">
+          <i class="fas fa-share-alt"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="product-container" id="productContainer">
+    <!-- Loading State -->
+    <div class="product-loading" id="loadingState">
+      <div class="loading-spinner"></div>
+      <p>Loading product details...</p>
+    </div>
+
+    <!-- Product Content (hidden initially) -->
+    <div class="product-content" id="productContent" style="display: none;">
+      
+      <!-- Image Gallery -->
+      <div class="product-gallery">
+        <div class="gallery-main" id="galleryMain">
+          <img src="" alt="Product image" id="mainImage">
+          <button class="gallery-prev" id="galleryPrev"><i class="fas fa-chevron-left"></i></button>
+          <button class="gallery-next" id="galleryNext"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="gallery-thumbnails" id="galleryThumbnails"></div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info-section">
+        <div class="product-header">
+          <h1 class="product-name" id="productName"></h1>
+          
+          <div class="product-meta-top">
+            <span class="product-category" id="productCategory"></span>
+            <span class="product-date" id="productDate"></span>
+          </div>
+
+          <div class="product-price-section">
+            <span class="product-price" id="productPrice"></span>
+            <span class="product-condition" id="productCondition"></span>
+          </div>
+
+          <div class="product-stats">
+            <div class="stat-item">
+              <i class="fas fa-eye"></i>
+              <span id="productViews">0</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-heart"></i>
+              <span id="productLikes">0</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-calendar"></i>
+              <span id="productListed">Recently</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="product-actions-sticky">
+          <button class="action-btn-fav" id="favouriteBtn">
+            <i class="far fa-heart"></i>
+            <span>Save</span>
+          </button>
+          <button class="action-btn-wa" id="whatsappOrderBtn">
+            <i class="fab fa-whatsapp"></i>
+            <span>Order on WhatsApp</span>
+          </button>
+        </div>
+
+        <!-- Seller Info Card -->
+        <div class="seller-card-compact" id="sellerCard">
+          <a href="portfolio.html?id=" class="seller-link" id="sellerLink">
+            <div class="seller-avatar-small">
+              <i class="fas fa-store"></i>
+            </div>
+            <div class="seller-info">
+              <div class="seller-name-row">
+                <h3 id="sellerName">TechGadgets NG</h3>
+                <span class="verified-badge" id="sellerVerified">
+                  <i class="fas fa-check-circle"></i>
+                </span>
+              </div>
+              <div class="seller-meta">
+                <span class="seller-rating">
+                  <i class="fas fa-star"></i> <span id="sellerRating">4.9</span>
+                </span>
+                <span class="dot">•</span>
+                <span class="seller-followers" id="sellerFollowers">61k followers</span>
+              </div>
+              <div class="seller-response">
+                <i class="fas fa-clock"></i>
+                <span id="sellerResponse">Typically responds in < 1 hour</span>
+              </div>
+            </div>
+          </a>
+          <button class="follow-seller-btn" id="followSellerBtn">
+            <i class="fas fa-user-plus"></i> Follow
+          </button>
+        </div>
+
+        <!-- Product Description -->
+        <div class="product-description">
+          <h3>Description</h3>
+          <p id="productDescription"></p>
+        </div>
+
+        <!-- Specifications -->
+        <div class="product-specs">
+          <h3>Specifications</h3>
+          <div class="specs-grid" id="specsGrid"></div>
+        </div>
+
+        <!-- Shipping Info -->
+        <div class="shipping-info">
+          <h3>Shipping & Delivery</h3>
+          <div class="shipping-details">
+            <div class="shipping-item">
+              <i class="fas fa-truck"></i>
+              <div>
+                <strong>Delivery Fee:</strong> <span id="shippingFee">₦1,500</span>
+              </div>
+            </div>
+            <div class="shipping-item">
+              <i class="fas fa-clock"></i>
+              <div>
+                <strong>Estimated Delivery:</strong> <span id="shippingTime">2-3 business days</span>
+              </div>
+            </div>
+            <div class="shipping-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <div>
+                <strong>Ships to:</strong> <span id="shippingLocations">Lagos, Abuja, nationwide</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="related-products">
+          <div class="section-header">
+            <h3>You might also like</h3>
+            <a href="explore.html" class="see-all">View all</a>
+          </div>
+          <div class="related-grid" id="relatedGrid">
+            <!-- Related products will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 ONTROPP. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Terms</a>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/products.js"></script>
+</body>
+</html>

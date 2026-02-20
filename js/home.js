@@ -42,7 +42,7 @@ function renderCategories(categories) {
   
   categories.forEach(category => {
     const categoryCard = document.createElement('a');
-    categoryCard.href = `category-seller.html?category=${category.id}`;
+    categoryCard.href = `sellers.html?category=${category.id}`;
     categoryCard.className = 'category-card';
     categoryCard.dataset.category = category.id;
     

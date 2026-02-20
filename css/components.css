@@ -233,6 +233,7 @@
   justify-content: center;
   font-size: 14px;
   color: var(--primary);
+  overflow: hidden;
 }
 
 .seller-details {

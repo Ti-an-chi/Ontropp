@@ -51,10 +51,10 @@ export function renderProducts(products, containerId, type = 'product') {
       });
     }
     
-    const sellerInfo = cfg.showSeller ? `
+    const sellerInfo = cfg.showSeller? `
       <div class="product-seller-info">
-        <div class="seller-avatar-small">
-          <i class="fas fa-store"></i>
+        <div class="seller-avatar-small" >
+          <img src=${product.seller?.logo_url}></img>
         </div>
         <div class="seller-details">
           <h4 class="seller-name">${product.seller?.shop_name || 'Seller'}</h4>
@@ -76,8 +76,8 @@ export function renderProducts(products, containerId, type = 'product') {
       </div>
     ` : '';
     
-    const imgHtml = product.image ? 
-      `<img src="${product.image}" alt="${product.name}">` : 
+    const imgHtml = product.cover_image ? 
+      `<img src="${product.cover_image}" alt="${product.name}">` : 
       `<i class="fas fa-box"></i>`;
     
     card.innerHTML = `

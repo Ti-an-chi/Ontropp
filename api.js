@@ -249,7 +249,8 @@ const API = {
   async updateCartQuantity(productId, quantity) {
     return this._fetch(`/cart/${productId}`, {
       method: 'PATCH',
-      body: JSON.stringify({ quantity })
+      body: JSON.stringify({ quantity }
+      )
     });
   },
   
@@ -275,10 +276,11 @@ const API = {
   
   /* ---------------- SELLER ACTIONS --------------- */
   async createProduct(productData) {
-    return this._fetch('/products', {
+    const response = await this._fetch('/products', {
       method: 'POST',
       body: JSON.stringify(productData)
     });
+    return response;
   },
 
   async deleteProduct(productId) {
