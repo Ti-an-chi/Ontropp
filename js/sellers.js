@@ -75,7 +75,8 @@ function renderSellers(sellers) {
   sellers.forEach(seller => {
     const sellerCard = document.createElement('div'); // Changed from <a> to <div>
     sellerCard.className = 'seller-card';
-    sellerCard.dataset.sellerId = seller.id; // Store ID in data attribute
+    sellerCard.dataset.sellerId = seller.id;
+    // Store ID in data attribute
     
     sellerCard.innerHTML = `
       <div class="seller-header">
@@ -165,10 +166,11 @@ function setupSellerCardListeners() {
 // Handle follow/unfollow logic
 async function handleFollowSeller(sellerId, button) {
   try {
-    button.disable = true;
-    
+    button.disabled = true;
+    console.log(sellerId);
     const resp = await API.followSeller(sellerId);
-    
+    console.log('pinggg');
+  
     if (resp.success) {
       button.innerHTML = `<i class='fas fa-check'></i> following`;
       button.classList.add('following');

@@ -42,15 +42,16 @@ const API = {
       try {
         const data = await resp.json();
         msg = data.message || msg;
+        console.log(msg);
       } catch {}
       
-      if ((msg === 'Invalid or expired token') && !_retry) {
+      if (data?.tokenExpired && !_retry) {
         try {
           await this.refresh();
           return await this._fetch(path, options, true);
         } catch {
-          // this.clearTokens();
-          // location.href = 'signup.html';
+          this.clearTokens();
+          location.href = 'signup.html';
           throw new Error('Session expired. Please login again.');
         }
       }
@@ -275,9 +276,8 @@ const API = {
   },
   
   async followSeller(sellerId) {
-    const response = await this._fetch('/seller/follow', {
+    const response = await this._fetch(`/seller/follow/${sellerId}`, {
       method: 'POST', 
-      body: JSON.stringify(sellerId),
     });
     return response;
   },

@@ -19,7 +19,7 @@ async function initDashboard() {
   try {
     // Load user data first
     await loadUserData();
-    
+
     // Setup tab navigation
     setupTabNavigation();
     
@@ -250,8 +250,10 @@ function setupGlobalEventListeners() {
   }
   
   if (logoutBtn) {
-    API.clearTokens()
-    window.location.href = 'signup.html'
+    logoutBtn.addEventListener('click', function() {
+      API.clearTokens()
+      window.location.href = 'signup.html'
+    })
   }
 }
 

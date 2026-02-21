@@ -178,8 +178,8 @@ signupForm.addEventListener('submit', async e => {
             const response = await window.API.login(email, pass);
             if (!response.success) throw new Error(response.message || 'Login failed');
             
-            // window.API.setTokens(response);
-            // location.href = 'dashboard.html';
+            window.API.setTokens(response);
+            location.href = 'dashboard.html';
         }
     } catch (err) {
         showMessage(err.message);
@@ -271,7 +271,7 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
         }
     } catch {
         // Token invalid, clear it
-        // window.API.clearTokens();
+        window.API.clearTokens();
     }
 })();
 
