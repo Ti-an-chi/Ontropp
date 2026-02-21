@@ -282,6 +282,18 @@ const API = {
     return response;
   },
   
+  async unfollowSeller(sellerId) {
+    const response = await this._fetch(`/seller/unfollow/${sellerId}`, {
+      method: 'DELETE',
+    })
+    return response;
+  }, 
+  
+  async getFollowedSellers() {
+    const response = await this._fetch(`/sellers/following`);
+    return response.data;
+  },
+  
   /* ---------------- SELLER ACTIONS --------------- */
   async createProduct(productData) {
     const response = await this._fetch('/products', {

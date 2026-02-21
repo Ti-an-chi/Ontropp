@@ -1,6 +1,7 @@
 // favourites.js - Favourites tab functionality
 import API from '../api.js';
 import { renderProducts, formatPrice } from './shared.js';
+import {changeDisplay} from './reconfig.js';
 
 export async function initFavouritesTab() {
   // Load favourites data
@@ -129,6 +130,9 @@ async function loadFollowedSellers() {
     renderFollowedSellers(sellers);
   } catch (error) {
     console.error('Failed to load followed sellers:', error);
+    // changeDisplay('error-sellers', 'flex');
+  } finally {
+    changeDisplay('loading-sellers', 'none');
   }
 }
 
@@ -136,11 +140,8 @@ function renderFollowedSellers(sellers) {
   const sellersList = document.getElementById('sellers-list');
   const emptyEl = document.getElementById('empty-sellers');
   const countEl = document.getElementById('followed-count');
-  const loadingEl = document.getElementById('loading-sellers');
   
   if (!sellersList) return;
-  
-  if (loadingEl) loadingEl.style.display = 'none';
   
   sellersList.innerHTML = '';
   
@@ -159,16 +160,15 @@ function renderFollowedSellers(sellers) {
     const sellerCard = document.createElement('a');
     sellerCard.href = '#';
     sellerCard.className = 'seller-card';
-    
     sellerCard.innerHTML = `
       <div class="seller-avatar">
-        <i class="fas fa-store"></i>
+        <img src='${seller.logo_url}'></img>
       </div>
       <div class="seller-info">
-        <h3 class="seller-name">${seller.name}</h3>
+        <h3 class="seller-name">${seller.shop_name}</h3>
         <div class="seller-stats">
           <span class="seller-stat">
-            <i class="fas fa-box"></i> ${seller.productCount} products
+            <i class="fas fa-box"></i> ${seller.products?.[0]?.count ?? 0} products
           </span>
           <span class="seller-stat">
             <i class="fas fa-star"></i> ${seller.rating}
@@ -182,6 +182,8 @@ function renderFollowedSellers(sellers) {
     
     sellersList.appendChild(sellerCard);
   });
+  
+  setupFollowedItemInteractions();
 }
 
 function setupFavouritesInteractions() {
@@ -258,6 +260,53 @@ function setupFavouriteItemInteractions() {
       }
     }
   });
+}
+
+function setupFollowedItemInteractions() {
+  const container = document.getElementById("sellers-list");
+
+  container.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const button = e.target.closest(".unfollow-btn, .follow-btn");
+    if (!button) return;
+  
+    const sellerId = button.dataset.sellerId;
+  
+    try {
+      button.disabled = true;
+  
+      if (button.classList.contains("unfollow-btn")) {
+        const res = await API.unfollowSeller(sellerId);
+  
+        if (res.success) {
+          switchToFollow(button);
+        }
+      } else {
+        const res = await API.followSeller(sellerId);
+  
+        if (res.success) {
+          switchToUnfollow(button);
+        }
+      }
+  
+    } catch (err) {
+      console.error(err);
+    } finally {
+      button.disabled = false;
+    }
+  });
+}
+
+function switchToFollow(button) {
+  button.classList.remove("unfollow-btn");
+  button.classList.add("follow-btn");
+  button.innerHTML = `<i class="fas fa-user-plus"></i> Follow`;
+}
+
+function switchToUnfollow(button) {
+  button.classList.remove("follow-btn");
+  button.classList.add("unfollow-btn");
+  button.innerHTML = `<i class="fas fa-user-minus"></i> Unfollow`;
 }
 
 function updateFavouritesCount(count) {

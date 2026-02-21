@@ -268,7 +268,8 @@
   gap: 4px;
 }
 
-.unfollow-btn {
+.unfollow-btn, 
+.follow-btn {
   background-color: var(--background);
   color: var(--error);
   border: 1px solid var(--border);
@@ -283,8 +284,16 @@
   transition: all 0.2s;
 }
 
+.follow-btn {
+  color: var(--primary);
+}
+
 .unfollow-btn:hover {
   background-color: rgba(239, 68, 68, 0.1);
+}
+
+.follow-btn:hover {
+  background-color: rgba(68, 68, 239, 0.1);
 }
 
 /* Empty States */
@@ -295,7 +304,7 @@
   border-radius: 12px;
   padding: 48px 24px;
   text-align: center;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
