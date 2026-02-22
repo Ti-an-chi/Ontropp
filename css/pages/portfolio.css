@@ -11,12 +11,16 @@
   height: 30vh;
   min-height: 180px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  overflow: hidden;
 }
 
 .hero-header-bg img {
   display: block;
   margin: 0 auto;
+  object-fit: cover;
+  transform: translateY(-20%)
 }
+
 
 .hero-content-wrapper {
   background: var(--white);
