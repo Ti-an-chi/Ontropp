@@ -1,417 +1,177 @@
-import {showNotification,} from './reconfig.js';
-import {formatPrice, formatNumber} from './shared.js';
+import { showNotification, updateElement, normalizePhoneNumber } from './reconfig.js';
+import { formatPrice, formatNumber } from './shared.js';
+import API from '../api.js';
 
-const urlParams = new URLSearchParams(window.location.search);
-const sellerId = urlParams.get('id') || '1';
-const sellerUsername = urlParams.get('username') || 'shop-name';
+// ============ CONFIGURATION ============
+const CONFIG = {
+  DEFAULT_MODE: 'portfolio',
+  PRODUCTS_PER_PAGE: 6,
+  REVIEWS_PER_PAGE: 3
+};
 
-// Initialize everything
-document.addEventListener('DOMContentLoaded', function() {
-  // Your existing initialization
-  loadPortfolioData();
-  setupInteractions();
-  setupTabs();
-  setupShare();
-});
+// ============ STATE MANAGEMENT ============
+const state = {
+  sellerId: null,
+  currentMode: null,
+  sellerData: null,
+  reviewsLoaded: false,
+  productsLoaded: false,
+  currentProductPage: 1,
+  currentReviewPage: 1
+};
 
-let reviewsLoaded = false;
-let sellerData = null;
-
-function setupInteractions() {
-  // WhatsApp contact button (main)
-  const contactBtn = document.getElementById('contactBtn');
-  if (contactBtn) {
-    contactBtn.addEventListener('click', function() {
-      const phone = '2348123456789';
-      const message = `Hi! I'm interested in your products on ONTROPP.`;
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-      window.open(url, '_blank');
-    });
-  }
-  
-  // Follow button
-  const followBtn = document.getElementById('followBtn');
-  if (followBtn) {
-    let isFollowing = false;
+// ============ ROUTER ============
+const Router = {
+  init() {
+    const urlParams = new URLSearchParams(window.location.search);
+    state.sellerId = urlParams.get('id') || '1';
+    state.currentMode = urlParams.get('mode') || CONFIG.DEFAULT_MODE;
     
-    followBtn.addEventListener('click', function() {
-      isFollowing = !isFollowing;
+    this.route();
+  },
+
+  route() {
+    switch (state.currentMode) {
+      case 'portfolio':
+      case '':  // No mode specified
+        PortfolioMode.init();
+        break;
+      case 'products':
+        // This will be implemented later - full products catalog mode
+        ProductsCatalogMode.init();
+        break;
+      default:
+        console.warn(`Unknown mode: ${state.currentMode}, defaulting to portfolio`);
+        PortfolioMode.init();
+    }
+  }
+};
+
+// ============ PORTFOLIO MODE ============
+const PortfolioMode = {
+  init() {
+    this.setupUI();
+    this.loadData();
+    this.setupEventListeners();
+  },
+
+  setupUI() {
+    // Show/hide appropriate sections for portfolio view
+    document.body.dataset.mode = 'portfolio';
+  },
+
+  async loadData() {
+    try {
+      const [sellerResponse, productsResponse] = await Promise.all([
+        API.getSellerData(state.sellerId),
+        this.loadProducts()
+      ]);
+
+      state.sellerData = sellerResponse.seller;
+      this.updateHeroSection(state.sellerData);
       
-      if (isFollowing) {
-        this.innerHTML = '<i class="fas fa-user-check"></i> Following';
-        this.classList.add('following');
-        showNotification('You are now following this shop');
-      } else {
-        this.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-        this.classList.remove('following');
-      }
-    });
-  }
-}
-
-function setupTabs() {
-  const tabs = document.querySelectorAll('.portfolio-tab');
-  const tabContents = document.querySelectorAll('.tab-content');
-  
-  tabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      const tabId = this.dataset.tab;
+      // Store reviews in state for later lazy loading
+      state.reviews = sellerResponse.reviews || this.getMockReviews();
       
-      // Update active tab
-      tabs.forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-      
-      // Show selected content
-      tabContents.forEach(content => {
-        content.classList.remove('active');
-      });
-      
-      const targetContent = document.getElementById(`${tabId}Tab`);
-      if (targetContent) targetContent.classList.add('active');
-      
-      if (tabId === 'reviews' && !reviewsLoaded) {
-        loadReviews();
-      }
-    });
-  });
-}
+    } catch (error) {
+      console.error('Error loading portfolio data:', error);
+      showNotification('Failed to load shop data', 'error');
+    }
+  },
 
-async function loadPortfolioData() {
-  const sellerData = getMockSellerData(sellerId);
-  
-  updateHeroSection(sellerData);
-  
-  await loadProducts(sellerData.products);
-  
-  window.sellerReviews = sellerData.reviews || [];
-}
-
-function loadReviews() {
-  // Check if already loaded
-  if (reviewsLoaded) {
-    console.log('Reviews already loaded');
-    return;
-  }
-
-  const reviewsGrid = document.getElementById('reviewsGrid');
-  if (!reviewsGrid) return;
-
-  const reviews = window.sellerReviews || [];
-
-  if (!reviews || reviews.length === 0) {
-    reviewsGrid.innerHTML = '<p style="color: var(--hash); text-align: center; padding: 40px;">No reviews yet</p>';
-    return;
-  }
-
-  let reviewsHTML = '';
-  
-  // Calculate average rating
-  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-  const avgRating = (totalRating / reviews.length).toFixed(1);
-  
-  // Build summary section
-  reviewsHTML += `
-    <div class="reviews-summary">
-      <div class="summary-left">
-        <span class="summary-rating">${avgRating}</span>
-        <div class="summary-stars">
-          ${generateStarRating(avgRating)}
-        </div>
-        <span class="summary-count">Based on ${reviews.length} reviews</span>
-      </div>
-      <div class="summary-right">
-        <button class="write-review-btn" id="writeReviewBtn">
-          <i class="fas fa-pen"></i> Write a Review
-        </button>
-      </div>
-    </div>
-  `;
-  
-  // Build individual reviews
-  reviewsHTML += '<div class="reviews-list">';
-  
-  reviews.forEach(review => {
-    const reviewDate = new Date(review.date).toLocaleDateString('en-NG', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+  async loadProducts() {
+    if (state.productsLoaded) return;
+    
+    const products = await DataService.fetchProducts({
+      sellerId: state.sellerId,
+      page: 1,
+      limit: CONFIG.PRODUCTS_PER_PAGE
     });
     
-    reviewsHTML += `
-      <div class="review-card">
-        <div class="review-header">
-          <div class="reviewer-info">
-            <div class="reviewer-avatar">
-              ${review.userAvatar ? 
-                `<img src="${review.userAvatar}" alt="${review.userName}">` : 
-                `<div class="avatar-placeholder">${review.userName.charAt(0)}</div>`
-              }
-            </div>
-            <div class="reviewer-details">
-              <div class="reviewer-name-row">
-                <span class="reviewer-name">${review.userName}</span>
-                ${review.verified ? 
-                  '<span class="verified-purchase"><i class="fas fa-check-circle"></i> Verified Purchase</span>' : 
-                  ''
-                }
-              </div>
-              <div class="review-rating">
-                ${generateStarRating(review.rating)}
-              </div>
-            </div>
-          </div>
-          <span class="review-date">${reviewDate}</span>
-        </div>
-        <div class="review-content">
-          <p>${review.comment}</p>
-        </div>
-      </div>
-    `;
-  });
-  
-  reviewsHTML += '</div>';
-  
-  // Add view all link if more than 3 reviews
-  if (reviews.length > 3) {
-    reviewsHTML += `
-      <div class="view-all-reviews">
-        <a href="#" id="viewAllReviewsLink">View all ${reviews.length} reviews <i class="fas fa-arrow-right"></i></a>
-      </div>
-    `;
-  }
-  
-  reviewsGrid.innerHTML = reviewsHTML;
-  reviewsLoaded = true;
-  
-  // Add event listener for write review button
-  const writeBtn = document.getElementById('writeReviewBtn');
-  if (writeBtn) {
-    writeBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      showNotification('Review feature coming soon!');
-    });
-  }
-  
-  // Add event listener for view all reviews if exists
-  const viewAllLink = document.getElementById('viewAllReviewsLink');
-  if (viewAllLink) {
-    viewAllLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      showNotification('Showing all reviews...');
-      // Could expand or navigate to full reviews page
-    });
-  }
-}
+    await ProductRenderer.render(products);
+    state.productsLoaded = true;
+  },
 
-function updateHeroSection(seller) {
-  document.getElementById('shopName').textContent = seller.shopName;
-  document.getElementById('shopTagline').textContent = seller.tagline;
-  
-  // Update stats in hero
-  document.getElementById('followerCount').textContent = formatNumber(seller.stats.followers);
-  document.getElementById('productCount').textContent = seller.stats.products;
-  document.getElementById('ratingValue').textContent = seller.stats.rating;
-  
-  // Update bio if exists
-  const bioEl = document.getElementById('shopBio');
-  if (bioEl) bioEl.textContent = seller.bio;
-  
-  // Update avatar
-  const shopAvatar = document.getElementById('shopAvatar');
-  if (seller.logoUrl) {
-    shopAvatar.innerHTML = `<img src="${seller.logoUrl}" alt="${seller.shopName}">`;
-  }
-}
+  setupEventListeners() {
+    TabController.init();
+    ShareController.init();
+    InteractionController.init();
+  },
 
-async function loadProducts(products) {
-  const productsGrid = document.getElementById('productsGrid');
-  const loadingEl = document.getElementById('loadingProducts');
-  
-  if (!productsGrid) return;
-  
-  // Simulate loading
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  if (loadingEl) loadingEl.style.display = 'none';
-  
-  productsGrid.innerHTML = '';
-  
-  products.forEach(product => {
-    const productCard = document.createElement('a');
-    productCard.href = `#`;
-    productCard.className = 'portfolio-product-card';
+  updateHeroSection(seller) {
+    updateElement('shopName', seller.shop_name);
+    updateElement('shopTagline', seller.bio);
+    updateElement('categoryTag', seller.category);
+    updateElement('locationTag', `Located in: ${seller.location || 'OAU'}`);
     
-    productCard.innerHTML = `
-      <div class="product-image-portfolio">
-        <img src="${product.image}" alt="${product.name}" loading="lazy">
-        <div class="product-overlay">
-          <div class="quick-actions">
-            <button class="quick-action-btn" data-action="whatsapp" data-product-id="${product.id}" data-product-name="${product.name}">
-              <i class="fab fa-whatsapp"></i> Order
-            </button>
-            <button class="quick-action-btn" data-action="favorite" data-product-id="${product.id}">
-              <i class="fas fa-heart"></i> Save
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="product-details-portfolio">
-        <h3 class="product-name-portfolio">${product.name}</h3>
-        <div class="product-price-portfolio">₦${formatPrice(product.price)}</div>
-        <div class="product-meta">
-          <div class="meta-item">
-            <i class="fas fa-star"></i> ${product.rating}
-          </div>
-          <div class="meta-item">
-            <i class="fas fa-shopping-bag"></i> ${product.sold} sold
-          </div>
-        </div>
-      </div>
-    `;
+    document.getElementById('followerCount').textContent = formatNumber(seller.followers?.[0]?.count ?? 0);
+    document.getElementById('productCount').textContent = formatNumber(seller.products?.[0]?.count ?? 0);
+    document.getElementById('ratingValue').textContent = seller.rating || 5.0;
     
-    // WhatsApp order button
-    const whatsappBtn = productCard.querySelector('[data-action="whatsapp"]');
-    whatsappBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const productName = this.dataset.productName;
-      orderProduct(this.dataset.productId, productName);
-    });
+    updateElement('shopBio', seller.bio);
     
-    // Favorite button
-    const favoriteBtn = productCard.querySelector('[data-action="favorite"]');
-    favoriteBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleFavorite(this.dataset.productId, this);
-    });
-    
-    productsGrid.appendChild(productCard);
-  });
-}
+    const shopAvatar = document.getElementById('shopAvatar');
+    if (seller.logo_url) {
+      shopAvatar.innerHTML = `<img src="${seller.logo_url}" alt="${seller.shop_name}">`;
+    }
+    const coverImage = document.getElementById('coverImage');
+    if (seller.user.avatar_url) {
+      coverImage.innerHTML = `<img src="${seller.user.avatar_url}" alt="${seller.user.username}">`;
+    }
+  },
 
-function toggleFavorite(productId, button) {
-  const icon = button.querySelector('i');
-  
-  if (icon.classList.contains('fa-heart')) {
-    icon.classList.remove('fa-heart');
-    icon.classList.add('fa-heart-circle-check');
-    button.innerHTML = '<i class=\"fas fa-heart-circle-check\"></i> Saved';
-    showNotification('Product saved to favorites', 'success');
-  } else {
-    icon.classList.remove('fa-heart-circle-check');
-    icon.classList.add('fa-heart');
-    button.innerHTML = '<i class=\"fas fa-heart\"></i> Save';
-  }
-}
-
-function orderProduct(productId, productName) {
-  const sellerPhone = '2348123456789';
-  const message = `Hello! I saw \"${productName}\" on your ONTROPP shop and I'd like to place an order. Product ID: ${productId}`;
-  const url = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(message)}`;
-  window.open(url, '_blank');
-  showNotification('Opening WhatsApp...');
-}
-
-function setupViewAllButton() {
-  const viewAllBtn = document.getElementById('viewAllProductsBtn');
-  if (viewAllBtn) {
-    viewAllBtn.addEventListener('click', function() {
-      const sellerId = urlParams.get('id') || '1';
-      window.location.href = `products.html?seller=${sellerId}`;
-    });
-  }
-}
-
-function setupShare() {
-  const shareBtn = document.getElementById('shareBtn');
-  if (shareBtn) {
-    shareBtn.addEventListener('click', function() {
-      if (navigator.share) {
-        navigator.share({
-          title: document.getElementById('shopName').textContent,
-          text: 'Check out this shop on ONTROPP!',
-          url: window.location.href
-        });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        showNotification('Link copied to clipboard!');
-      }
-    });
-  }
-}
-
-// Helper function to generate star ratings HTML
-function generateStarRating(rating) {
-  const fullStars = Math.floor(rating);
-  const halfStar = rating % 1 >= 0.5;
-  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-  
-  let starsHTML = '';
-  
-  // Full stars
-  for (let i = 0; i < fullStars; i++) {
-    starsHTML += '<i class="fas fa-star"></i>';
-  }
-  
-  // Half star
-  if (halfStar) {
-    starsHTML += '<i class="fas fa-star-half-alt"></i>';
-  }
-  
-  // Empty stars
-  for (let i = 0; i < emptyStars; i++) {
-    starsHTML += '<i class="far fa-star"></i>';
-  }
-  
-  return starsHTML;
-}
-
-// Mock data
-function getMockSellerData(id) {
-  return {
-    shopName: 'TechGadgets NG',
-    tagline: 'Your trusted source for authentic tech gadgets',
-    bio: 'Welcome to TechGadgets NG! We specialize in authentic tech gadgets, mobile accessories, and electronics. With over 5 years of experience, we bring you quality products with warranty and excellent customer service.',
-    logoUrl: '',
-    stats: {
-      products: 146,
-      followers: 61000,
-      rating: 5.0,
-      orders: 892,
-      totalReviews: 234 // Added this
-    },
-    // Added reviews array
-    reviews: [
+  getMockReviews() {
+    // Fallback mock data
+    return [
       {
         id: 1,
         userName: "Chidi O.",
         userAvatar: "",
         rating: 5,
-        comment: "Got the wireless headphones. Sound quality is amazing and battery lasts forever. Seller responded quickly.",
+        comment: "Got the wireless headphones. Sound quality is amazing...",
         date: "2024-02-10",
         verified: true
-      },
-      {
-        id: 2,
-        userName: "Aisha B.",
-        userAvatar: "",
-        rating: 4,
-        comment: "Smart watch is authentic and delivery was fast. Only giving 4 stars because the box came slightly dented but product is fine.",
-        date: "2024-02-05",
-        verified: true
-      },
-      {
-        id: 3,
-        userName: "Tunde A.",
-        userAvatar: "",
-        rating: 5,
-        comment: "Best phone case I've bought on ONTROPP. Will definitely order again.",
-        date: "2024-01-28",
-        verified: true
       }
-    ],
-    products: [
+    ];
+  }
+};
+
+// ============ PRODUCTS CATALOG MODE (PLACEHOLDER) ============
+const ProductsCatalogMode = {
+  init() {
+    // This will be implemented later - transforms page into full product catalog
+    console.log('Products catalog mode initialized');
+    document.body.dataset.mode = 'products-catalog';
+    // TODO: Implement full product listing view
+  }
+};
+
+// ============ DATA SERVICE ============
+const DataService = {
+  async fetchProducts({ sellerId, page = 1, limit = CONFIG.PRODUCTS_PER_PAGE }) {
+    try {
+      // Use the actual API call with pagination
+      const response = await API.getSellerProducts(sellerId, page, limit);
+      return response.products || [];
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      // Fallback to mock data if API fails
+      return this.getMockProducts().slice(0, limit);
+    }
+  },
+
+  async fetchReviews({ sellerId, page = 1, limit = CONFIG.REVIEWS_PER_PAGE }) {
+    try {
+      const response = await API.getSellerReviews(sellerId, page, limit);
+      return response.reviews || [];
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      return this.getMockReviews().slice(0, limit);
+    }
+  },
+
+  getMockProducts() {
+    return [
       {
         id: 1,
         name: 'Wireless Bluetooth Headphones',
@@ -436,6 +196,378 @@ function getMockSellerData(id) {
         rating: 4.5,
         sold: 234
       }
-    ] // existing products
-  };
-}
+    ];
+  },
+
+  getMockReviews() {
+    return [
+      {
+        id: 1,
+        userName: "Chidi O.",
+        userAvatar: "",
+        rating: 5,
+        comment: "Got the wireless headphones. Sound quality is amazing and battery lasts forever.",
+        date: "2024-02-10",
+        verified: true
+      },
+      {
+        id: 2,
+        userName: "Aisha B.",
+        userAvatar: "",
+        rating: 4,
+        comment: "Smart watch is authentic and delivery was fast.",
+        date: "2024-02-05",
+        verified: true
+      },
+      {
+        id: 3,
+        userName: "Tunde A.",
+        userAvatar: "",
+        rating: 5,
+        comment: "Best phone case I've bought on ONTROPP.",
+        date: "2024-01-28",
+        verified: true
+      }
+    ];
+  }
+};
+
+// ============ PRODUCT RENDERER ============
+const ProductRenderer = {
+  async render(products) {
+    const grid = document.getElementById('productsGrid');
+    const loadingEl = document.getElementById('loadingProducts');
+    
+    if (!grid) return;
+
+    // Simulate loading delay for UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    if (loadingEl) loadingEl.style.display = 'none';
+    
+    grid.innerHTML = '';
+    
+    products.forEach(product => {
+      const card = this.createProductCard(product);
+      grid.appendChild(card);
+    });
+  },
+
+  createProductCard(product) {
+    const card = document.createElement('a');
+    card.href = `#`;
+    card.className = 'portfolio-product-card';
+    card.dataset.productId = product.id;
+    
+    card.innerHTML = `
+      <div class="product-image-portfolio">
+        <img src="${product.cover_image}" alt="${product.name}" loading="lazy">
+        <div class="product-overlay">
+          <div class="quick-actions">
+            <button class="quick-action-btn" data-action="whatsapp" data-product-id="${product.id}" data-product-name="${product.name}">
+              <i class="fab fa-whatsapp"></i> Order
+            </button>
+            <button class="quick-action-btn" data-action="favorite" data-product-id="${product.id}">
+              <i class="fas fa-heart"></i> Save
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="product-details-portfolio">
+        <h3 class="product-name-portfolio">${product.name}</h3>
+        <div class="product-price-portfolio">₦${formatPrice(product.price)}</div>
+        <div class="product-meta">
+          <div class="meta-item">
+            <i class="fas fa-star"></i> ${product.rating || 5.0}
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-shopping-bag"></i> ${product.sold || 10} sold
+          </div>
+        </div>
+      </div>
+    `;
+
+    this.attachCardEvents(card, product);
+    return card;
+  },
+
+  attachCardEvents(card, product) {
+    const whatsappBtn = card.querySelector('[data-action="whatsapp"]');
+    const favoriteBtn = card.querySelector('[data-action="favorite"]');
+
+    whatsappBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      OrderHandler.handle(product.id, product.name);
+    });
+
+    favoriteBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      FavoriteHandler.toggle(product.id, favoriteBtn);
+    });
+  }
+};
+
+// ============ REVIEW RENDERER ============
+const ReviewRenderer = {
+  async render() {
+    if (state.reviewsLoaded) return;
+
+    const container = document.getElementById('reviewsGrid');
+    if (!container) return;
+
+    const reviews = await DataService.fetchReviews({
+      sellerId: state.sellerId,
+      page: state.currentReviewPage,
+      limit: CONFIG.REVIEWS_PER_PAGE
+    });
+
+    if (!reviews.length) {
+      container.innerHTML = '<p class="no-reviews">No reviews yet</p>';
+      return;
+    }
+
+    const html = this.buildHTML(reviews);
+    container.innerHTML = html;
+    this.attachEvents();
+    state.reviewsLoaded = true;
+  },
+
+  buildHTML(reviews) {
+    const avgRating = this.calculateAverage(reviews);
+    
+    return `
+      ${this.buildSummary(avgRating, reviews.length)}
+      <div class="reviews-list">
+        ${reviews.map(r => this.buildReviewCard(r)).join('')}
+      </div>
+      ${reviews.length >= CONFIG.REVIEWS_PER_PAGE ? this.buildViewAllLink(reviews.length) : ''}
+    `;
+  },
+
+  calculateAverage(reviews) {
+    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+    return (total / reviews.length).toFixed(1);
+  },
+
+  buildSummary(avgRating, totalCount) {
+    return `
+      <div class="reviews-summary">
+        <div class="summary-left">
+          <span class="summary-rating">${avgRating}</span>
+          <div class="summary-stars">${StarRating.generate(avgRating)}</div>
+          <span class="summary-count">Based on ${totalCount} reviews</span>
+        </div>
+        <div class="summary-right">
+          <button class="write-review-btn" id="writeReviewBtn">
+            <i class="fas fa-pen"></i> Write a Review
+          </button>
+        </div>
+      </div>
+    `;
+  },
+
+  buildReviewCard(review) {
+    const date = new Date(review.date).toLocaleDateString('en-NG', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    });
+
+    return `
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer-info">
+            <div class="reviewer-avatar">
+              ${review.userAvatar 
+                ? `<img src="${review.userAvatar}" alt="${review.userName}">` 
+                : `<div class="avatar-placeholder">${review.userName.charAt(0)}</div>`
+              }
+            </div>
+            <div class="reviewer-details">
+              <div class="reviewer-name-row">
+                <span class="reviewer-name">${review.userName}</span>
+                ${review.verified ? '<span class="verified-purchase"><i class="fas fa-check-circle"></i> Verified Purchase</span>' : ''}
+              </div>
+              <div class="review-rating">${StarRating.generate(review.rating)}</div>
+            </div>
+          </div>
+          <span class="review-date">${date}</span>
+        </div>
+        <div class="review-content">
+          <p>${review.comment}</p>
+        </div>
+      </div>
+    `;
+  },
+
+  buildViewAllLink(totalCount) {
+    return `
+      <div class="view-all-reviews">
+        <a href="#" id="viewAllReviewsLink">View all ${totalCount} reviews <i class="fas fa-arrow-right"></i></a>
+      </div>
+    `;
+  },
+
+  attachEvents() {
+    document.getElementById('writeReviewBtn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      showNotification('Review feature coming soon!');
+    });
+
+    document.getElementById('viewAllReviewsLink')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      showNotification('Showing all reviews...');
+    });
+  }
+};
+
+// ============ UI CONTROLLERS ============
+const TabController = {
+  init() {
+    const tabs = document.querySelectorAll('.portfolio-tab');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => this.handleTabSwitch(tab));
+    });
+  },
+
+  handleTabSwitch(clickedTab) {
+    const tabId = clickedTab.dataset.tab;
+    
+    // Update active states
+    document.querySelectorAll('.portfolio-tab').forEach(t => t.classList.remove('active'));
+    clickedTab.classList.add('active');
+    
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(`${tabId}Tab`)?.classList.add('active');
+
+    // Lazy load reviews when tab is clicked
+    if (tabId === 'reviews') {
+      ReviewRenderer.render();
+    }
+  }
+};
+
+const ShareController = {
+  init() {
+    const shareBtn = document.getElementById('shareBtn');
+    shareBtn?.addEventListener('click', () => this.handleShare());
+  },
+
+  async handleShare() {
+    const shareData = {
+      title: document.getElementById('shopName')?.textContent,
+      text: 'Check out this shop on ONTROPP!',
+      url: window.location.href
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showNotification('Link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Share failed:', err);
+    }
+  }
+};
+
+const InteractionController = {
+  init() {
+    this.setupContactButton();
+    this.setupFollowButton();
+    this.setupViewAllButton();
+  },
+
+  setupContactButton() {
+    const btn = document.getElementById('contactBtn');
+    btn?.addEventListener('click', () => {
+      const phone = normalizePhoneNumber(state.sellerData?.whatsapp_number);
+      const message = `Hi! I'm interested in your products on ONTROPP.`;
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    });
+  },
+
+  setupFollowButton() {
+    const btn = document.getElementById('followBtn');
+    if (!btn) return;
+
+    let isFollowing = false;
+    
+    btn.addEventListener('click', () => {
+      isFollowing = !isFollowing;
+      
+      if (isFollowing) {
+        btn.innerHTML = '<i class="fas fa-user-check"></i> Following';
+        btn.classList.add('following');
+        showNotification('You are now following this shop', 'success');
+      } else {
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+        btn.classList.remove('following');
+      }
+    });
+  },
+
+  setupViewAllButton() {
+    const btn = document.getElementById('viewAllProductsBtn');
+    btn?.addEventListener('click', () => {
+      // Navigate to products catalog mode
+      const url = new URL(window.location.href);
+      url.searchParams.set('mode', 'products');
+      window.location.href = url.toString();
+    });
+  }
+};
+
+// ============ HANDLERS ============
+const OrderHandler = {
+  handle(productId, productName) {
+    const phone = normalizePhoneNumber(state.sellerData?.whatsapp_number);
+    const message = `Hello! I saw "${productName}" on your ONTROPP shop and I'd like to place an order. Product ID: ${productId}`;
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    
+    window.open(url, '_blank');
+    showNotification('Opening WhatsApp...');
+  }
+};
+
+const FavoriteHandler = {
+  toggle(productId, button) {
+    const icon = button.querySelector('i');
+    const isSaved = icon.classList.contains('fa-heart-circle-check');
+
+    if (!isSaved) {
+      icon.classList.remove('fa-heart');
+      icon.classList.add('fa-heart-circle-check');
+      button.innerHTML = '<i class="fas fa-heart-circle-check"></i> Saved';
+      showNotification('Product saved to favorites', 'success');
+    } else {
+      icon.classList.remove('fa-heart-circle-check');
+      icon.classList.add('fa-heart');
+      button.innerHTML = '<i class="fas fa-heart"></i> Save';
+    }
+  }
+};
+
+// ============ UTILITIES ============
+const StarRating = {
+  generate(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return [
+      ...Array(fullStars).fill('<i class="fas fa-star"></i>'),
+      ...(hasHalfStar ? ['<i class="fas fa-star-half-alt"></i>'] : []),
+      ...Array(emptyStars).fill('<i class="far fa-star"></i>')
+    ].join('');
+  }
+};
+
+// ============ INITIALIZATION ============
+document.addEventListener('DOMContentLoaded', () => {
+  Router.init();
+});

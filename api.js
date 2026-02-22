@@ -155,8 +155,9 @@ const API = {
     return response.data;
   },
 
-  async getSellerData() {
-    return this._fetch('/seller/stats');
+  async getSellerData(sellerId) {
+    const response = await this._fetch(`/seller/${sellerId}`);
+    return response;
   },
   
   async getMyProducts(page = 1, limit = 20, search = '') {
@@ -277,7 +278,7 @@ const API = {
   
   async followSeller(sellerId) {
     const response = await this._fetch(`/seller/follow/${sellerId}`, {
-      method: 'POST', 
+      method: 'POST',
     });
     return response;
   },

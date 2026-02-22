@@ -8,9 +8,14 @@
 }
 
 .hero-header-bg {
-  height: 25vh;
+  height: 30vh;
   min-height: 180px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+}
+
+.hero-header-bg img {
+  display: block;
+  margin: 0 auto;
 }
 
 .hero-content-wrapper {
@@ -588,6 +593,8 @@
   margin-top: 60px;
   padding: 24px 16px;
 }
+
+
 
 /* Responsive */
 @media (min-width: 768px) {

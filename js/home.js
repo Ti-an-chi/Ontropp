@@ -22,7 +22,7 @@ export async function initHomeTab(user) {
     
     seller = user.sellerProfile;
     if (user?.role === 'seller') {
-      const resp = await API.getSellerProducts(seller.id);
+      const resp = await API.getSellerProducts(seller.id, 1, 8);
       const sellerProducts = resp.products || [];
       console.log(sellerProducts)
       renderProducts(sellerProducts, 'seller-products-grid', 'seller');

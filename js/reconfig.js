@@ -70,3 +70,19 @@ export function showNotification(message, type= 'info'){
 export function viewSellerProfile(sellerId) {
   window.location.href = `/portfolio.html?id=${sellerId}`;
 }
+
+export function normalizePhoneNumber(phone) {
+  if (!phone) return '';
+  
+  phone = phone.replace(/\D/g, '');
+  
+  // Handle Nigerian numbers
+  if (phone.length === 10) {
+    return '234' + phone;
+  } else if (phone.length === 11 && phone.startsWith('0')) {
+    return '234' + phone.substring(1);
+  }
+  
+  return phone;
+}
+

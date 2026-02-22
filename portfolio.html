@@ -14,7 +14,9 @@
   <!-- Hero Section - Matching UIX Screenshot Layout -->
   <header class="portfolio-hero">
     <!-- Green gradient header area -->
-    <div class="hero-header-bg"></div>
+    <div class="hero-header-bg">
+      <i id="coverImage"></i>
+    </div>
     
     <!-- White content area -->
     <div class="hero-content-wrapper">
@@ -61,8 +63,15 @@
         
         <!-- Category Tags -->
         <div class="hero-tags"> 
-          <span class="hero-tag">Electronics category</span>
-          <span class="hero-tag">Location</span>
+          <div class="hero-tag">
+            <i class="fas fa-tag"></i>
+            Category:
+            <span id="categoryTag"></span>
+          </div>
+          <div class="hero-tag">
+            <i class="fas fa-location"></i>
+            <span id="locationTag">Location </span>
+          </div>
         </div>
         
         <!-- Action Buttons -->
@@ -79,7 +88,7 @@
         </div>
         
         <!-- Info Banner -->
-        <div class="hero-banner" id="heroBanner">
+        <div class="hero-banner" id="heroBanner" style="display: none">
           Banner for any info, this banner is ment to hold any information needed to be passed across. Banner for any info, this banner is ment to hold any information needed to be passed across. Banner for any info, this banner is ment to hold any information needed to be passed across.
         </div>
       </div>
@@ -111,6 +120,12 @@
         <p>Loading products...</p>
       </div>
       <div class="products-grid-portfolio" id="productsGrid"></div>
+      <div class="view-all-container">
+        <button class="view-all-btn" id="viewAllProductsBtn">
+          <span>View All Products</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
     </div>
 
     <!-- About Tab -->
@@ -132,14 +147,6 @@
     </div>
 
   </main>
-
-<!-- View All Products Button -->
-<div class="view-all-container">
-  <button class="view-all-btn" id="viewAllProductsBtn">
-    <span>View All Products</span>
-    <i class="fas fa-arrow-right"></i>
-  </button>
-</div>
 
 <!-- Simple Footer -->
 <footer class="portfolio-footer">
