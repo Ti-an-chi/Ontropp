@@ -12,7 +12,7 @@ export function changeDisplay(id, display) {
   el.style.display = display;
 }
 
-export function showNotification(message){
+export function showNotification(message, type= 'info'){
   // Remove existing notifications
   const existing = document.querySelector('.notification');
   if (existing) existing.remove();
@@ -28,7 +28,7 @@ export function showNotification(message){
     position: fixed;
     top: 20px;
     right: 20px;
-    background: var(--success, #10B981);
+    background: var(--${type}, #10B981);
     color: white;
     padding: 16px 24px;
     border-radius: 12px;
@@ -64,4 +64,9 @@ export function showNotification(message){
     notification.style.animation = 'slideOut 0.3s ease forwards';
     setTimeout(() => notification.remove(), 300);
   }, 3000);
+}
+
+// Navigate to seller profile
+export function viewSellerProfile(sellerId) {
+  window.location.href = `/portfolio.html?id=${sellerId}`;
 }

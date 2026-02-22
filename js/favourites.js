@@ -1,7 +1,7 @@
 // favourites.js - Favourites tab functionality
 import API from '../api.js';
 import { renderProducts, formatPrice } from './shared.js';
-import {changeDisplay} from './reconfig.js';
+import {changeDisplay, viewSellerProfile} from './reconfig.js';
 
 export async function initFavouritesTab() {
   // Load favourites data
@@ -160,6 +160,7 @@ function renderFollowedSellers(sellers) {
     const sellerCard = document.createElement('a');
     sellerCard.href = '#';
     sellerCard.className = 'seller-card';
+    sellerCard.dataset.sellerId = seller.id;
     sellerCard.innerHTML = `
       <div class="seller-avatar">
         <img src='${seller.logo_url}'></img>
@@ -266,34 +267,40 @@ function setupFollowedItemInteractions() {
   const container = document.getElementById("sellers-list");
 
   container.addEventListener("click", async (e) => {
-    e.preventDefault();
     const button = e.target.closest(".unfollow-btn, .follow-btn");
-    if (!button) return;
-  
-    const sellerId = button.dataset.sellerId;
-  
-    try {
-      button.disabled = true;
-  
-      if (button.classList.contains("unfollow-btn")) {
-        const res = await API.unfollowSeller(sellerId);
-  
-        if (res.success) {
-          switchToFollow(button);
+    const card = e.target.closest(".seller-card");
+    
+    if (!card) return;
+
+    const sellerId = card.dataset.sellerId;
+    
+    if (button) {
+      e.preventDefault();
+      try {
+        button.disabled = true;
+      
+        if (button.classList.contains("unfollow-btn")) {
+          const res = await API.unfollowSeller(sellerId);
+      
+          if (res.success) {
+            switchToFollow(button);
+          }
+        } else {
+          const res = await API.followSeller(sellerId);
+          
+          if (res.success) {
+            switchToUnfollow(button);
+          }
         }
-      } else {
-        const res = await API.followSeller(sellerId);
-  
-        if (res.success) {
-          switchToUnfollow(button);
-        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        button.disabled = false;
       }
-  
-    } catch (err) {
-      console.error(err);
-    } finally {
-      button.disabled = false;
+      return;
     }
+    e.preventDefault();
+    viewSellerProfile(sellerId);
   });
 }
 

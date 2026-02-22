@@ -1,4 +1,5 @@
 import API from '../api.js';
+import { viewSellerProfile } from './reconfig.js';
 
 // Get category from URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -187,8 +188,3 @@ async function handleFollowSeller(sellerId, button) {
   }
 }
 
-// Navigate to seller profile
-export function viewSellerProfile(sellerId) {
-  // Update URL without reloading if using SPA, or redirect
-  window.location.href = `/portfolio.html?id=${sellerId}`;
-}

@@ -1,8 +1,7 @@
-import { showNotification } from '/reconfig.js'
-
 const urlParams = new URLSearchParams(window.location.search);
 const sellerId = urlParams.get('id') || '1';
 const sellerUsername = urlParams.get('username') || 'shop-name';
+import {showNotification} from './reconfig.js';
 
 // Initialize everything
 document.addEventListener('DOMContentLoaded', function() {
@@ -295,7 +294,7 @@ function toggleFavorite(productId, button) {
     icon.classList.remove('fa-heart');
     icon.classList.add('fa-heart-circle-check');
     button.innerHTML = '<i class=\"fas fa-heart-circle-check\"></i> Saved';
-    showNotification('Product saved to favorites');
+    showNotification('Product saved to favorites', 'success');
   } else {
     icon.classList.remove('fa-heart-circle-check');
     icon.classList.add('fa-heart');
