@@ -1,11 +1,11 @@
 import { 
   CONFIG, state, DataService, OrderHandler, FavoriteHandler, 
-  StarRating, ShareController, Router 
+  FollowHandler, StarRating, ShareController, Router 
 } from './portfolio.js';
 import { showNotification, updateElement, normalizePhoneNumber } from './reconfig.js';
 import { formatPrice, formatNumber } from './shared.js';
 
-// ============ PRODUCT RENDERER (Portfolio) ============
+// ============ PRODUCT RENDERER ============
 const ProductRenderer = {
   async render(products) {
     const grid = document.getElementById('productsGrid');
@@ -38,14 +38,13 @@ const ProductRenderer = {
             <button class="quick-action-btn" data-action="whatsapp" data-product-id="${product.id}" data-product-name="${product.name}">
               <i class="fab fa-whatsapp"></i> Order
             </button>
-            <button class="quick-action-btn" data-action="favorite" data-product-id="${product.id}">
-              <i class="fas fa-heart"></i> Save
-            </button>
           </div>
         </div>
       </div>
       <div class="product-details-portfolio">
-        <h3 class="product-name-portfolio">${product.name}</h3>
+        <div class="product-header-row">
+          <h3 class="product-name-portfolio">${product.name}</h3>
+        </div>
         <div class="product-price-portfolio">₦${formatPrice(product.price)}</div>
         <div class="product-meta">
           <div class="meta-item">
@@ -58,24 +57,22 @@ const ProductRenderer = {
       </div>
     `;
 
+    // Add favorite button separately to handle events properly
+    const headerRow = card.querySelector('.product-header-row');
+    const favButton = FavoriteHandler.createButton(product.id, product.isFavourite);
+    favButton.classList.add('portfolio-fav-btn');
+    headerRow.appendChild(favButton);
+
     this.attachEvents(card, product);
     return card;
   },
 
   attachEvents(card, product) {
     const whatsappBtn = card.querySelector('[data-action="whatsapp"]');
-    const favoriteBtn = card.querySelector('[data-action="favorite"]');
-
     whatsappBtn?.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       OrderHandler.handle(product.id, product.name);
-    });
-
-    favoriteBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      FavoriteHandler.toggle(product.id, favoriteBtn);
     });
   }
 };
@@ -84,7 +81,6 @@ const ProductRenderer = {
 const ReviewRenderer = {
   async render() {
     if (state.reviewsLoaded) return;
-
     const container = document.getElementById('reviewsGrid');
     if (!container) return;
 
@@ -99,36 +95,20 @@ const ReviewRenderer = {
       return;
     }
 
-    const html = this.buildHTML(reviews);
-    container.innerHTML = html;
+    container.innerHTML = this.buildHTML(reviews);
     this.attachEvents();
     state.reviewsLoaded = true;
   },
 
   buildHTML(reviews) {
-    const avgRating = this.calculateAverage(reviews);
+    const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
     
-    return `
-      ${this.buildSummary(avgRating, reviews.length)}
-      <div class="reviews-list">
-        ${reviews.map(r => this.buildReviewCard(r)).join('')}
-      </div>
-      ${reviews.length >= CONFIG.REVIEWS_PER_PAGE ? this.buildViewAllLink(reviews.length) : ''}
-    `;
-  },
-
-  calculateAverage(reviews) {
-    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-    return (total / reviews.length).toFixed(1);
-  },
-
-  buildSummary(avgRating, totalCount) {
     return `
       <div class="reviews-summary">
         <div class="summary-left">
           <span class="summary-rating">${avgRating}</span>
           <div class="summary-stars">${StarRating.generate(avgRating)}</div>
-          <span class="summary-count">Based on ${totalCount} reviews</span>
+          <span class="summary-count">Based on ${reviews.length} reviews</span>
         </div>
         <div class="summary-right">
           <button class="write-review-btn" id="writeReviewBtn">
@@ -136,6 +116,14 @@ const ReviewRenderer = {
           </button>
         </div>
       </div>
+      <div class="reviews-list">
+        ${reviews.map(r => this.buildReviewCard(r)).join('')}
+      </div>
+      ${reviews.length >= CONFIG.REVIEWS_PER_PAGE ? `
+        <div class="view-all-reviews">
+          <a href="#" id="viewAllReviewsLink">View all ${reviews.length} reviews <i class="fas fa-arrow-right"></i></a>
+        </div>
+      ` : ''}
     `;
   },
 
@@ -171,20 +159,11 @@ const ReviewRenderer = {
     `;
   },
 
-  buildViewAllLink(totalCount) {
-    return `
-      <div class="view-all-reviews">
-        <a href="#" id="viewAllReviewsLink">View all ${totalCount} reviews <i class="fas fa-arrow-right"></i></a>
-      </div>
-    `;
-  },
-
   attachEvents() {
     document.getElementById('writeReviewBtn')?.addEventListener('click', (e) => {
       e.preventDefault();
       showNotification('Review feature coming soon!');
     });
-
     document.getElementById('viewAllReviewsLink')?.addEventListener('click', (e) => {
       e.preventDefault();
       showNotification('Showing all reviews...');
@@ -195,9 +174,7 @@ const ReviewRenderer = {
 // ============ CONTROLLERS ============
 const TabController = {
   init() {
-    const tabs = document.querySelectorAll('.portfolio-tab');
-    
-    tabs.forEach(tab => {
+    document.querySelectorAll('.portfolio-tab').forEach(tab => {
       tab.addEventListener('click', () => this.handleTabSwitch(tab));
     });
   },
@@ -211,52 +188,26 @@ const TabController = {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById(`${tabId}Tab`)?.classList.add('active');
 
-    if (tabId === 'reviews') {
-      ReviewRenderer.render();
-    }
+    if (tabId === 'reviews') ReviewRenderer.render();
   }
 };
 
 const InteractionController = {
   init() {
     this.setupContactButton();
-    this.setupFollowButton();
     this.setupViewAllButton();
   },
 
   setupContactButton() {
-    const btn = document.getElementById('contactBtn');
-    btn?.addEventListener('click', () => {
+    document.getElementById('contactBtn')?.addEventListener('click', () => {
       const phone = normalizePhoneNumber(state.sellerData?.whatsapp_number);
-      const message = `Hi! I'm interested in your products on ONTROPP.`;
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent("Hi! I'm interested in your products on ONTROPP.")}`;
       window.open(url, '_blank');
     });
   },
 
-  setupFollowButton() {
-    const btn = document.getElementById('followBtn');
-    if (!btn) return;
-
-    let isFollowing = false;
-    
-    btn.addEventListener('click', () => {
-      isFollowing = !isFollowing;
-      
-      if (isFollowing) {
-        btn.innerHTML = '<i class="fas fa-user-check"></i> Following';
-        btn.classList.add('following');
-        showNotification('You are now following this shop', 'success');
-      } else {
-        btn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-        btn.classList.remove('following');
-      }
-    });
-  },
-
   setupViewAllButton() {
-    const btn = document.getElementById('viewAllProductsBtn');
-    btn?.addEventListener('click', () => {
+    document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
       const url = new URL(window.location.href);
       url.searchParams.set('mode', 'shop');
       window.location.href = url.toString();
@@ -267,7 +218,7 @@ const InteractionController = {
 // ============ PORTFOLIO MODE ============
 const PortfolioMode = {
   async init() {
-    this.loadData();
+    await this.loadData();
     this.setupEventListeners();
   },
 
@@ -277,7 +228,6 @@ const PortfolioMode = {
       state.sellerData = sellerResponse.seller;
       
       this.updateHeroSection(state.sellerData);
-      state.reviews = sellerResponse.reviews || DataService.getMockReviews();
       
       const { products } = await DataService.fetchProducts({
         sellerId: state.sellerId,
@@ -303,7 +253,6 @@ const PortfolioMode = {
     document.getElementById('followerCount').textContent = formatNumber(seller.followers?.[0]?.count ?? 0);
     document.getElementById('productCount').textContent = formatNumber(seller.products?.[0]?.count ?? 0);
     document.getElementById('ratingValue').textContent = seller.rating || 5;
-    
     updateElement('shopBio', seller.bio);
     
     const shopAvatar = document.getElementById('shopAvatar');
@@ -311,9 +260,15 @@ const PortfolioMode = {
       shopAvatar.innerHTML = `<img src="${seller.logo_url}" alt="${seller.shop_name}">`;
     }
     
-    const coverImage = document.getElementById('coverImage');
+    const coverPhoto = document.getElementById('coverImage');
     if (seller.user?.avatar_url) {
-      coverImage.innerHTML = `<img src="${seller.user.avatar_url}" alt="${seller.user.username}">`;
+      coverPhoto.innerHTML = `<img src="${seller.user.avatar_url}" alt="${seller.user.username}">`;
+    }
+
+    // Initialize follow button with API integration
+    const followBtn = document.getElementById('followBtn');
+    if (followBtn) {
+      FollowHandler.initButton(followBtn, state.sellerId, seller.isFollowing);
     }
   },
 

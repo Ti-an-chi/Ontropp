@@ -1,5 +1,6 @@
 import { 
-  CONFIG, state, DataService, OrderHandler, ShareController, Router 
+  CONFIG, state, DataService, OrderHandler, FavoriteHandler, 
+  FollowHandler, ShareController, Router 
 } from './portfolio.js';
 import { showNotification, updateElement, normalizePhoneNumber } from './reconfig.js';
 import { formatPrice, formatNumber } from './shared.js';
@@ -14,9 +15,12 @@ const ProductRenderer = {
     card.innerHTML = `
       <div class="shop-product-image">
         <img src="${product.cover_image}" alt="${product.name}" loading="lazy">
+        <button class="shop-fav-btn" data-product-id="${product.id}">
+          <i class="${product.isFavourite ? 'fas' : 'far'} fa-heart"></i>
+        </button>
         <div class="shop-product-overlay">
           <button class="shop-quick-order" data-product-id="${product.id}" data-product-name="${product.name}">
-            <i class="fab fa-whatsapp"></i>
+            <i class="fab fa-whatsapp"></i> Order Now
           </button>
         </div>
       </div>
@@ -26,12 +30,35 @@ const ProductRenderer = {
       </div>
     `;
 
+    // Favorite button
+    const favBtn = card.querySelector('.shop-fav-btn');
+    favBtn.dataset.saved = product.isFavourite;
+    favBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isSaved = favBtn.dataset.saved === 'true';
+      const newState = !isSaved;
+      
+      // Optimistic update
+      favBtn.dataset.saved = newState;
+      favBtn.innerHTML = `<i class="${newState ? 'fas' : 'far'} fa-heart"></i>`;
+      if (newState) favBtn.classList.add('saved');
+      else favBtn.classList.remove('saved');
+      
+      // API call
+      FavoriteHandler.toggle({ 
+        dataset: { saved: isSaved }, 
+        querySelector: () => favBtn 
+      }, product.id);
+    });
+
+    // Quick order button
     const orderBtn = card.querySelector('.shop-quick-order');
     orderBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
       OrderHandler.handle(product.id, product.name);
     });
 
+    // Card click
     card.addEventListener('click', () => {
       OrderHandler.handle(product.id, product.name);
     });
@@ -40,20 +67,19 @@ const ProductRenderer = {
   }
 };
 
-// ============ INFINITE SCROLL CONTROLLER ============
+// ============ INFINITE SCROLL ============
 const InfiniteScroll = {
   init(loadMoreCallback) {
     this.loadMoreCallback = loadMoreCallback;
-    this.throttledScroll = this.throttle(this.handleScroll.bind(this), 200);
+    this.throttledScroll = this.throttle(() => this.handleScroll(), 200);
     window.addEventListener('scroll', this.throttledScroll);
-    window.addEventListener('resize', this.throttledScroll);
   },
 
   throttle(func, limit) {
     let inThrottle;
-    return function(...args) {
+    return () => {
       if (!inThrottle) {
-        func.apply(this, args);
+        func();
         inThrottle = true;
         setTimeout(() => inThrottle = false, limit);
       }
@@ -62,20 +88,13 @@ const InfiniteScroll = {
 
   handleScroll() {
     if (state.isLoadingMore || !state.hasMoreProducts) return;
-
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const windowHeight = window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
 
-    // Trigger when within threshold of bottom
     if (scrollTop + windowHeight >= documentHeight - CONFIG.INFINITE_SCROLL_THRESHOLD) {
       this.loadMoreCallback();
     }
-  },
-
-  destroy() {
-    window.removeEventListener('scroll', this.throttledScroll);
-    window.removeEventListener('resize', this.throttledScroll);
   }
 };
 
@@ -84,7 +103,6 @@ const ShopMode = {
   init() {
     this.setupUI();
     this.loadData();
-    this.setupEventListeners();
   },
 
   setupUI() {
@@ -139,7 +157,6 @@ const ShopMode = {
           <div class="shop-products-grid" id="shopProductsGrid"></div>
           <div class="shop-loading" id="shopLoading" style="display: none;">
             <div class="loading-spinner"></div>
-            <p>Loading more...</p>
           </div>
           <div class="shop-end-message" id="shopEndMessage" style="display: none;">
             <p>No more products</p>
@@ -162,6 +179,7 @@ const ShopMode = {
       this.updateUI(state.sellerData);
       this.setupBackground(state.sellerData);
       await this.loadProducts();
+      this.setupEventListeners();
       
     } catch (error) {
       console.error('Error loading shop:', error);
@@ -202,6 +220,12 @@ const ShopMode = {
       `${formatNumber(seller.followers?.[0]?.count ?? 0)} followers`;
     document.getElementById('shopProductCount').textContent = 
       `${formatNumber(seller.products?.[0]?.count ?? 0)} products`;
+
+    // Initialize follow button
+    const followBtn = document.getElementById('shopFollowBtn');
+    if (followBtn) {
+      FollowHandler.initButton(followBtn, state.sellerId, seller.isFollowing);
+    }
   },
 
   async loadProducts() {
@@ -224,9 +248,7 @@ const ShopMode = {
         limit: CONFIG.SHOP_PRODUCTS_PER_PAGE
       });
 
-      if (state.shopProductsPage === 1) {
-        grid.innerHTML = '';
-      }
+      if (state.shopProductsPage === 1) grid.innerHTML = '';
 
       if (products.length === 0 && state.shopProductsPage === 1) {
         grid.innerHTML = '<p class="shop-no-products">No products available</p>';
@@ -235,20 +257,17 @@ const ShopMode = {
       }
 
       products.forEach(product => {
-        const card = ProductRenderer.createCard(product);
-        grid.appendChild(card);
+        grid.appendChild(ProductRenderer.createCard(product));
       });
 
       state.hasMoreProducts = hasMore;
       state.shopProductsPage++;
 
-      // Show end message if no more products
       if (!hasMore) {
         document.getElementById('shopEndMessage').style.display = 'block';
       }
 
     } catch (error) {
-      console.error('Error loading products:', error);
       showNotification('Failed to load products', 'error');
     } finally {
       state.isLoadingMore = false;
@@ -267,26 +286,10 @@ const ShopMode = {
     // Share
     ShareController.init();
 
-    // Follow button
-    const followBtn = document.getElementById('shopFollowBtn');
-    let isFollowing = false;
-    followBtn?.addEventListener('click', function() {
-      isFollowing = !isFollowing;
-      if (isFollowing) {
-        this.innerHTML = '<i class="fas fa-user-check"></i> Following';
-        this.classList.add('following');
-        showNotification('You are now following this shop', 'success');
-      } else {
-        this.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-        this.classList.remove('following');
-      }
-    });
-
     // Contact FAB
     document.getElementById('shopContactFab')?.addEventListener('click', () => {
       const phone = normalizePhoneNumber(state.sellerData?.whatsapp_number);
-      const message = `Hi! I'm interested in your products on ONTROPP.`;
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent("Hi! I'm interested in your products on ONTROPP.")}`;
       window.open(url, '_blank');
     });
 

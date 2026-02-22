@@ -1,5 +1,5 @@
 import { showNotification, updateElement, normalizePhoneNumber } from './reconfig.js';
-import { formatPrice, formatNumber } from './shared.js';
+import {formatPrice,formatNumber} from './shared.js';
 import API from '../api.js';
 
 // ============ CONFIGURATION ============
@@ -8,7 +8,7 @@ export const CONFIG = {
   PRODUCTS_PER_PAGE: 6,
   REVIEWS_PER_PAGE: 3,
   SHOP_PRODUCTS_PER_PAGE: 20,
-  INFINITE_SCROLL_THRESHOLD: 500 // pixels from bottom to trigger load
+  INFINITE_SCROLL_THRESHOLD: 500
 };
 
 // ============ STATE MANAGEMENT ============
@@ -22,7 +22,9 @@ export const state = {
   currentReviewPage: 1,
   shopProductsPage: 1,
   isLoadingMore: false,
-  hasMoreProducts: true
+  hasMoreProducts: true,
+  // Track pending API calls to prevent duplicates
+  pendingToggles: new Set()
 };
 
 // ============ DATA SERVICE ============
@@ -36,11 +38,7 @@ export const DataService = {
       };
     } catch (error) {
       console.error('Error fetching products:', error);
-      const mock = this.getMockProducts();
-      return {
-        products: mock.slice(0, limit),
-        hasMore: false
-      };
+      return { products: [], hasMore: false };
     }
   },
 
@@ -49,50 +47,113 @@ export const DataService = {
       const response = await API.getSellerReviews(sellerId, page, limit);
       return response.reviews || [];
     } catch (error) {
-      console.error('Error fetching reviews:', error);
-      return this.getMockReviews().slice(0, limit);
+      return [];
     }
-  },
-
-  getMockProducts() {
-    return [
-      {
-        id: 1,
-        name: 'Wireless Bluetooth Headphones',
-        price: 24999,
-        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop'
-      },
-      {
-        id: 2,
-        name: 'Smart Watch Series 5',
-        price: 64999,
-        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop'
-      },
-      {
-        id: 3,
-        name: 'Phone Case Collection',
-        price: 5499,
-        image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400&h=400&fit=crop'
-      }
-    ];
-  },
-
-  getMockReviews() {
-    return [
-      {
-        id: 1,
-        userName: "Chidi O.",
-        userAvatar: "",
-        rating: 5,
-        comment: "Great product!",
-        date: "2024-02-10",
-        verified: true
-      }
-    ];
   }
 };
 
-// ============ HANDLERS ============
+// ============ FOLLOW HANDLER ============
+export const FollowHandler = {
+  async toggle(button, sellerId) {
+    // Prevent duplicate clicks
+    if (state.pendingToggles.has(`follow-${sellerId}`)) return;
+    
+    const isFollowing = button.classList.contains('following');
+    const newState = !isFollowing;
+    
+    // Optimistic UI update
+    this.updateButton(button, newState);
+    state.pendingToggles.add(`follow-${sellerId}`);
+    
+    try {
+      if (newState) {
+        await API.followSeller(sellerId);
+        showNotification('You are now following this shop', 'success');
+      } else {
+        await API.unfollowSeller(sellerId);
+      }
+    } catch (error) {
+      // Revert on error
+      this.updateButton(button, isFollowing);
+      showNotification('Failed to update follow status', 'error');
+      console.error('Follow error:', error);
+    } finally {
+      state.pendingToggles.delete(`follow-${sellerId}`);
+    }
+  },
+
+  updateButton(button, isFollowing) {
+    if (isFollowing) {
+      button.innerHTML = '<i class="fas fa-user-check"></i> Following';
+      button.classList.add('following');
+    } else {
+      button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+      button.classList.remove('following');
+    }
+  },
+
+  initButton(button, sellerId, initialIsFollowing) {
+    this.updateButton(button, initialIsFollowing);
+    button.addEventListener('click', () => this.toggle(button, sellerId));
+  }
+};
+
+// ============ FAVORITE HANDLER ============
+export const FavoriteHandler = {
+  async toggle(button, productId) {
+    // Prevent duplicate clicks
+    if (state.pendingToggles.has(`fav-${productId}`)) return;
+    
+    const icon = button.querySelector('i');
+    const isSaved = button.dataset.saved === 'true';
+    const newState = !isSaved;
+    
+    // Optimistic UI update
+    this.updateButton(button, newState);
+    state.pendingToggles.add(`fav-${productId}`);
+    
+    try {
+      if (newState) {
+        await API.addToFavourites(productId);
+        showNotification('Product saved to favorites', 'success');
+      } else {
+        await API.removeFromFavourites(productId);
+      }
+    } catch (error) {
+      // Revert on error
+      this.updateButton(button, isSaved);
+      showNotification('Failed to update favorite', 'error');
+      console.error('Favorite error:', error);
+    } finally {
+      state.pendingToggles.delete(`fav-${productId}`);
+    }
+  },
+
+  updateButton(button, isSaved) {
+    button.dataset.saved = isSaved;
+    if (isSaved) {
+      button.innerHTML = '<i class="fas fa-heart"></i> Saved';
+      button.classList.add('saved');
+    } else {
+      button.innerHTML = '<i class="far fa-heart"></i> Save';
+      button.classList.remove('saved');
+    }
+  },
+
+  createButton(productId, isFavorite) {
+    const button = document.createElement('button');
+    button.className = 'favorite-btn';
+    button.dataset.productId = productId;
+    this.updateButton(button, isFavorite);
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggle(button, productId);
+    });
+    return button;
+  }
+};
+
+// ============ ORDER HANDLER ============
 export const OrderHandler = {
   handle(productId, productName) {
     const phone = normalizePhoneNumber(state.sellerData?.whatsapp_number);
@@ -100,24 +161,6 @@ export const OrderHandler = {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
     showNotification('Opening WhatsApp...');
-  }
-};
-
-export const FavoriteHandler = {
-  toggle(productId, button) {
-    const icon = button.querySelector('i');
-    const isSaved = icon.classList.contains('fa-heart-circle-check');
-
-    if (!isSaved) {
-      icon.classList.remove('fa-heart');
-      icon.classList.add('fa-heart-circle-check');
-      button.innerHTML = '<i class="fas fa-heart-circle-check"></i> Saved';
-      showNotification('Product saved to favorites', 'success');
-    } else {
-      icon.classList.remove('fa-heart-circle-check');
-      icon.classList.add('fa-heart');
-      button.innerHTML = '<i class="fas fa-heart"></i> Save';
-    }
   }
 };
 
@@ -136,7 +179,7 @@ export const StarRating = {
   }
 };
 
-// ============ SHARED UI CONTROLLERS ============
+// ============ SHARED CONTROLLERS ============
 export const ShareController = {
   init() {
     const shareBtn = document.getElementById('shareBtn') || document.getElementById('shopShareBtn');
@@ -144,15 +187,13 @@ export const ShareController = {
   },
 
   async handleShare() {
-    const shareData = {
-      title: state.sellerData?.shop_name || 'ONTROPP Shop',
-      text: 'Check out this shop on ONTROPP!',
-      url: window.location.href
-    };
-
     try {
       if (navigator.share) {
-        await navigator.share(shareData);
+        await navigator.share({
+          title: state.sellerData?.shop_name || 'ONTROPP Shop',
+          text: 'Check out this shop on ONTROPP!',
+          url: window.location.href
+        });
       } else {
         await navigator.clipboard.writeText(window.location.href);
         showNotification('Link copied to clipboard!');

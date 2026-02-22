@@ -1013,6 +1013,67 @@ body.shop-mode {
   font-size: 20px;
 }
 
+/* Portfolio favorite button */
+.portfolio-fav-btn {
+  background: none;
+  border: none;
+  color: var(--hash);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.2s ease;
+}
+
+.portfolio-fav-btn.saved {
+  color: #ef4444;
+}
+
+.portfolio-fav-btn:hover {
+  transform: scale(1.1);
+}
+
+.product-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Shop favorite button */
+.shop-fav-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.shop-fav-btn.saved {
+  background: #ef4444;
+}
+
+.shop-fav-btn:hover {
+  transform: scale(1.1);
+  background: rgba(0,0,0,0.6);
+}
+
+.shop-fav-btn.saved:hover {
+  background: #dc2626;
+}
+
+
 /* Animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
