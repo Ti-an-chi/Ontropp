@@ -1,7 +1,9 @@
+import {showNotification,} from './reconfig.js';
+import {formatPrice, formatNumber} from './shared.js';
+
 const urlParams = new URLSearchParams(window.location.search);
 const sellerId = urlParams.get('id') || '1';
 const sellerUsername = urlParams.get('username') || 'shop-name';
-import {showNotification} from './reconfig.js';
 
 // Initialize everything
 document.addEventListener('DOMContentLoaded', function() {
@@ -13,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 let reviewsLoaded = false;
+let sellerData = null;
 
 function setupInteractions() {
   // WhatsApp contact button (main)
@@ -336,17 +339,6 @@ function setupShare() {
       }
     });
   }
-}
-
-// Helper functions
-function formatPrice(price) {
-  return new Intl.NumberFormat('en-NG').format(price);
-}
-
-function formatNumber(num) {
-  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-  return num.toString();
 }
 
 // Helper function to generate star ratings HTML

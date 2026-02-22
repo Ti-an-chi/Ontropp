@@ -99,7 +99,7 @@ export function renderProducts(products, containerId, type = 'product') {
 }
 
 
-function setupSellerProductActions() {
+export function setupSellerProductActions() {
   const container = document.getElementById('seller-products-grid');
   if (!container) return;
   
@@ -127,6 +127,12 @@ export function viewProductDetails(productId) {
   // Navigate to product details page
   console.log('View product:', productId);
   window.location.href = `product.html?id=${productId}`;
+}
+
+export function formatNumber(num) {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toString();
 }
 
 export function formatPrice(price) {

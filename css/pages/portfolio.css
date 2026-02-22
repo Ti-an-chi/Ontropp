@@ -131,6 +131,78 @@
   font-weight: 500;
 }
 
+/* Action Buttons Row */
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-btn.follow {
+  background: rgba(52, 131, 224, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(52, 131, 224, 0.2);
+  flex: 0 0 auto;
+  min-width: 100px;
+}
+
+.action-btn.follow:hover {
+  background: rgba(52, 131, 224, 0.2);
+}
+
+.action-btn.follow.following {
+  background: var(--success);
+  color: var(--white);
+  border-color: var(--success);
+}
+
+.action-btn.whatsapp {
+  background: var(--secondary);
+  color: var(--white);
+  flex: 1;
+}
+
+.action-btn.whatsapp:hover {
+  background: var(--secondary);
+  transform: translateY(-1px);
+}
+
+.action-btn.whatsapp {
+    order: -1;
+    flex: 1 0 100%;
+  }
+
+.action-btn.share {
+  background: rgba(52, 131, 224, 0.1);
+  color: var(--primary); 
+  border: 1px solid rgba(52, 131, 224, 0.2);
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 12px;
+}
+
+.action-btn.share:hover {
+  background: rgba(52, 131, 224, 0.2);
+}
+
+
 /* Hero Banner */
 .hero-banner {
   background: rgba(52, 131, 224, 0.08);
