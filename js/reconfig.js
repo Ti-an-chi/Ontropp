@@ -86,3 +86,16 @@ export function normalizePhoneNumber(phone) {
   return phone;
 }
 
+export const orderHandler = {
+  flexibleHandle({
+        whatsappNumber,
+        productName,
+        productId
+      }) {
+    const phone = normalizePhoneNumber(whatsappNumber);
+    const message = `Hello! I saw "${productName}" on your ONTROPP shop and I'd like to place an order. Product ID: ${productId}`;
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+    showNotification('Opening WhatsApp...');
+  }
+}

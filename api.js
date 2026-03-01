@@ -36,16 +36,17 @@ const API = {
     };
     
     const resp = await fetch(url, { ...defaults, ...options });
+    const data = await resp.json();
     
     if (!resp.ok) {
       let msg = 'Network error';
       try {
-        const data = await resp.json();
+        
         msg = data.message || msg;
         console.log(msg);
       } catch {}
       
-      if (data?.tokenExpired && !_retry) {
+      if (data.tokenExpired && !_retry) {
         try {
           await this.refresh();
           return await this._fetch(path, options, true);
@@ -59,7 +60,24 @@ const API = {
       throw new Error(msg);
     }
     
-    return await resp.json(); // Return raw JSON, not wrapped
+    return await data;
+  },
+  
+  async refresh() {
+    const refreshToken = localStorage.getItem('ontrop_refresh');
+    if (!refreshToken) throw new Error('No refresh token');
+    
+    const response = await this._fetch('/auth/refresh', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ token: refreshToken })
+    }, true);
+    if (response.success) {
+      localStorage.setItem('ontrop_token', response.accessToken);
+    }
+    return response;
   },
   
   /*--------------------- AUTH --------------------*/
@@ -97,23 +115,6 @@ const API = {
     });
     if (response.success) {
       this.setTokens(response);
-    }
-    return response;
-  },
-  
-  async refresh() {
-    const refreshToken = localStorage.getItem('ontrop_refresh');
-    if (!refreshToken) throw new Error('No refresh token');
-    
-    const response = await this._fetch('/auth/refresh', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token: refreshToken })
-    }, true);
-    if (response.success) {
-      localStorage.setItem('ontrop_token', response.accessToken);
     }
     return response;
   },

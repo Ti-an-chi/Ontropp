@@ -1,7 +1,7 @@
 // favourites.js - Favourites tab functionality
 import API from '../api.js';
-import { renderProducts, formatPrice } from './shared.js';
-import {changeDisplay, viewSellerProfile} from './reconfig.js';
+import { formatPrice } from './shared.js';
+import {changeDisplay, viewSellerProfile, orderHandler} from './reconfig.js';
 
 export async function initFavouritesTab() {
   // Load favourites data
@@ -16,6 +16,7 @@ async function loadFavouritesContent() {
     const favourites = await API.getFavourites();
     
     renderFavourites(favourites);
+    setupFavouriteItemInteractions();
     updateFavouritesCount(favourites.length);
     
     // Setup interactions
@@ -29,27 +30,25 @@ async function loadFavouritesContent() {
 
 function renderFavourites(favourites) {
   const favouritesGrid = document.getElementById('favourites-grid');
-  const emptyEl = document.getElementById('empty-favourites');
-  const loadingEl = document.getElementById('loading-favourites');
-  
+    
   if (!favouritesGrid) return;
   
-  if (loadingEl) loadingEl.style.display = 'none';
+  changeDisplay('loading-favourites', 'none');
   
   favouritesGrid.innerHTML = '';
   
   if (favourites.length === 0) {
-    if (emptyEl) emptyEl.style.display = 'flex';
+    changeDisplay('empty-favourites', 'flex')
     return;
   }
   
-  if (emptyEl) emptyEl.style.display = 'none';
+  changeDisplay('empty-favourites', 'none');
   
   favourites.forEach(item => {
     const sellerInfo = `
       <div class="product-seller-info">
         <div class="seller-avatar-small">
-          <i class="fas fa-store"></i>
+          <img src="${item.seller.logo_url}" alt='${item.seller.shop_name}'>
         </div>
         <div class="seller-details">
           <h4 class="seller-name">${item.seller.shop_name}</h4>
@@ -63,14 +62,15 @@ function renderFavourites(favourites) {
     const favouriteItem = document.createElement('div');
     favouriteItem.className = 'favourite-item';
     favouriteItem.dataset.id = item.id;
+    favouriteItem.dataset.number = item.seller.whatsapp_number;
     
     favouriteItem.innerHTML = `
       <button class="favourite-remove-btn" data-id="${item.id}">
         <i class="fas fa-times"></i>
       </button>
       <div class="favourite-image">
-        ${item.image ? 
-          `<img src="${item.image}" alt="${item.name}">` :
+        ${item.cover_image ? 
+          `<img src="${item.cover_image}" alt="${item.name}">` :
           `<i class="fas fa-box"></i>`
         }
       </div>
@@ -78,24 +78,22 @@ function renderFavourites(favourites) {
         ${sellerInfo}
         <h3 class="favourite-title">${item.name}</h3>
         <p class="favourite-price">₦${formatPrice(item.price)}</p>
-        <span class="favourite-status status-${item.status || 'available'}">
+        <!--<span class="favourite-status status-${item.status || 'available'}">
           ${item.status === 'sold' ? 'Out of Stock' : 'In Stock'}
-        </span>
+        </span>-->
         <div class="favourite-actions">
           <button class="favourite-action-btn buy-now-btn" data-id="${item.id}">
-            <i class="fas fa-bolt"></i> Buy Now
+            <i class="fab fa-whatsapp"></i> Order Now
           </button>
-          <button class="favourite-action-btn add-cart-btn" data-id="${item.id}">
+          <!-- <button class="favourite-action-btn add-cart-btn" data-id="${item.id}">
             <i class="fas fa-cart-plus"></i> Add to Cart
-          </button>
+          </button> -->
         </div>
       </div>
     `;
     
     favouritesGrid.appendChild(favouriteItem);
   });
-  
-  setupFavouriteItemInteractions();
 }
 
 function setupFavouritesTabs() {
@@ -221,7 +219,6 @@ function setupFavouriteItemInteractions() {
   favouritesGrid.addEventListener('click', async function(e) {
     const removeBtn = e.target.closest('.favourite-remove-btn');
     const buyNowBtn = e.target.closest('.buy-now-btn');
-    const addCartBtn = e.target.closest('.add-cart-btn');
     
     if (removeBtn) {
       e.preventDefault();
@@ -244,21 +241,20 @@ function setupFavouriteItemInteractions() {
     if (buyNowBtn) {
       e.preventDefault();
       const itemId = buyNowBtn.dataset.id;
-      const item = buyNowBtn.closest('.favourite-item');
-      const itemName = item.querySelector('.favourite-title').textContent;
-      alert(`Proceeding to checkout for: ${itemName}`);
-    }
-    
-    if (addCartBtn) {
-      e.preventDefault();
-      const itemId = addCartBtn.dataset.id;
-      try {
-        await API.addToCart(itemId);
-        alert('Item added to cart');
-      } catch (error) {
-        console.error('Failed to add to cart:', error);
-        alert('Failed to add item to cart.');
-      }
+      const favouriteItem = buyNowBtn.closest('.favourite-item');
+      if (!favouriteItem) return;
+      
+      const productId = favouriteItem.dataset.id;
+      const whatsappNumber = favouriteItem.dataset.number;
+      const productName = favouriteItem.querySelector('.favourite-title')?.textContent?.trim();
+      
+      if (!productName || !whatsappNumber) return;
+      
+      orderHandler.flexibleHandle({
+        whatsappNumber,
+        productName,
+        productId
+      })
     }
   });
 }
