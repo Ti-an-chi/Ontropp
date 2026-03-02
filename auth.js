@@ -17,10 +17,61 @@ const passwordStrengthEl = $('passwordStrength');
 let mode = 'signin';
 let pendingEmail = null;
 document.addEventListener('DOMContentLoaded', () => {
-    const saved = localStorage.getItem('mod');
-    if (saved) mode = saved;
-    toggleMode();
+  mode = getSavedMode();
+  renderUI();
 });
+
+// 1️⃣ STATE FUNCTIONS
+function getSavedMode() {
+  return localStorage.getItem('mod') || 'signin';
+}
+
+function setMode(newMode) {
+  mode = newMode;
+  localStorage.setItem('mod', mode);
+  renderUI();
+}
+
+function toggleMode() {
+  const newMode = mode === 'signin' ? 'signup' : 'signin';
+  setMode(newMode);
+}
+
+// 2️⃣ VIEW FUNCTION
+function renderUI() {
+  document.querySelector('.form-title').textContent =
+    mode === 'signup' ? 'Create Seller Account' : 'Log In';
+  
+  authBtn.value =
+    mode === 'signup' ? 'Create Account' : 'Log In';
+  
+  ['uname', 'confPass'].forEach(id => {
+    const group = document.getElementById(id);
+    const input = group.querySelector('input');
+    
+    const show = mode === 'signup';
+    group.style.display = show ? 'block' : 'none';
+    input.required = show;
+  });
+  
+  document.getElementById('toggleText').innerHTML =
+    mode === 'signup' ?
+    `<p>Already have an account? <a href="#" id="togBtn">Log in</a></p>` :
+    `<p>Don't have an account? <a href="#" id="togBtn">Sign up</a></p>`;
+  
+  attachToggleListener(); // reattach after innerHTML change
+  hideMessage();
+}
+
+function attachToggleListener() {
+  const btn = document.getElementById('togBtn');
+  if (btn) {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      toggleMode();
+    };
+  }
+}
 
 /* ----------  Helpers  ---------- */
 function showMessage(txt, type = 'error', target = 'form') {
@@ -67,31 +118,13 @@ passwordInput.addEventListener('input', () => {
 });
 
 /* ----------  Mode Toggle (Sign Up ⇄ Log In)  ---------- */
-document.getElementById('togBtn').addEventListener('click', toggleMode);
+document.getElementById('togBtn').addEventListener('click', () => {
+  changeMode();
+  toggleMode();
+});
 
-function toggleMode(e) {
-    if (e) e.preventDefault();
-    mode = mode === 'signup' ? 'signin' : 'signup';
-    
-    document.querySelector('.form-title').textContent = 
-        mode === 'signup' ? 'Create Seller Account' : 'Log In';
-    authBtn.value = mode === 'signup' ? 'Create Account' : 'Log In';
-    
-    // Show/hide signup-only fields
-    ['uname', 'confPass'].forEach(id => {
-        const group = document.getElementById(id);
-        const input = group.querySelector('input');
-        group.style.display = mode === 'signup' ? 'block' : 'none';
-        input.required = mode === 'signup';
-    });
-    
-    document.getElementById('toggleText').innerHTML = mode === 'signup'
-        ? '<p>Already have an account? <a href="#" id="togBtn">Log in</a></p>'
-        : `<p>Don't have an account? <a href="#" id="togBtn">Sign up</a></p>`;
-    
-    document.getElementById('togBtn').onclick = toggleMode;
-    hideMessage();
-    localStorage.setItem('mod', mode);
+function changeMode() {
+  mode = mode === 'signin' ? 'signup' : 'signin';
 }
 
 /* ----------  Form Validation  ---------- */
@@ -275,7 +308,6 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
     }
 })();
 
-
 /*========= Session Helper =========*/
 window.UserSession = {
   setCurrentUser(user) {
@@ -289,4 +321,3 @@ window.UserSession = {
     localStorage.removeItem('ontrop_user');
   }
 };
-
