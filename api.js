@@ -1,6 +1,7 @@
 /*========= API GATEWAY – api.js =========*/
 const API = {
-  baseURL: 'http://localhost:5000/api',
+  basURL: 'http://localhost:5000/api',
+  baseURL: 'https://ontropp-backend.onrender.com/api',
   
   // Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {

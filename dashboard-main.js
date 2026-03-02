@@ -187,7 +187,7 @@ function setupGlobalEventListeners() {
   const dropdown = document.getElementById('profile-dropdown');
   const setupSellerBtn = document.getElementById('setup-seller-btn');
   const editAvatarInput = document.getElementById("edit-avatar-input");
-  const editAvatarBtn = document.getElementById('edit -avatar-btn');
+  const editAvatarBtn = document.getElementById('edit-avatar-btn');
   const addProductButton = document.getElementById('add-product-btn');
   const logoutBtn = document.getElementById('logout-btn');
   
