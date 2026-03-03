@@ -40,8 +40,8 @@ function renderProfileFavourites(favourites) {
     
     itemEl.innerHTML = `
       <div class="favourite-preview-image">
-        ${item.image ? 
-          `<img src="${item.image}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;">` :
+        ${item.cover_image ? 
+          `<img src="${item.cover_image}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;">` :
           `<i class="fas fa-box"></i>`
         }
       </div>
