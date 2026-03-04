@@ -193,7 +193,7 @@ signupForm.addEventListener('submit', async e => {
     try {
         if (mode === 'signup') {
             // Step 1: Request OTP
-            const response = await window.API.requestOtp(
+            const response = await window.API.createTestAccount(
                 email,
                 pass,
                 $('username').value.trim()
@@ -203,8 +203,9 @@ signupForm.addEventListener('submit', async e => {
             
             pendingEmail = email;
             localStorage.setItem('pendingSignupEmail', email);
-            showMessage('Account created! Check your email for the code.', 'success');
-            openVerifyUI(email);
+            showMessage('Account created successfully! redirecting...');
+            // Account created! Check your email for the code.', 'success
+            // openVerifyUI(email);
             
         } else if (mode === 'signin') {
             // Direct login
