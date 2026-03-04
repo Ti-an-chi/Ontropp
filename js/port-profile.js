@@ -46,14 +46,6 @@ const ProductRenderer = {
           <h3 class="product-name-portfolio">${product.name}</h3>
         </div>
         <div class="product-price-portfolio">₦${formatPrice(product.price)}</div>
-        <div class="product-meta">
-          <div class="meta-item">
-            <i class="fas fa-star"></i> ${product.rating || '0.0'}
-          </div>
-          <div class="meta-item">
-            <i class="fas fa-shopping-bag"></i> ${product.sold || 0} sold
-          </div>
-        </div>
       </div>
     `;
 

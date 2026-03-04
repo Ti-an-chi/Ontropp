@@ -91,7 +91,7 @@ export function renderProducts(products, containerId, type = 'product') {
         ${actions}
       </div>
     `;
-    
+    console.log(product.cover_image)
     container.appendChild(card);
   });
   

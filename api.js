@@ -1,7 +1,9 @@
+import { showNotification } from './js/reconfig.js'
+
 /*========= API GATEWAY – api.js =========*/
 const API = {
-  basURL: 'http://localhost:5000/api',
-  baseURL: 'https://ontropp-backend.onrender.com/api',
+  baseURL: 'http://localhost:5000/api',
+  basURL: 'https://ontropp-backend.onrender.com/api',
   
   // Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {
@@ -18,8 +20,6 @@ const API = {
     localStorage.removeItem('ontrop_user');
     localStorage.removeItem('pendingSignupEmail');
   },
-  
-  
   
   /*---------- Core Fetch with Auto-Refresh ----------*/
 /*========= API GATEWAY – api.js (Fixed) =========*/
@@ -45,6 +45,7 @@ const API = {
         
         msg = data.message || msg;
         console.log(msg);
+        showNotification(msg, 'error')
       } catch {}
       
       if (data.tokenExpired && !_retry) {

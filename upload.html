@@ -94,14 +94,33 @@
           </div>
         </div>
         
-        <!-- Category -->
+        <!-- Condition (NEW) -->
+        <div class="form-group">
+          <label for="productCondition" class="required">
+            <i class="fas fa-star"></i>
+            Condition
+          </label>
+          <select id="productCondition" class="form-control" required>
+            <option value=""></option>
+            <option value="new">Brand New</option>
+            <option value="lightly_used">Lightly Used</option>
+            <option value="used">Used</option>
+            <option value="damaged">Damaged</option>
+          </select>
+          <div class="form-help">
+            <i class="fas fa-lightbulb"></i>
+            Be honest about condition. Buyers appreciate transparency.
+          </div>
+        </div>
+        
+        <!-- Category (keep existing but updated) -->
         <div class="form-group">
           <label for="productCategory" class="required">
             <i class="fas fa-tags"></i>
             Category
           </label>
           <select id="productCategory" class="form-control" required>
-            <option value="">Select category</option>
+            <option value=""></option>
             <option value="electronics">Electronics</option>
             <option value="clothing">Clothing</option>
             <option value="home">Home & Garden</option>
@@ -144,7 +163,30 @@
             </div>
           </div>
         </div>
-
+        
+        <!-- Specifications (NEW) -->
+        <div class="form-group">
+          <label>
+            <i class="fas fa-list-ul"></i>
+            Specifications
+            <span class="optional-badge">Optional</span>
+          </label>
+          
+          <div id="specificationsContainer">
+            <!-- Specs will be added here -->
+          </div>
+          
+          <button type="button" class="add-spec-btn" id="addSpecBtn" style="display: flex;">
+            <i class="fas fa-plus"></i>
+            Add Specification
+          </button>
+          
+          <div class="form-help">
+            <i class="fas fa-lightbulb"></i>
+            Add details like size, color, storage, material, etc. (Max 5)
+          </div>
+        </div>
+        
         <!-- Quick Tips -->
         <div class="quick-tips">
           <h4><i class="fas fa-bolt"></i> Quick Selling Tips</h4>

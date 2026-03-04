@@ -1,7 +1,7 @@
 // products.js
 import API from '../api.js';
-import { formatPrice} from './shared.js';
-import { showNotification } from './reconfig.js'
+import { formatPrice, formatNumber} from './shared.js';
+import { showNotification, changeDisplay, orderHandler } from './reconfig.js'
 
 // State
 let productId = null;
@@ -13,7 +13,7 @@ let isFavourite = false;
 document.addEventListener('DOMContentLoaded', async function() {
   // Get product ID from URL
   const urlParams = new URLSearchParams(window.location.search);
-  productId = urlParams.get('id');
+  productId = urlParams.get('id') || 'b4bfb29d-e1e5-412d-b2c6-213e0d736a26';
   
   /*if (!productId) {
     showError('No product specified');
@@ -24,35 +24,34 @@ document.addEventListener('DOMContentLoaded', async function() {
   setupEventListeners();
 });
 
-/*async function loadProductData() {
+async function loadProductData() {
   try {
-    productData = await API.getProductById(productId);
+    const response = await API.getProductById(productId);
+    productData = await response.product;
+    isFavourite = productData.isFavourite;
     renderProduct();
-    
-    // Load related products
-    loadRelatedProducts();
+    console.log('ping');
     
   } catch (error) {
     console.error('Failed to load product:', error);
     showError('Failed to load product details');
   }
 }
-*/
-async function loadProductData() {
+
+/*async function loadProductData() {
   try {
     productData = getFakeProduct();
     renderProduct();
-    loadRelatedProducts();
   } catch (error) {
     console.error(error);
     showError('Failed to load product details');
   }
-}
+}*/
 
 function renderProduct() {
   // Hide loading, show content
-  document.getElementById('loadingState').style.display = 'none';
-  document.getElementById('productContent').style.display = 'block';
+    changeDisplay('loadingState', 'none');
+  changeDisplay('productContent', 'block')
   
   // Basic info
   document.getElementById('productName').textContent = productData.name;
@@ -61,43 +60,36 @@ function renderProduct() {
   document.getElementById('productCondition').textContent = productData.condition || 'New';
   document.getElementById('productDescription').textContent = productData.description;
   
+  // favourites
+  const btn = document.getElementById('favouriteBtn');
+  const icon = btn.querySelector('i');
+  
+  if (isFavourite) {
+    icon.className = 'fas fa-heart';
+    btn.classList.add('active');
+  } 
+  
   // Stats
-  document.getElementById('productViews').textContent = formatNumber(productData.views || 1234);
-  document.getElementById('productLikes').textContent = formatNumber(productData.likes || 89);
+  document.getElementById('productViews').textContent = formatNumber(productData.views);
+  document.getElementById('productLikes').textContent = formatNumber(productData.favouritesCount[0].count);
   
   // Date
-  const date = new Date(productData.dateCreated);
+  const date = new Date(productData.created_at);
   document.getElementById('productDate').textContent = `Listed: ${date.toLocaleDateString('en-NG', { month: 'short', day: 'numeric', year: 'numeric' })}`;
-  document.getElementById('productListed').textContent = timeAgo(productData.dateCreated);
+  document.getElementById('productListed').textContent = timeAgo(productData.created_at);
   
-  // Seller info
   renderSellerInfo();
-  
-  // Specifications
   renderSpecifications();
-  
-  // Shipping
-  renderShipping();
-  
-  // Gallery
   renderGallery();
 }
 
 function renderSellerInfo() {
   const seller = productData.seller;
   
-  document.getElementById('sellerName').textContent = seller.shopName;
+  document.getElementById('sellerName').textContent = seller.shop_name;
   document.getElementById('sellerRating').textContent = seller.rating;
-  document.getElementById('sellerFollowers').textContent = formatNumber(seller.followers) + ' followers';
-  document.getElementById('sellerResponse').textContent = `Typically responds in ${seller.responseTime || '< 1 hour'}`;
-  
-  // Verified badge
-  const verifiedBadge = document.getElementById('sellerVerified');
-  if (seller.isVerified) {
-    verifiedBadge.style.display = 'inline-flex';
-  } else {
-    verifiedBadge.style.display = 'none';
-  }
+  document.getElementById('sellerFollowers').textContent = formatNumber(seller.followersCount);
+  document.getElementById('sellerListings').textContent = formatNumber(seller.productsCount);
   
   // Seller link
   document.getElementById('sellerLink').href = `portfolio.html?id=${seller.id}`;
@@ -106,6 +98,7 @@ function renderSellerInfo() {
 function renderSpecifications() {
   const specsGrid = document.getElementById('specsGrid');
   const specs = productData.specifications || {};
+  console.log(specs);
   
   specsGrid.innerHTML = '';
   
@@ -118,12 +111,6 @@ function renderSpecifications() {
     `;
     specsGrid.appendChild(specItem);
   });
-}
-
-function renderShipping() {
-  const locations = productData.locations || [];
-  
-  document.getElementById('shippingLocations').textContent = locations?.join(', ') || 'Nationwide';
 }
 
 function renderGallery() {
@@ -186,16 +173,7 @@ function nextImage() {
   changeImage(currentImageIndex);
 }
 
-async function loadRelatedProducts() {
-  try {
-    const products = await API.getRelatedProducts(productData.category);
-    renderRelatedProducts(products);
-  } catch (error) {
-    console.error('Failed to load related products:', error);
-  }
-}
-
-function renderRelatedProducts(products) {
+/*function renderRelatedProducts(products) {
   const grid = document.getElementById('relatedGrid');
   grid.innerHTML = '';
   
@@ -220,7 +198,7 @@ function renderRelatedProducts(products) {
     
     grid.appendChild(card);
   });
-}
+}*/
 
 function setupEventListeners() {
   // Favourite button
@@ -229,11 +207,17 @@ function setupEventListeners() {
   
   // WhatsApp order
   const waBtn = document.getElementById('whatsappOrderBtn');
-  waBtn.addEventListener('click', orderOnWhatsApp);
+  waBtn.addEventListener('click', () => {
+    orderHandler.flexibleHandle({
+      productId, 
+      whatsappNumber: productData.seller.whatsapp_number,
+      productName: productData.name, 
+    });
+  });
   
   // Follow seller
-  const followBtn = document.getElementById('followSellerBtn');
-  followBtn.addEventListener('click', toggleFollowSeller);
+  // const followBtn = document.getElementById('followSellerBtn');
+  // followBtn.addEventListener('click', toggleFollowSeller);
   
   // Share
   const shareBtn = document.getElementById('shareProductBtn');
@@ -241,22 +225,23 @@ function setupEventListeners() {
 }
 
 function toggleFavourite() {
-  isFavourite = !isFavourite;
   const btn = document.getElementById('favouriteBtn');
   const icon = btn.querySelector('i');
   
-  if (isFavourite) {
+  if (!isFavourite) {
     icon.className = 'fas fa-heart';
     btn.classList.add('active');
+    API.addToFavourites(productId);
     showNotification('Added to favourites');
   } else {
     icon.className = 'far fa-heart';
     btn.classList.remove('active');
+    API.removeFromFavourites(productId);
     showNotification('Removed from favourites');
   }
   
   // API call
-  API.toggleFavorite(productId);
+  // API.toggleFavorite(productId);
 }
 
 function orderOnWhatsApp() {
@@ -269,7 +254,7 @@ function orderOnWhatsApp() {
   showNotification('Opening WhatsApp...');
 }
 
-function toggleFollowSeller() {
+/*function toggleFollowSeller() {
   const btn = document.getElementById('followSellerBtn');
   const isFollowing = btn.classList.contains('following');
   
@@ -282,7 +267,7 @@ function toggleFollowSeller() {
     btn.classList.add('following');
     showNotification('Now following seller');
   }
-}
+}*/
 
 function shareProduct() {
   const product = productData;
@@ -308,13 +293,6 @@ function showError(message) {
   `;
 }
 
-// Helper functions
-function formatNumber(num) {
-  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-  return num.toString();
-}
-
 function timeAgo(dateString) {
   const date = new Date(dateString);
   const now = new Date();
@@ -326,11 +304,6 @@ function timeAgo(dateString) {
   if (diffDays < 7) return `${diffDays} days ago`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
   return `${Math.floor(diffDays / 30)} months ago`;
-}
-
-// Add showNotification if not in shared.js
-if (typeof window.showNotification !== 'function') {
-  window.showNotification = showNotification;
 }
 
 function getFakeProduct() {
@@ -347,9 +320,9 @@ function getFakeProduct() {
     locations: ["Lagos", "Abuja", "Ibadan"],
 
     images: [
-      "https://via.placeholder.com/600x600",
-      "https://via.placeholder.com/600x600?text=Side+View",
-      "https://via.placeholder.com/600x600?text=Back+View"
+      "https://res.cloudinary.com/dxptlb7rx/image/upload/v1771551275/products/images/nqpt3tfsd2p22esei2cv.jpg",
+      "https://res.cloudinary.com/dxptlb7rx/image/upload/v1771560472/products/images/ddhewm4d2klon6xxxxjg.jpg",
+      "https://res.cloudinary.com/dxptlb7rx/image/upload/v1771596452/products/images/duwzlns4v3bzlfufolce.jpg"
     ],
     
     specifications: {
@@ -363,8 +336,8 @@ function getFakeProduct() {
       shopName: "ONTROPP Gadgets",
       rating: 4.8,
       followers: 1290,
-      responseTime: "< 1 hour",
-      isVerified: true,
+      // responseTime: "< 1 hour",
+      // isVerified: true,
       phone: "2348123456789"
     }
   };

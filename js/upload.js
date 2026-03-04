@@ -1,13 +1,17 @@
 import API from '../api.js';
+// import {} from ''
 
 document.addEventListener('DOMContentLoaded', function() {
   setupImageUpload();
+  setupSpecifications();
   setupFormSubmission();
 });
 
-// Store uploaded image URLs (similar to sellerLogoUrl)
+// Store uploaded image URLs
 let productImageUrls = [];
+let specifications = [];
 
+// ========== IMAGE UPLOAD (unchanged logic) ==========
 function setupImageUpload() {
   const imageUploadArea = document.getElementById('imageUploadArea');
   const imageUploadBtn = document.getElementById('imageUploadBtn');
@@ -17,7 +21,6 @@ function setupImageUpload() {
   
   const maxImages = 5;
   
-  // Click handlers (same pattern as seller signup)
   imageUploadArea.addEventListener('click', (e) => {
     if (e.target !== imageFileInput && !e.target.closest('.image-remove-btn')) {
       imageFileInput.click();
@@ -29,18 +32,15 @@ function setupImageUpload() {
     imageFileInput.click();
   });
   
-  // Handle file selection - now uploads immediately like seller logo
   imageFileInput.addEventListener('change', function(e) {
     const files = Array.from(this.files);
     
-    // Check max images limit
     if (productImageUrls.length + files.length > maxImages) {
       alert(`You can only upload up to ${maxImages} images. Remove some images first.`);
       this.value = '';
       return;
     }
     
-    // Upload each file immediately (parallel uploads like seller logo pattern)
     files.forEach(file => {
       if (!file.type.startsWith('image/')) {
         alert(`"${file.name}" is not an image file`);
@@ -52,14 +52,12 @@ function setupImageUpload() {
         return;
       }
       
-      // Upload immediately - matches seller logo pattern
       uploadProductImage(file);
     });
     
     this.value = '';
   });
   
-  // Drag and drop (same pattern as seller signup)
   imageUploadArea.addEventListener('dragover', (e) => {
     e.preventDefault();
     imageUploadArea.style.borderColor = 'var(--primary)';
@@ -82,7 +80,6 @@ function setupImageUpload() {
     );
     
     if (files.length > 0) {
-      // Check limit before processing drop
       if (productImageUrls.length + files.length > maxImages) {
         alert(`You can only upload up to ${maxImages} images. Remove some images first.`);
         return;
@@ -111,7 +108,6 @@ async function uploadProductImage(file) {
   try {
     const res = await API.uploadImage(formData);
     
-    // Replace placeholder with actual URL
     const index = productImageUrls.findIndex(img => img.id === tempId);
     if (index !== -1) {
       productImageUrls[index] = {
@@ -125,13 +121,11 @@ async function uploadProductImage(file) {
     alert(`Failed to upload "${file.name}". Please try again.`);
     console.error(err);
     
-    // Remove failed upload from array
     productImageUrls = productImageUrls.filter(img => img.id !== tempId);
     updateImagePreview();
   }
 }
 
-// Update preview - similar structure but handles array instead of single image
 function updateImagePreview() {
   const imagePreviewGrid = document.getElementById('imagePreviewGrid');
   const imageUploadContent = document.getElementById('imageUploadContent');
@@ -145,9 +139,7 @@ function updateImagePreview() {
   }
   
   imageUploadContent.style.display = 'none';
-  
   imagePreviewGrid.style.display = 'grid';
-  
   imagePreviewGrid.innerHTML = '';
   
   productImageUrls.forEach((image, index) => {
@@ -165,7 +157,6 @@ function updateImagePreview() {
     imagePreviewGrid.appendChild(previewItem);
   });
   
-  // Remove button handlers
   document.querySelectorAll('.image-remove-btn').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -176,6 +167,87 @@ function updateImagePreview() {
   });
 }
 
+// ========== SPECIFICATIONS (NEW) ==========
+function setupSpecifications() {
+  const addSpecBtn = document.getElementById('addSpecBtn');
+  const container = document.getElementById('specificationsContainer');
+  
+  if (!addSpecBtn || !container) return;
+  
+  const maxSpecs = 5;
+  
+  addSpecBtn.addEventListener('click', () => {
+    if (specifications.length >= maxSpecs) return;
+    
+    const specId = Date.now();
+    specifications.push({ id: specId, name: '', value: '' });
+    renderSpecifications();
+  });
+}
+
+function renderSpecifications() {
+  const container = document.getElementById('specificationsContainer');
+  const addSpecBtn = document.getElementById('addSpecBtn');
+  const maxSpecs = 5;
+  
+  if (!container) return;
+  
+  // Clear and rebuild
+  container.innerHTML = '';
+  
+  specifications.forEach((spec, index) => {
+    const specEl = document.createElement('div');
+    specEl.className = 'spec-item';
+    specEl.innerHTML = `
+      <input 
+        type="text" 
+        class="spec-name" 
+        placeholder="e.g., Color, Size" 
+        value="${spec.name}"
+        maxlength="20"
+      >
+      <input 
+        type="text" 
+        class="spec-value" 
+        placeholder="e.g., Red, Large" 
+        value="${spec.value}"
+        maxlength="30"
+      >
+      <button type="button" class="remove-spec-btn" data-id="${spec.id}">
+        <i class="fas fa-trash"></i>
+      </button>
+    `;
+    
+    // Bind input events
+    const nameInput = specEl.querySelector('.spec-name');
+    const valueInput = specEl.querySelector('.spec-value');
+    
+    nameInput.addEventListener('input', (e) => {
+      specifications[index].name = e.target.value.trim();
+    });
+    
+    valueInput.addEventListener('input', (e) => {
+      specifications[index].value = e.target.value.trim();
+    });
+    
+    // Bind delete
+    specEl.querySelector('.remove-spec-btn').addEventListener('click', () => {
+      specifications.splice(index, 1);
+      renderSpecifications();
+    });
+    
+    container.appendChild(specEl);
+  });
+  
+  // Show/hide add button based on limit
+  if (specifications.length >= maxSpecs) {
+    addSpecBtn.classList.add('hidden');
+  } else {
+    addSpecBtn.classList.remove('hidden');
+  }
+}
+
+// ========== FORM SUBMISSION (UPDATED) ==========
 function setupFormSubmission() {
   const form = document.getElementById('productForm');
   const submitBtn = document.getElementById('submitBtn');
@@ -193,19 +265,28 @@ function setupFormSubmission() {
       alert('Please upload at least one product image');
       return;
     }
-    const coverImage = completedImages[0];
+    
+    // Build specifications object from array (filter out empty ones)
+    const specsObject = {};
+    specifications.forEach(spec => {
+      if (spec.name.trim() && spec.value.trim()) {
+        specsObject[spec.name.trim()] = spec.value.trim();
+      }
+    });
     
     const formData = {
       name: document.getElementById('productName').value.trim(),
       description: document.getElementById('productDescription').value.trim(),
       price: parseFloat(document.getElementById('productPrice').value),
+      condition: document.getElementById('productCondition').value, // NEW
       category: document.getElementById('productCategory').value,
-      cover_image: coverImage,
-      images: completedImages
+      cover_image: completedImages[0],
+      images: completedImages,
+      specifications: Object.keys(specsObject).length > 0 ? specsObject : null // NEW
     };
     
     // Validation
-    if (!formData.name || !formData.description || !formData.price || !formData.category) {
+    if (!formData.name || !formData.description || !formData.price || !formData.category || !formData.condition) {
       alert('Please fill in all required fields');
       return;
     }
@@ -235,4 +316,3 @@ function setupFormSubmission() {
   
   document.getElementById('productName')?.focus();
 }
-

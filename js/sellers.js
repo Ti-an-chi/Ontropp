@@ -168,9 +168,7 @@ function setupSellerCardListeners() {
 async function handleFollowSeller(sellerId, button) {
   try {
     button.disabled = true;
-    console.log(sellerId);
     const resp = await API.followSeller(sellerId);
-    console.log('pinggg');
   
     if (resp.success) {
       button.innerHTML = `<i class='fas fa-check'></i> following`;

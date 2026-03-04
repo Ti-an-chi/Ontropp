@@ -189,7 +189,7 @@
 
 /* Sticky Action Buttons */
 .product-actions-sticky {
-  position: sticky;
+  position: static;
   bottom: 80px;
   display: flex;
   gap: 12px;
@@ -339,8 +339,7 @@
 }
 
 .product-description h3,
-.product-specs h3,
-.shipping-info h3 {
+.product-specs h3 {
   font-size: 18px;
   font-weight: 600;
   color: var(--text);
@@ -415,7 +414,7 @@
 .shipping-item span {
   font-size: 14px;
   color: var(--hash);
-}
+} 
 
 /* Related Products */
 .related-products {
@@ -480,6 +479,140 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--primary);
+}
+
+/* ===== Seller Section ===== */
+
+.seller-section {
+  margin: 32px 0;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.seller-card-expanded {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+/* Top Row */
+.seller-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.seller-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--primary);
+}
+
+.seller-main-info {
+  flex: 1;
+}
+
+.seller-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.seller-name-row h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.verified-badge {
+  color: var(--primary);
+  font-size: 16px;
+}
+
+.seller-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--hash);
+}
+
+/* Stats Grid */
+.seller-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+  background: var(--background);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.seller-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.seller-stat i {
+  color: var(--primary);
+}
+
+/* Actions */
+.seller-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-view-store,
+.btn-follow {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-view-store {
+  background: var(--primary);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.btn-view-store:hover {
+  opacity: 0.9;
+}
+
+.btn-follow {
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--primary);
+}
+
+.btn-follow:hover {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
 }
 
 /* Responsive */
