@@ -185,10 +185,11 @@ function setupFormSubmission() {
       shopName: document.getElementById('shopName').value.trim(),
       shopBio: document.getElementById('shopBio').value.trim(),
       whatsapp_number: document.getElementById('whatsappNumber').value.trim(),
+      location: document.getElementById('operatingLocation').value.trim(), 
       category: document.getElementById('selectedCategory').value
     };
     
-    if (!formData.shopName || !formData.shopBio || !formData.whatsapp_number || !formData.category) {
+    if (!formData.shopName || !formData.shopBio || !formData.whatsapp_number || !formData.location || !formData.category) {
       alert('Please fill in all required fields');
       return;
     }
