@@ -197,14 +197,15 @@ signupForm.addEventListener('submit', async e => {
             const response = await window.API.createTestAccount(
                 email,
                 pass,
-                $('username').value.trim()
+                $('username').value.trim(),
             );
             
-            if (!response.success) throw new Error(response.message || 'Signup failed');
-            
-            pendingEmail = email;
-            localStorage.setItem('pendingSignupEmail', email);
+            //pendingEmail = email;
+            //localStorage.setItem('pendingSignupEmail', email);
             showMessage('Account created successfully! redirecting...');
+            const loginResponse = await window.API.login(email, pass);
+            window.API.setTokens(loginResponse);
+            location.href = 'dashboard.html';
             // Account created! Check your email for the code.', 'success
             // openVerifyUI(email);
             

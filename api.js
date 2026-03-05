@@ -110,13 +110,14 @@ const API = {
     });
   },
   
-  async createTestAccount(email, password, username) {
+  async createTestAccount(email, password, username, role = 'buyer') {
     const response = await this._fetch('/auth/directsignup', {
       method: 'POST', 
       body: JSON.stringify({
         email,
         password,
-        username
+        username,
+        role
       })
     });
   },
