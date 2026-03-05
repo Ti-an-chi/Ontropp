@@ -205,7 +205,7 @@ signupForm.addEventListener('submit', async e => {
             showMessage('Account created successfully! redirecting...');
             const loginResponse = await window.API.login(email, pass);
             window.API.setTokens(loginResponse);
-            location.href = 'dashboard.html';
+            location.href = 'dashboard';
             // Account created! Check your email for the code.', 'success
             // openVerifyUI(email);
             
@@ -215,7 +215,7 @@ signupForm.addEventListener('submit', async e => {
             if (!response.success) throw new Error(response.message || 'Login failed');
             
             window.API.setTokens(response);
-            location.href = 'dashboard.html';
+            location.href = 'dashboard';
         }
     } catch (err) {
         showMessage(err.message);
@@ -253,7 +253,7 @@ verifyBtn.addEventListener('click', async () => {
         localStorage.removeItem('pendingSignupEmail');
         
         showMessage('Email verified! Redirecting...', 'success', 'verify');
-        setTimeout(() => location.href = 'dashboard.html', 1000);
+        setTimeout(() => location.href = 'dashboard', 1000);
         
     } catch (err) {
         showMessage(err.message, 'error', 'verify');
@@ -303,7 +303,7 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
         if (token) {
             // Verify token is still valid
             const { data } = await window.API.tokenPing();
-            if (data?.success) location.href = 'dashboard.html';
+            if (data?.success) location.href = 'dashboard';
         }
     } catch {
         // Token invalid, clear it

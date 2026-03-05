@@ -89,6 +89,7 @@ function renderSellerInfo() {
   document.getElementById('sellerRating').textContent = seller.rating;
   document.getElementById('sellerFollowers').textContent = formatNumber(seller.followersCount);
   document.getElementById('sellerListings').textContent = formatNumber(seller.productsCount);
+  document.getElementById('sellerLocation').textContent = seller.location;
   
   // Seller link
   document.getElementById('sellerLink').href = `portfolio.html?id=${seller.id}`;

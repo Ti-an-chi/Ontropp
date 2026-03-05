@@ -222,7 +222,7 @@ function setupGlobalEventListeners() {
   if (addProductButton) {
     addProductButton.addEventListener('click', function(e) {
       e.stopPropagation();
-      location.href = 'upload.html';
+      location.href = 'upload';
     });
   }
   
