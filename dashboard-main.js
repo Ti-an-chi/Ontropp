@@ -253,7 +253,7 @@ function setupGlobalEventListeners() {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function() {
       API.clearTokens()
-      window.location.href = 'signup.html'
+      window.location.href = 'signup.html?mode=signin'
     })
   }
 }

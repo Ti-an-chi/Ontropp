@@ -143,7 +143,6 @@ const API = {
   
   async getUserData() {
     const response = await this._fetch('/user/dashboard');
-    console.log('ping');
     return response.data;
   },
   
@@ -319,14 +318,14 @@ const API = {
     return response;
   },
 
-  async deleteProduct(productId) {
-    return this._fetch(`/products/${productId}`, {
+  async deleteProduct(productId= String) {
+    return await this._fetch(`/products/${productId}`, {
       method: 'DELETE'
     });
   },
   
   async updateProduct(productId, updates) {
-    return this._fetch(`/products/${productId}`, {
+    return await this._fetch(`/products/${productId}`, {
       method: 'PATCH',
       body: JSON.stringify(updates)
     });
@@ -334,18 +333,22 @@ const API = {
 
   /* ---------------- UTILITY ---------------- */
   async startSelling(userInfo) {
-    return this._fetch('/upgrade', {
+    return await this._fetch('/upgrade', {
       method: 'POST',
       body: JSON.stringify(userInfo)
     });
   },
   
   /*---------- LOAD DATA ----------*/
-  /*---------- PING ----------*/
+  // PING
   async ping() {
     const resp = await fetch(`${this.baseURL}/ping`);
     const data = await resp.json();
     return { data }; // This matches your usage: const { data } = await window.API.ping();
+  },
+  async tokenPing() {
+    const resp = await this._fetch('/tokencheck');
+    return resp;
   },
 
   /* ---------- IMAGE UPLOAD ---------- */
@@ -372,7 +375,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = API;
 }
 
-// Attach to window for global access
+// Attach to window for globalaccess
 if (typeof window !== 'undefined') {
   window.API = API;
 }

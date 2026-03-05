@@ -42,6 +42,7 @@ export function renderProducts(products, containerId, type = 'product') {
   products.forEach(product => {
     const card = document.createElement(cfg.tag);
     card.className = cfg.className;
+    card.dataset.id = product.id;
     
     if (cfg.isClickable) {
       card.href = '#';
@@ -98,25 +99,32 @@ export function renderProducts(products, containerId, type = 'product') {
 }
 
 
-export function setupSellerProductActions() {
+export async function setupSellerProductActions() {
   const container = document.getElementById('seller-products-grid');
   if (!container) return;
   
-  container.addEventListener('click', function(e) {
+  container.addEventListener('click', async function(e) {
     const editBtn = e.target.closest('.edit-btn');
     const deleteBtn = e.target.closest('.delete-btn');
     
     if (editBtn) {
       e.preventDefault();
       const productId = editBtn.dataset.id;
-      alert(`Edit product ${productId} - feature coming soon!`);
+      window.location.href = `upload.html?productId=${productId}`
     }
     
     if (deleteBtn) {
       e.preventDefault();
       const productId = deleteBtn.dataset.id;
       if (confirm('Are you sure you want to delete this product?')) {
-        alert(`Delete product ${productId} - feature coming soon!`);
+        const resp = await API.deleteProduct(productId);
+        if (resp.success) {
+          showNotification('product deleted successfully');
+          const cardToRemove = container.querySelector(`[data-id="${productId}"]`)
+          if (cardToRemove) {
+            cardToRemove.remove();
+          }
+        }
       }
     }
   });

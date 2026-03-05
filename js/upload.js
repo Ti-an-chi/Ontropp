@@ -1,15 +1,72 @@
 import API from '../api.js';
-// import {} from ''
+import {showNotification, updateElement} from './reconfig.js'
 
 document.addEventListener('DOMContentLoaded', function() {
+  setupRoute();
   setupImageUpload();
   setupSpecifications();
   setupFormSubmission();
 });
 
+
 // Store uploaded image URLs
+let mode = 'creating'
+let productId = null
 let productImageUrls = [];
 let specifications = [];
+
+async function setupRoute() {
+  const urlParams = new URLSearchParams(window.location.search);
+  productId = urlParams.get('productId');
+  if (productId) {
+    mode = 'editing';
+    
+    updateElement('productName', 'loading...', 'placeholder');
+    updateElement('productPrice', 'loading...', 'placeholder');
+    updateElement('productDescription', 'loading...', 'placeholder');
+  
+    await loadProductData(productId);
+  }
+}
+
+async function loadProductData(productId) {
+  try {
+    const response = await API.getProductById(productId);
+    const productData = response.product;
+    
+    console.log(productData);
+    autofillProductData(productData);
+  } catch (err) {
+    console.error('Falied to load product data', err)
+    showNotification(`failed to load product data: ${err}`, 'error')
+  }
+}
+
+function autofillProductData(data) {
+  updateElement('productName', data.name, 'value');
+  updateElement('productPrice', data.price, 'value');
+  updateElement('productCondition', data.condition, 'value');
+  updateElement('productCategory', data.category, 'value');
+  updateElement('productDescription', data.description);
+
+  // Specifications
+  specifications = Object.entries(data.specifications || {}).map(
+    ([name, value]) => ({
+      id: crypto.randomUUID(),
+      name,
+      value
+    })
+  );
+  renderSpecifications();
+
+  // Images
+  productImageUrls = (data.images || []).map(url => ({
+    id: crypto.randomUUID(),
+    url,
+    status: 'complete'
+  }));
+  updateImagePreview();
+}
 
 // ========== IMAGE UPLOAD (unchanged logic) ==========
 function setupImageUpload() {
@@ -248,13 +305,13 @@ function renderSpecifications() {
 }
 
 // ========== FORM SUBMISSION (UPDATED) ==========
-function setupFormSubmission() {
+async function setupFormSubmission() {
   const form = document.getElementById('productForm');
   const submitBtn = document.getElementById('submitBtn');
   
   if (!form || !submitBtn) return;
   
-  form.addEventListener('submit', async function(e) {
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
     
     const completedImages = productImageUrls
@@ -301,10 +358,17 @@ function setupFormSubmission() {
     submitBtn.disabled = true;
     
     try {
-      const response = await API.createProduct(formData);
+      let response = null;
+      if (mode === 'editing') {
+        response = await API.updateProduct(productId, formData);
+      } else {
+        response = await API.createProduct(formData);
+      }
       
-      alert('Product listed successfully!');
-      window.location.href = 'dashboard.html';
+      if (response.success) {
+        showNotification('product listed sucessfully', 'success');
+        window.location.href = 'dashboard.html';
+      }
     } catch (error) {
       console.error('Failed to add product:', error);
       alert(error.message || 'Failed to list product. Please try again.');
@@ -316,3 +380,4 @@ function setupFormSubmission() {
   
   document.getElementById('productName')?.focus();
 }
+

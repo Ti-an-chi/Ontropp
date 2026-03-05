@@ -301,8 +301,8 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
         const token = localStorage.getItem('ontrop_token');
         if (token) {
             // Verify token is still valid
-            const { data } = await window.API.ping();
-            if (data?.ok) location.href = 'dashboard.html';
+            const { data } = await window.API.tokenPing();
+            if (data?.success) location.href = 'dashboard.html';
         }
     } catch {
         // Token invalid, clear it
