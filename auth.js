@@ -17,7 +17,8 @@ const passwordStrengthEl = $('passwordStrength');
 let mode = 'signin';
 let pendingEmail = null;
 document.addEventListener('DOMContentLoaded', () => {
-  mode = getSavedMode();
+  const urlParams = new URLSearchParams(window.location.search);
+  mode = urlParams.get('mode') || getSavedMode();
   renderUI();
 });
 

@@ -30,7 +30,6 @@ async function loadProductData() {
     productData = await response.product;
     isFavourite = productData.isFavourite;
     renderProduct();
-    console.log('ping');
     
   } catch (error) {
     console.error('Failed to load product:', error);
@@ -98,7 +97,6 @@ function renderSellerInfo() {
 function renderSpecifications() {
   const specsGrid = document.getElementById('specsGrid');
   const specs = productData.specifications || {};
-  console.log(specs);
   
   specsGrid.innerHTML = '';
   

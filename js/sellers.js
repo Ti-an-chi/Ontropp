@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function initPage() {
   const categoryInfo = await categoryIno();
-  console.log(categoryInfo);
-  // Update header with category info
+  // update header with category info
   const category = categoryInfo.find(cat => cat.id === categoryId) || categoryInfo[4];
   document.getElementById('categoryTitle').textContent = category.name;
   document.getElementById('categoryDescription').textContent = category.description;

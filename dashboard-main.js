@@ -1,4 +1,4 @@
-// dashboard-main.js - Core dashboard functionality
+// dashboard-main.js - Core dashboard functionality    
 import API from './api.js';
 import { initHomeTab } from '/js/home.js';
 import { initExploreTab } from '/js/explore.js';
@@ -115,6 +115,7 @@ function setupTabNavigation() {
       switchToTab(tabId);
     });
   });
+  
   
   // Search bar goes to explore tab
   const searchBarLink = document.getElementById('search-bar-link');
@@ -310,7 +311,7 @@ function showErrorMessage(message) {
   // In production: show error toast/notification
 }
 
-// Export for other modules
+/*/ Export for other modules
 export { 
   currentUser, 
   searchTimeout,
@@ -318,4 +319,4 @@ export {
   showErrorMessage,
   switchToTab,
   loadUserData
-};
+};*/

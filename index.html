@@ -1,54 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONTROPP - Explore Products</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONTROPP - Explore Products</title>
+  <link rel="stylesheet" href="css/CORE.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/tabs/explore.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo">ONTROPP</a>
-                <a href="signup.html" class="btn btn-primary btn-small" style="display: none;">Join ONTROP now</a> <!-- shouldn't show when logged in-->
-            </div>
-        </div>
-    </header>
+  <header class="dashboard-header">
+    <div class="header-container">
+      <div class="logo">ONTROPP.</div>
+      <div class="header-actions">
+        <a href="signup.html" class="btn btn-primary btn-small">Join ONTROP now</a>
+      </div>
+    </div>
+  </header>
 
-    <main class="container">
-        <div class="search-bar">
-            <input type="text" placeholder="Search products...">
+    <!-- Explore Tab Content -->
+    <main class="tab-content" id="tab-explore">
+      <!-- Sticky Search & Filter Bar -->
+      <div class="sticky-search-filter" id="sticky-search-filter">
+        <div class="search-filter-container">
+          <!-- Search Bar -->
+          <div class="sticky-search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="explore-search-input" placeholder="Search products..." autocomplete="off">
+          </div>
+      
+          <!-- Filter Toggle Button -->
+          <button class="filter-toggle-btn" id="filter-toggle-btn">
+            <i class="fas fa-filter"></i>
+          </button>
         </div>
-
-        <div class="filter-section">
-            <div class="filter-chips">
-                <button class="chip active">All</button>
-                <div class="chip">Electronics</div>
-                <div class="chip">Clothing</div>
-                <div class="chip">Home & Garden</div>
-                <div class="chip">Beauty</div>
-                <div class="chip">Others</div>
+    
+        <!-- Filter Panel (hidden by default) -->
+        <div class="filter-panel" id="filter-panel" style="display: none;">
+          <div class="filter-content">
+            <!-- Category Filter -->
+            <div class="filter-section">
+              <h4 class="filter-title">Category</h4>
+              <div class="filter-chips">
+                <button class="chip active" data-category="all">All</button>
+                <button class="chip" data-category="electronics">Electronics</button>
+                <button class="chip" data-category="clothing">Clothing</button>
+                <button class="chip" data-category="home">Home & Garden</button>
+                <button class="chip" data-category="beauty">Beauty</button>
+                <button class="chip" data-category="other">Others</button>
+              </div>
             </div>
-            
-            <div class="price-filter">
-                <input type="number" placeholder="Min price">
-                <span>to</span>
-                <input type="number" placeholder="Max price">
+        
+            <!-- Price Filter -->
+            <div class="filter-section">
+              <h4 class="filter-title">Price Range (₦)</h4>
+              <div class="price-filter">
+                <input type="number" id="min-price" placeholder="Min" min="0">
+                <span class="price-separator">to</span>
+                <input type="number" id="max-price" placeholder="Max" min="0">
+                <button class="filter-apply-btn" id="apply-price-filter">Apply</button>
+              </div>
             </div>
+        
+            <!-- Close Filter Button -->
+            <button class="close-filter-btn" id="close-filter-btn">
+              <i class="fas fa-times"></i> Close Filters
+            </button>
+          </div>
         </div>
+      </div>
 
-        <div class="product-grid" id="productGrid">
-            <!-- Products will be loaded here by JavaScript -->
+      <!-- Products Grid -->
+      <section class="explore-products-section">
+        <div class="section-header">
+          <h2 class="section-title">Discover Products</h2>
+          <div class="results-count" id="results-count">0 products</div>
         </div>
+    
+        <div class="products-grid" id="explore-product-grid">
+          <div class="loading-products" id="loading-products">
+            <div class="loading-spinner"></div>
+            <p>Loading products...</p>
+          </div>
+        </div>
+        <div class="pagination-controls" id="pagination-controls">
+          <!-- Pagination buttons will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="empty-products" id="empty-products" style="display: none;">
+          <i class="fas fa-search"></i>
+          <h3>No products found</h3>
+          <p>Try adjusting your search or filters</p>
+        </div>
+      </section>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>ONTROPP - Simple portfolio marketplace for sellers</p>
+    <footer class="dashboard-footer">
+      <div class="footer-content">
+        <p class="footer-text">© 2025 ONTROPP. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Terms</a>
+          <a href="#" class="footer-link">Privacy</a>
+          <a href="#" class="footer-link">Help</a>
         </div>
+      </div>
     </footer>
-    <script src="db.js"></script>
     <script type="module" src="script.js"></script>
 </body>
 </html>

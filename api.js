@@ -110,7 +110,7 @@ const API = {
     });
   },
   
-  createTestAccount(email, password, username) {
+  async createTestAccount(email, password, username) {
     const response = await this._fetch('/auth/directsignup', {
       method: 'POST', 
       body: JSON.stringify({
@@ -143,6 +143,7 @@ const API = {
   
   async getUserData() {
     const response = await this._fetch('/user/dashboard');
+    console.log('ping');
     return response.data;
   },
   

@@ -1,7 +1,6 @@
 export function renderProducts(products, containerId, type = 'product') {
   const container = document.getElementById(containerId);
   if (!container) return;
-  console.log('debugging...');
   
   container.innerHTML = '';
   
@@ -91,7 +90,7 @@ export function renderProducts(products, containerId, type = 'product') {
         ${actions}
       </div>
     `;
-    console.log(product.cover_image)
+    
     container.appendChild(card);
   });
   

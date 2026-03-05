@@ -32,14 +32,12 @@ export class ProductPagination {
     this.showLoading(true);
 
     try {
-      console.log('ACTIVE FILTERS:', this.filters);
       const data = await API.getProductsPaginated(
         this.currentPage,
         this.limit,
         this.cleanFilters()
       );
-      console.log('ACTIVE FILTERS:', this.filters);
-
+      
       this.paginationData = data;
 
       if (!data.products || data.products.length === 0) {
