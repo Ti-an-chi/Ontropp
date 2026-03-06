@@ -41,7 +41,7 @@ function toggleMode() {
 // 2️⃣ VIEW FUNCTION
 function renderUI() {
   document.querySelector('.form-title').textContent =
-    mode === 'signup' ? 'Create Seller Account' : 'Log In';
+    mode === 'signup' ? 'Create Account' : 'Log In';
   
   authBtn.value =
     mode === 'signup' ? 'Create Account' : 'Log In';
