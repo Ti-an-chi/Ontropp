@@ -92,14 +92,17 @@ function updateSellerDashboard(userData) {
   
   // Show seller profile link in profile tab
   changeDisplay('seller-profile-link', 'block');
-  updateElement('profile-link-url', userData.profileLink || '');
   
-  const profileLinkEl = document.getElementById('seller-profile-link');
+  const base = window.location.origin;
+  const link = `${base}/portfolio.html?id=${userData.sellerProfile.id}`;
+  updateElement('profile-link-btn', link, 'href');
+  
+  /*const profileLinkEl = document.getElementById('seller-profile-link');
   if (profileLinkEl) {
     profileLinkEl.style.display = 'block';
     document.getElementById('profile-link-url').textContent = userData.profileLink || '';
-  }
-  
+  }*/
+    
   // Hide become seller button
   changeDisplay('become-seller-btn', 'none');
 }
