@@ -30,7 +30,7 @@ export async function initHomeTab(user) {
     
   } catch (error) {
     console.error('Failed to load home content:', error);
-    alert('Failed to load home content.');
+    // alert('Failed to load home content.');
   }
 }
 

@@ -1,4 +1,4 @@
-import { showNotification } from './js/reconfig.js'
+import { showNotification} from './js/reconfig.js'
 
 /*========= API GATEWAY – api.js =========*/
 const API = {
@@ -11,7 +11,6 @@ const API = {
     localStorage.setItem('ontrop_refresh', refreshToken);
     localStorage.setItem('ontrop_userid', userId);
   },
-  
   // Clear everything on logout
   clearTokens() {
     localStorage.removeItem('ontrop_token');
@@ -21,8 +20,7 @@ const API = {
     localStorage.removeItem('pendingSignupEmail');
   },
   
-  /*---------- Core Fetch with Auto-Refresh ----------*/
-/*========= API GATEWAY – api.js (Fixed) =========*/
+  /*========= API GATEWAY =========*/
   
   /*---------- Core Fetch ----------*/
   async _fetch(path, options = {}, _retry = false) {
@@ -40,25 +38,30 @@ const API = {
     const data = await resp.json();
     
     if (!resp.ok) {
-      let msg = 'Network error';
+      let msg = 'Request failed';
       try {
-        
         msg = data.message || msg;
-        console.log(msg);
-        showNotification(msg, 'error')
       } catch {}
       
-      if (data.tokenExpired && !_retry) {
-        try {
-          await this.refresh();
-          return await this._fetch(path, options, true);
-        } catch {
-          this.clearTokens();
-          location.href = 'signup.html';
-          throw new Error('Session expired. Please login again.');
+      if (resp.status === 401) {
+        if (data.code === 'TOKEN_EXPIRED' &&  !_retry) {
+          try {
+            await this.refresh();
+            return await this._fetch(path, options, true);
+          } catch {
+            this.clearTokens()
+            location.href = 'signup.html';
+            throw new Error('Session expired. Please login again.');
+          }
+        }
+        
+        if (data.code === 'AUTH_REQUIRED') {
+          showNotification('You need to continue', 'info', 'signup.html?mode=signin');
+          throw new error(msg);
         }
       }
       
+      showNotification(msg, 'error')
       throw new Error(msg);
     }
     
@@ -78,12 +81,12 @@ const API = {
     }, true);
     if (response.success) {
       localStorage.setItem('ontrop_token', response.accessToken);
+      localStorage.setItem('ontrop_refresh', response.refreshToken);
     }
     return response;
   },
   
-  /*--------------------- AUTH --------------------*/
-  // These now return raw responses so frontend can use response.success directly
+  /*---------------------- AUTH ---------------------*/
   
   async signUpSeller({ email, password, username }) {
     return this.requestOtp(email, password, username);

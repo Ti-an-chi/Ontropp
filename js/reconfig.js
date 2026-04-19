@@ -12,7 +12,7 @@ export function changeDisplay(id, display) {
   el.style.display = display;
 }
 
-export function showNotification(message, type= 'info'){
+export function showNotification(message, type= 'info', href = null){
   // Remove existing notifications
   const existing = document.querySelector('.notification');
   if (existing) existing.remove();
@@ -20,8 +20,9 @@ export function showNotification(message, type= 'info'){
   const notification = document.createElement('div');
   notification.className = 'notification';
   notification.innerHTML = `
-    <i class=\"fas fa-check-circle\"></i>
+    <i class="fas fa-check-circle"></i>
     <span>${message}</span>
+    ${href ? `<a href="${href}" style="color:white; font-weight:bold;">Sign in</a>` : ''}
   `;
   
   notification.style.cssText = `
@@ -43,6 +44,7 @@ export function showNotification(message, type= 'info'){
   
   // Add animation keyframes if not exists
   if (!document.getElementById('notif-styles')) {
+    
     const style = document.createElement('style');
     style.id = 'notif-styles';
     style.textContent = `
@@ -51,7 +53,7 @@ export function showNotification(message, type= 'info'){
         to { transform: translateX(0); opacity: 1; }
       }
       @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
+        from { transform: translateX(0);opacity: 1; }
         to { transform: translateX(100%); opacity: 0; }
       }
     `;

@@ -20,7 +20,7 @@
   </header>
 
     <!-- Explore Tab Content -->
-    <main class="tab-content" id="tab-explore">
+    <main class="tab-content active" id="tab-explore">
       <!-- Sticky Search & Filter Bar -->
       <div class="sticky-search-filter" id="sticky-search-filter">
         <div class="search-filter-container">
@@ -106,6 +106,12 @@
         </div>
       </div>
     </footer>
-    <script type="module" src="script.js"></script>
+    <script type="module">
+      import { initExploreTab } from './js/explore.js';
+      
+      document.addEventListener('DOMContentLoaded', async () => {
+        await initExploreTab();
+      })
+    </script>
 </body>
 </html>
