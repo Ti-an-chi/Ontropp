@@ -1,5 +1,5 @@
-import API from '../api.js';
-import { viewSellerProfile } from './reconfig.js';
+import API from '../../api.js';
+import { viewSellerProfile } from '../utility/reconfig.js';
 
 // Get category from URL
 const urlParams = new URLSearchParams(window.location.search);

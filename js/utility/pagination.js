@@ -1,5 +1,5 @@
-// pagination.js – stable, predictable, backend-aligned
-import API from '../api.js';
+// pagination.js – stable, predictable, backend-aligned 
+import API from '../../api.js';
 import { renderProducts } from './shared.js';
 
 export class ProductPagination {

@@ -1,7 +1,7 @@
 // products.js
-import API from '../api.js';
-import { formatPrice, formatNumber} from './shared.js';
-import { showNotification, changeDisplay, orderHandler } from './reconfig.js'
+import API from '../../api.js';
+import { formatPrice, formatNumber} from '../utility/shared.js';
+import { showNotification, changeDisplay, orderHandler } from '../utility/reconfig.js';
 
 // State
 let productId = null;

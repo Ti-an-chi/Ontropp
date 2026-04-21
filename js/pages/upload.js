@@ -1,5 +1,5 @@
-import API from '../api.js';
-import {showNotification, updateElement} from './reconfig.js'
+import API from '../../api.js';
+import {showNotification, updateElement} from '../utility/reconfig.js';
 
 document.addEventListener('DOMContentLoaded', function() {
   setupRoute();

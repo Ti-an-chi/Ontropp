@@ -1,6 +1,6 @@
 // profile.js - Profile tab functionality
-import API from '../api.js';
-import { renderProducts } from './shared.js';
+import API from '../../api.js';
+import { renderProducts } from '../utility/shared.js';
 
 export async function initProfileTab() {
 

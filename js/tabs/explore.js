@@ -1,5 +1,5 @@
 // explore.js - Explore tab functionality with pagination
-import { ProductPagination } from './pagination.js';
+import { ProductPagination } from '../utility/pagination.js';
 
 let pagination;
 

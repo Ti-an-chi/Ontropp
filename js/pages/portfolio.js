@@ -1,6 +1,6 @@
-import { showNotification, updateElement, normalizePhoneNumber } from './reconfig.js';
-import {formatPrice,formatNumber} from './shared.js';
-import API from '../api.js';
+import { showNotification, updateElement, normalizePhoneNumber } from '../utility/reconfig.js';
+import {formatPrice,formatNumber} from '../utility/shared.js';
+import API from '../../api.js';
 
 // ============ CONFIGURATION ============
 export const CONFIG = {

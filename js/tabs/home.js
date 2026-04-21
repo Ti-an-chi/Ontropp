@@ -1,6 +1,6 @@
 // home.js - Home tab functionality
-import API from '../api.js';
-import { renderProducts } from './shared.js';
+import API from '../../api.js';
+import { renderProducts } from '../utility/shared.js';
 
 let seller = null;
 
@@ -42,7 +42,7 @@ function renderCategories(categories) {
   
   categories.forEach(category => {
     const categoryCard = document.createElement('a');
-    categoryCard.href = `sellers?category=${category.id}`;
+    categoryCard.href = `sellers.html?category=${category.id}`;
     categoryCard.className = 'category-card';
     categoryCard.dataset.category = category.id;
     

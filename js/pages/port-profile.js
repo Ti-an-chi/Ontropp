@@ -2,8 +2,8 @@ import {
   CONFIG, state, DataService, OrderHandler, FavoriteHandler, 
   FollowHandler, StarRating, ShareController, Router 
 } from './portfolio.js';
-import { showNotification, updateElement, normalizePhoneNumber } from './reconfig.js';
-import { formatPrice, formatNumber } from './shared.js';
+import { showNotification, updateElement, normalizePhoneNumber } from '../utility/reconfig.js';
+import { formatPrice, formatNumber } from '../utility/shared.js';
 
 // ============ PRODUCT RENDERER ============
 const ProductRenderer = {

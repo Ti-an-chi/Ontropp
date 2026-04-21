@@ -1,10 +1,10 @@
 // dashboard-main.js - Core dashboard functionality    
 import API from './api.js';
-import { initHomeTab } from '/js/home.js';
-import { initExploreTab } from '/js/explore.js';
-import { initFavouritesTab } from '/js/favourites.js';
-import { initProfileTab } from '/js/profile.js';
-import { updateElement, changeDisplay } from '/js/reconfig.js'
+import { initHomeTab } from './js/tabs/home.js';
+import { initExploreTab } from './js/tabs/explore.js';
+import { initFavouritesTab } from './js/tabs/favourites.js';
+import { initProfileTab } from './js/tabs/profile.js';
+import { updateElement, changeDisplay } from './js/utility/reconfig.js'
 
 // Global state
 let currentUser = null;
@@ -225,7 +225,7 @@ function setupGlobalEventListeners() {
   if (addProductButton) {
     addProductButton.addEventListener('click', function(e) {
       e.stopPropagation();
-      location.href = 'upload';
+      location.href = 'upload.html';
     });
   }
   
@@ -311,15 +311,5 @@ function showSuccessMessage(message) {
 
 function showErrorMessage(message) {
   console.error('Error:', message);
-  // In production: show error toast/notification
 }
 
-/*/ Export for other modules
-export { 
-  currentUser, 
-  searchTimeout,
-  showSuccessMessage,
-  showErrorMessage,
-  switchToTab,
-  loadUserData
-};*/

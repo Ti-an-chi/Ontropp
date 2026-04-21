@@ -1,9 +1,9 @@
-import { showNotification} from './js/reconfig.js'
+import { showNotification} from './js/utility/reconfig.js'
 
 /*========= API GATEWAY – api.js =========*/
 const API = {
-  basURL: 'http://localhost:5000/api',
-  baseURL: 'https://ontropp-backend.onrender.com/api',
+  baseURL: 'http://localhost:5000/api',
+  basURL: 'https://ontropp-backend.onrender.com/api',
   
   // Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {

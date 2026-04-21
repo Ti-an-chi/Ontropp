@@ -1,7 +1,7 @@
 // favourites.js - Favourites tab functionality
-import API from '../api.js';
-import { formatPrice } from './shared.js';
-import {changeDisplay, viewSellerProfile, orderHandler} from './reconfig.js';
+import API from '../../api.js';
+import { formatPrice } from '../utility/shared.js';
+import {changeDisplay, viewSellerProfile, orderHandler} from '../utility/reconfig.js';
 
 export async function initFavouritesTab() {
   // Load favourites data
