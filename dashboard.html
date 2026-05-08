@@ -107,8 +107,8 @@
             <i class="fas fa-bell"></i>
           </button>
           <!--<button class="icon-btn cart-btn" aria-label="Cart">
-            <i class="fas fa-shopping-cart"></i>-->
-          </button>
+            <i class="fas fa-shopping-cart"></i>
+          </button>-->
             <div class="kebab-menu-container">
               <button class="kebab-menu-btn" id="profile-kebab-btn">
                 <i class="fas fa-ellipsis-h"></i>
@@ -149,7 +149,8 @@
       <section class="user-welcome-section">
         <div class="user-welcome">
           <div class="user-avatar">
-            <img src="" alt="Profile" id="user-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=User&background=3483E0&color=fff'">
+            <img src="" alt="Profile" id="user-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=User&amp;background=3483E0&amp;color=fff'">
+            
           </div>
           <div class="user-info">
             <h2 class="welcome-text">Welcome back, <span id="user-name">Loading</span>!</h2>
@@ -157,7 +158,7 @@
           </div>
         </div>
       </section>
-      <!----- Seller Board ---->
+      <!-- —————— Seller Board —————— -->
       <section class="seller-board" id="seller-board" style="display: none;">
         <div class="section-header">
           <h2 class="section-title">Seller Dashboard</h2>
@@ -200,7 +201,6 @@
             <div class="loading-spinner"></div>
             <p>Loading your products...</p>
           </div>
-            <!-- Seller products will be loaded from server -->
           </div>
         </div>
       </section>
@@ -337,9 +337,9 @@
           <!-- Search Bar -->
           <div class="sticky-search-bar">
             <i class="fas fa-search"></i>
-            <input type="text" id="explore-search-input" placeholder="Search products..." autocomplete="off">
+            <input type="text" id="search-input" placeholder="Search products..." autocomplete="off">
           </div>
-      
+          
           <!-- Filter Toggle Button -->
           <button class="filter-toggle-btn" id="filter-toggle-btn">
             <i class="fas fa-filter"></i>
@@ -390,12 +390,11 @@
     
         <div class="products-grid" id="explore-product-grid">
           <div class="loading-products" id="loading-products">
-            <div class="loading-spinner"></div>
+            <div class="loading-state"></div>
             <p>Loading products...</p>
           </div>
         </div>
         <div class="pagination-controls" id="pagination-controls">
-          <!-- Pagination buttons will be inserted here by JavaScript -->
         </div>
         
         <div class="empty-products" id="empty-products" style="display: none;">
@@ -437,7 +436,6 @@
         <!-- Favourites Grid -->
         <section class="favourites-grid-section">
           <div class="favourites-grid" id="favourites-grid">
-            <!-- Favourite items will be loaded here -->
           </div>
       
           <!-- Empty State -->
@@ -499,7 +497,7 @@
       <section class="profile-header-section">
         <div class="profile-header-content">
           <div class="profile-avatar-large">
-            <img src="" alt="Profile" id="profile-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=User&background=3483E0&color=fff'">
+            <img src="" alt="Profile" id="profile-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=User&amp;background=3483E0&amp;color=fff'">
             <button class="edit-avatar-btn" id="edit-avatar-btn">
               <i class="fas fa-camera"></i>
             <input type="file" class="edit-avatar-input" id="edit-avatar-input" accept="image/*">
@@ -574,15 +572,6 @@
             </div>
           </div>
            
-          <!--<div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-star"></i>
-            </div>
-            <div class="stat-details">
-              <h3 class="stat-title">Rating</h3>
-              <p class="stat-value" id="seller-rating">4.8</p>
-            </div>
-          </div> -->
         </div>
         
         <!-- Seller's Products -->
@@ -592,14 +581,12 @@
             <a href="#" class="see-all">View All</a>
           </div>
           <div class="products-grid" id="profile-seller-products">
-            <!-- Seller's products will be loaded here -->
           </div>
         </div>
       </section>
       
       <!-- Buyer Section -->
       <section class="profile-buyer-section" id="profile-buyer-section">
-        <!-- Recent Orders -->
         <div class="profile-section">
           <div class="section-header">
             <h3 class="section-subtitle">Recent Orders</h3>
@@ -667,7 +654,11 @@
     </nav>
   </div>
 
-  <!-- Templates (hidden) -->
+<script type="module" src="dashboard-main.js"></script>
+</body>
+</html>
+
+  <!-- Templates (hidden) 
   <template id="recommended-template">
     <a href="#" class="recommended-item">
       <div class="item-image">
@@ -699,7 +690,5 @@
       </div>
     </div>
   </template>
-
-<script type="module" src="dashboard-main.js"></script>
-</body>
-</html>
+  -->
+  

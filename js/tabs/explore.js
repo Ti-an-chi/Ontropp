@@ -1,20 +1,14 @@
-// explore.js - Explore tab functionality with pagination
 import { ProductPagination } from '../utility/pagination.js';
+import {showNotification} from '../utility/reconfig.js';
 
 let pagination;
 
 export async function initExploreTab() {
   try {
     // Initialize pagination
-    pagination = new ProductPagination('explore-product-grid', 'explore');
+    pagination = new ProductPagination('explore-product-grid');
+    loadPaginatedProducts();
     
-    // Setup UI
-    setupExploreUI();
-    
-    // Load initial page (from URL or page 1)
-    await pagination.initFromURL();
-    
-    // Setup interactions
     setupExploreInteractions();
     
   } catch (error) {
@@ -23,8 +17,37 @@ export async function initExploreTab() {
   }
 }
 
-function setupExploreUI() {
-  // Add pagination controls container if not exists
+async function loadPaginatedProducts() {
+  // container = new StateManager('explore-product-grid');
+  // container.loadingState(spinner);
+  const reqData = await pagination.initFromURL();
+  
+  try {
+    const data = await API.getProductsPaginated(
+      reqData.currentPage,
+      reqData.limit,
+      reqData.filters
+    );
+    
+    pagination.paginationData = data.pagination;
+
+    if (!data.products || data.products.length === 0) {
+        // container.emptyState('No products found', 'try adjusting your search');
+        pagination.updatePaginationUI();
+    } else {
+      // container.clearState;
+      renderProducts(data.products, 'explore-product-grid', 'explore');
+      updateTotalProducts(data.pagination.totalProducts)
+      pagination.updatePaginationUI();
+    }
+    
+  } catch (err) {
+    console.error('failed to load products:', err);
+    showNotification('Failed to load products', 'error'); 
+  }
+}
+
+/*function setupExploreUI() {
   const productsSection = document.querySelector('.explore-products-section');
   if (productsSection && !document.getElementById('pagination-controls')) {
     const paginationDiv = document.createElement('div');
@@ -32,11 +55,11 @@ function setupExploreUI() {
     paginationDiv.className = 'pagination-controls';
     productsSection.appendChild(paginationDiv);
   }
-}
+}*/
 
 function setupExploreInteractions() {
   /* ---------- SEARCH ---------- */
-  const searchInput = document.getElementById('explore-search-input');
+  const searchInput = document.getElementById('search-input');
   if (searchInput) {
     let timeout;
     searchInput.addEventListener('input', function () {

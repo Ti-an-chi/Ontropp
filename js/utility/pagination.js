@@ -3,9 +3,9 @@ import API from '../../api.js';
 import { renderProducts } from './shared.js';
 
 export class ProductPagination {
-  constructor(containerId, type = 'explore') {
+  constructor(containerId) {
     this.containerId = containerId;
-    this.type = type;
+    this.container = document.getElementById(containerId);
 
     this.currentPage = 1;
     this.limit = 20;
@@ -27,36 +27,16 @@ export class ProductPagination {
   async loadPage(page = 1) {
     if (this.isLoading) return;
 
-    this.isLoading = true;
+    // this.isLoading = true;
     this.currentPage = page;
-    this.showLoading(true);
-
-    try {
-      const data = await API.getProductsPaginated(
-        this.currentPage,
-        this.limit,
-        this.cleanFilters()
-      );
-      
-      this.paginationData = data;
-
-      if (!data.products || data.products.length === 0) {
-        this.showEmptyState();
-        this.hidePagination();
-      } else {
-        renderProducts(data.products, this.containerId, this.type);
-        this.hideEmptyState();
-        this.updatePaginationUI();
-      }
-
-      this.updateURL();
-    } catch (err) {
-      console.error('Pagination load failed:', err);
-      alert('Failed to load products');
-    } finally {
-      this.isLoading = false;
-      this.showLoading(false);
-    }
+    // this.showLoading(true);
+    this.updateURL();
+    
+    return {
+      currentPage: this.currentPage,
+      limit: this.limit,
+      filters: this.cleanFilters()
+    };
   }
 
   /* ================= FILTER API ================= */
@@ -64,19 +44,19 @@ export class ProductPagination {
   async search(query) {
     this.filters.search = query || undefined;
     this.currentPage = 1;
-    await this.loadPage(1);
+    return await this.loadPage(this.currentPage);
   }
   
 
   /*async filterByCategory(category) {
     this.filters.categories = category && category !== 'all' ? [category] : undefined;
     this.currentPage = 1;
-    await this.loadPage(1);
+    return await this.loadPage(1);
   }*/
   
   async filterByCategory(category) {
     this.filters.categories = category && category !== 'all' ? [category] : undefined;
-    await this.loadPage(1);
+    return await this.loadPage(1);
   }
 
   async filterByPrice(minPrice, maxPrice) {
@@ -85,25 +65,25 @@ export class ProductPagination {
     this.filters.maxPrice =
       maxPrice !== undefined && maxPrice !== '' ? Number(maxPrice) : undefined;
     this.currentPage = 1;
-    await this.loadPage(1);
+    return await this.loadPage(1);
   }
 
   /* ================= PAGINATION ================= */
 
   async nextPage() {
     if (this.paginationData?.pagination.hasNextPage) {
-      await this.loadPage(this.currentPage + 1);
+      return await this.loadPage(this.currentPage + 1);
     }
   }
 
   async prevPage() {
     if (this.paginationData?.pagination.hasPrevPage) {
-      await this.loadPage(this.currentPage - 1);
+      return await this.loadPage(this.currentPage - 1);
     }
   }
 
   async goToPage(page) {
-    await this.loadPage(page);
+    return await this.loadPage(page);
   }
 
   updatePaginationUI() {
@@ -111,7 +91,7 @@ export class ProductPagination {
     if (!el || !this.paginationData) return;
 
     const { currentPage, hasNextPage, hasPrevPage } =
-      this.paginationData.pagination;
+      this.paginationData;
 
     el.innerHTML = `
       <div class="pagination">
@@ -151,17 +131,17 @@ export class ProductPagination {
     this.filters.maxPrice = max ? Number(max) : undefined;
 
     // Sync search input
-    const input = document.getElementById('explore-search-input');
+    const input = this.container.querySelector('#search-input');
     if (input && this.filters.search) {
       input.value = this.filters.search;
     }
 
-    await this.loadPage(this.currentPage);
+    return await this.loadPage(this.currentPage);
   }
 
   updateURL() {
     const params = new URLSearchParams();
-    params.set('page', this.currentPage);
+    params.set('page', String(this.currentPage));
 
     if (this.filters.search) params.set('q', this.filters.search);
     if (this.filters.categories) params.set('categories', this.filters.categories.join(','));
@@ -187,10 +167,10 @@ export class ProductPagination {
     );
   }
 
-  showLoading(show) {
-    const el = document.getElementById('loading-products');
+  /*showLoading(show) {
+    const el = this.container.querySelector('#loading-state');
     if (el) el.style.display = show ? 'block' : 'none';
-  }
+  }*/
 
   showEmptyState() {
     const emptyEl = document.getElementById('empty-products');

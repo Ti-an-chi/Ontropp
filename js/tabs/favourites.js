@@ -4,10 +4,7 @@ import { formatPrice } from '../utility/shared.js';
 import {changeDisplay, viewSellerProfile, orderHandler} from '../utility/reconfig.js';
 
 export async function initFavouritesTab() {
-  // Load favourites data
   await loadFavouritesContent();
-  
-  // Setup favourites tabs
   setupFavouritesTabs();
 }
 
