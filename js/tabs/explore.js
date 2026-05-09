@@ -1,5 +1,7 @@
 import { ProductPagination } from '../utility/pagination.js';
 import {showNotification} from '../utility/reconfig.js';
+import API from '../../api.js';
+import { renderProducts } from '../utility/shared.js';
 
 let pagination;
 
@@ -23,6 +25,7 @@ async function loadPaginatedProducts() {
   const reqData = await pagination.initFromURL();
   
   try {
+    console.log('fetching products with:', reqData)
     const data = await API.getProductsPaginated(
       reqData.currentPage,
       reqData.limit,
@@ -44,6 +47,13 @@ async function loadPaginatedProducts() {
   } catch (err) {
     console.error('failed to load products:', err);
     showNotification('Failed to load products', 'error'); 
+  }
+}
+
+function updateTotalProducts(count = 0) {
+  const totalEl = document.getElementById('results-count');
+  if (totalEl) {
+    totalEl.textContent = `${count} results`;
   }
 }
 

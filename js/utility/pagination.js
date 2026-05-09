@@ -24,7 +24,7 @@ export class ProductPagination {
 
   /* ================= CORE ================= */
 
-  async loadPage(page = 1) {
+  async buildPage(page = 1) {
     if (this.isLoading) return;
 
     // this.isLoading = true;
@@ -44,19 +44,19 @@ export class ProductPagination {
   async search(query) {
     this.filters.search = query || undefined;
     this.currentPage = 1;
-    return await this.loadPage(this.currentPage);
+    return await this.buildPage(this.currentPage);
   }
   
 
   /*async filterByCategory(category) {
     this.filters.categories = category && category !== 'all' ? [category] : undefined;
     this.currentPage = 1;
-    return await this.loadPage(1);
+    return await this.buildPage(1);
   }*/
   
   async filterByCategory(category) {
     this.filters.categories = category && category !== 'all' ? [category] : undefined;
-    return await this.loadPage(1);
+    return await this.buildPage(1);
   }
 
   async filterByPrice(minPrice, maxPrice) {
@@ -65,25 +65,25 @@ export class ProductPagination {
     this.filters.maxPrice =
       maxPrice !== undefined && maxPrice !== '' ? Number(maxPrice) : undefined;
     this.currentPage = 1;
-    return await this.loadPage(1);
+    return await this.buildPage(1);
   }
 
   /* ================= PAGINATION ================= */
 
   async nextPage() {
     if (this.paginationData?.pagination.hasNextPage) {
-      return await this.loadPage(this.currentPage + 1);
+      return await this.buildPage(this.currentPage + 1);
     }
   }
 
   async prevPage() {
     if (this.paginationData?.pagination.hasPrevPage) {
-      return await this.loadPage(this.currentPage - 1);
+      return await this.buildPage(this.currentPage - 1);
     }
   }
 
   async goToPage(page) {
-    return await this.loadPage(page);
+    return await this.buildPage(page);
   }
 
   updatePaginationUI() {
@@ -120,9 +120,10 @@ export class ProductPagination {
     const params = new URLSearchParams(window.location.search);
 
     this.currentPage = Number(params.get('page')) || 1;
-
     this.filters.search = params.get('q') || undefined;
-    this.filters.categories = params.get('categories') || undefined;
+
+    const cats = params.get('categories'); 
+    this.filters.categories = cats ? cats.split(',') : undefined;
 
     const min = params.get('minPrice');
     const max = params.get('maxPrice');
@@ -136,7 +137,7 @@ export class ProductPagination {
       input.value = this.filters.search;
     }
 
-    return await this.loadPage(this.currentPage);
+    return await this.buildPage(this.currentPage);
   }
 
   updateURL() {
