@@ -2,6 +2,7 @@ import { ProductPagination } from '../utility/pagination.js';
 import {showNotification} from '../utility/reconfig.js';
 import API from '../../api.js';
 import { renderProducts } from '../utility/shared.js';
+import { StateManager } from '../utility/stateManager.js';
 
 let pagination;
 
@@ -20,8 +21,9 @@ export async function initExploreTab() {
 }
 
 async function loadPaginatedProducts() {
-  // container = new StateManager('explore-product-grid');
-  // container.loadingState(spinner);
+  const container = new StateManager('explore-product-grid');
+  container._injectDefaultStylesheet();
+  container.loadingState('spinner');
   const reqData = await pagination.initFromURL();
   
   try {
@@ -35,10 +37,11 @@ async function loadPaginatedProducts() {
     pagination.paginationData = data.pagination;
 
     if (!data.products || data.products.length === 0) {
-        // container.emptyState('No products found', 'try adjusting your search');
+        container.emptyState('No products found', 'try adjusting your search');
         pagination.updatePaginationUI();
     } else {
-      // container.clearState;
+      container.clearState();
+      container.dataState();
       renderProducts(data.products, 'explore-product-grid', 'explore');
       updateTotalProducts(data.pagination.totalProducts)
       pagination.updatePaginationUI();
