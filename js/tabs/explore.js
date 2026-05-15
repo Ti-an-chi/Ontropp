@@ -5,10 +5,14 @@ import { renderProducts } from '../utility/shared.js';
 import { StateManager } from '../utility/stateManager.js';
 
 let pagination;
+let container;
 
 export async function initExploreTab() {
   try {
     // Initialize pagination
+    container = new StateManager('explore-product-grid');
+    container._injectDefaultStylesheet();
+
     pagination = new ProductPagination('explore-product-grid');
     loadPaginatedProducts();
     
@@ -21,8 +25,6 @@ export async function initExploreTab() {
 }
 
 async function loadPaginatedProducts() {
-  const container = new StateManager('explore-product-grid');
-  container._injectDefaultStylesheet();
   container.loadingState('spinner');
   const reqData = await pagination.initFromURL();
   
@@ -77,8 +79,10 @@ function setupExploreInteractions() {
     let timeout;
     searchInput.addEventListener('input', function () {
       clearTimeout(timeout);
+      container.loadingState('spinner');
       timeout = setTimeout(() => {
         pagination.search(this.value.trim());
+        loadPaginatedProducts();
       }, 500);
     });
   }
@@ -91,6 +95,7 @@ function setupExploreInteractions() {
       this.classList.add('active');
 
       pagination.filterByCategory(this.dataset.category);
+      loadPaginatedProducts();
     });
   });
 
@@ -102,6 +107,7 @@ function setupExploreInteractions() {
       const max = document.getElementById('max-price')?.value;
 
       pagination.filterByPrice(min, max);
+      loadPaginatedProducts();
     });
   }
 

@@ -86,6 +86,7 @@ export class ProductPagination {
     return await this.buildPage(page);
   }
 
+  
   updatePaginationUI() {
     const el = document.getElementById('pagination-controls');
     if (!el || !this.paginationData) return;
@@ -95,11 +96,11 @@ export class ProductPagination {
 
     el.innerHTML = `
       <div class="pagination">
-        <button data-action="prev" ${!hasPrevPage ? 'disabled' : ''}>
+        <button class="pagination-btn ${!hasPrevPage ? 'disabled' : ''}" data-action="prev">
           Previous
         </button>
         <span>Page ${currentPage}</span>
-        <button data-action="next" ${!hasNextPage ? 'disabled' : ''}>
+        <button class="pagination-btn ${!hasNextPage ? 'disabled' : ''}" data-action="next">
           Next
         </button>
       </div>
@@ -107,7 +108,7 @@ export class ProductPagination {
 
     el.onclick = (e) => {
       const btn = e.target.closest('button');
-      if (!btn) return;
+      if (!btn || btn.classList.contains('disabled')) return;
 
       if (btn.dataset.action === 'next') this.nextPage();
       if (btn.dataset.action === 'prev') this.prevPage();
@@ -173,7 +174,7 @@ export class ProductPagination {
     if (el) el.style.display = show ? 'block' : 'none';
   }*/
 
-  showEmptyState() {
+  /*showEmptyState() {
     const emptyEl = document.getElementById('empty-products');
     const gridEl = document.getElementById(this.containerId);
     if (emptyEl) emptyEl.style.display = 'flex';
@@ -183,7 +184,7 @@ export class ProductPagination {
   hideEmptyState() {
     const el = document.getElementById('empty-products');
     if (el) el.style.display = 'none';
-  }
+  }*/
 
   hidePagination() {
     const el = document.getElementById('pagination-controls');
