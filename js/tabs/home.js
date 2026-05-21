@@ -38,14 +38,6 @@ export async function loadCategories(user) {
       emptyRecEl.style.display = products.length === 0 ? 'block' : 'none';
     }
     
-    seller = user.sellerProfile;
-    if (user?.role === 'seller') {
-      const resp = await API.getSellerProducts(seller.id, 1, 8);
-      const sellerProducts = resp.products || [];
-      // console.log(sellerProducts)
-      renderProducts(sellerProducts, 'seller-products-grid', 'seller');
-    }
-    
   } catch (error) {
     console.error('Failed to load home content:', error);
     // alert('Failed to load home content.');
@@ -58,19 +50,20 @@ function updateBuyerStats(userData) {
   updateElement('favorites-count', userData.favoritesCount || 0);
 }
 
-function updateSellerDashboard(userData) {
-  changeDisplay('seller-board', 'block');
-  // Update seller stats
+async function updateSellerDashboard(userData) {
   updateElement('seller-profole-views', userData.profileViews || 0);
+  
   updateElement('total-orders', userData.sellerOrders || 0);
   
-  // Show seller profile link in profile tab
-  changeDisplay('seller-profile-link', 'block');
-  
-  const base = window.location.origin;
-  const link = `${base}/portfolio.html?id=${userData.sellerProfile.id}`;
-  updateElement('profile-link-btn', link, 'href');
-    
+  // update seller info
+  changeDisplay('seller-board', 'block');
+    seller = userData.sellerProfile;
+    if (userData?.role === 'seller') {
+      const resp = await API.getSellerProducts(seller.id, 1, 8);
+      const sellerProducts = resp.products || [];
+      // console.warn(sellerProducts);
+      renderProducts(sellerProducts, 'seller-products-grid', 'seller');
+    }
   // Hide become seller button
   changeDisplay('become-seller-btn', 'none');
 }

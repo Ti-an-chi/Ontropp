@@ -52,7 +52,14 @@ function setupProfileUi(userData) {
   updateElement('user-avatar-img', userData.avatar_url, 'src');
   updateElement('profile-avatar-img', userData.avatar_url, 'src');
 
-  if (userData.role !== 'seller') {
+  if (userData.role === 'seller') {
+    changeDisplay('seller-profile-link', 'block');
+    
+    const base = window.location.origin;
+    const link = `${base}/portfolio.html?id=${userData.sellerProfile.id}`;
+    updateElement('profile-link-btn', link, 'href');
+      
+    } else {
     updateBuyerStats(userData);
   }
 }
@@ -60,6 +67,7 @@ function setupProfileUi(userData) {
 async function loadProfileFavourites() {
   try {
     const favourites = await API.getFavourites();
+    console.log(favourites)
     renderProfileFavourites(favourites.slice(0, 4)); // Show only 4
   } catch (error) {
     console.error('Failed to load profile favourites:', error);

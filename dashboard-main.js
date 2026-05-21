@@ -13,19 +13,19 @@ let currentTab;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
-  console.log("here");
   initDashboard();
 });
 
 async function initDashboard() {
   try {
-    await loadUserData();
+    setupGlobalEventListeners();
     
     setupTabNavigation();
+    
+    await loadUserData();
     const initialTab = getInitialTab();
     switchToTab(initialTab);
     
-    setupGlobalEventListeners();
   } catch (error) {
     console.error('Failed to initialize dashboard:', error);
     showErrorMessage('Failed to load dashboard. Please refresh the page.');
@@ -35,7 +35,6 @@ async function initDashboard() {
 // User Data Management
 async function loadUserData() {
   try {
-    console.log("here");
     const userData = currentUser || await API.getUserData();
     currentUser = userData;
     localStorage.setItem('userData', JSON.stringify(userData));
@@ -55,16 +54,9 @@ async function loadUserData() {
 function getInitialTab() {
   const hash = window.location.hash.replace('#', '');
   
-  const validTabs = [
-    'tab-home',
-    'tab-explore',
-    'tab-fav',
-    'tab-profile'
-  ];
+  const validTabs = [ 'tab-home', 'tab-explore', 'tab-fav', 'tab-profile' ];
   
-  return validTabs.includes(hash) 
-  ? hash
-  : 'tab-home';
+  return validTabs.includes(hash) ? hash  : 'tab-home';
 }
 
 // Tab Management
@@ -166,8 +158,7 @@ function setupGlobalEventListeners() {
     document.addEventListener('click', function() {
       dropdown.style.display = 'none';
     });
-
-    // Prevent dropdown from closing when clicking inside it
+    
     dropdown.addEventListener('click', function(e) {
       e.stopPropagation();
     });
