@@ -1,13 +1,13 @@
 // home.js - Home tab functionality
 import API from '../../api.js';
 import { renderProducts } from '../utility/shared.js';
-import { updateElement, changeDisplay } from '../reconfig.js';
+import { updateElement, changeDisplay } from '../utility/reconfig.js';
 
 let seller = null;
 
 export async function initHomeTab(user) {
   await updateUserUI(user);
-  loadCategories();
+  await loadCategories(user);
 }
 
 function updateUserUI(userData) {
@@ -18,7 +18,7 @@ function updateUserUI(userData) {
   if (userData.role !== 'seller') {
     updateBuyerStats(userData);
   } else {
-    updateSellerDashboard();
+    updateSellerDashboard(userData);
   }
 }
 

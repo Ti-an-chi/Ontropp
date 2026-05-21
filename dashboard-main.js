@@ -13,6 +13,7 @@ let currentTab;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
+  console.log("here");
   initDashboard();
 });
 
@@ -21,8 +22,8 @@ async function initDashboard() {
     await loadUserData();
     
     setupTabNavigation();
-    //const initialTab = getInitialTab();
-    //switchToTab(initialTab);
+    const initialTab = getInitialTab();
+    switchToTab(initialTab);
     
     setupGlobalEventListeners();
   } catch (error) {
