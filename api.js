@@ -1,4 +1,4 @@
-import { showNotification} from './js/utility/reconfig.js'
+import { showNotification} from './js/utility/reconfig.js';
 
 /*========= API GATEWAY – api.js =========*/
 const API = {
@@ -49,7 +49,7 @@ const API = {
             await this.refresh();
             return await this._fetch(path, options, true);
           } catch {
-            this.clearTokens()
+            this.clearTokens();
             location.href = 'signup.html';
             throw new Error('Session expired. Please login again.');
           }
@@ -61,7 +61,7 @@ const API = {
         }
       }
       
-      showNotification(msg, 'error')
+      showNotification(msg, 'error');
       throw new Error(msg);
     }
     
@@ -304,7 +304,7 @@ const API = {
   async unfollowSeller(sellerId) {
     const response = await this._fetch(`/seller/unfollow/${sellerId}`, {
       method: 'DELETE',
-    })
+    });
     return response;
   }, 
   

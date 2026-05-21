@@ -1,10 +1,28 @@
 // home.js - Home tab functionality
 import API from '../../api.js';
 import { renderProducts } from '../utility/shared.js';
+import { updateElement, changeDisplay } from '../reconfig.js';
 
 let seller = null;
 
 export async function initHomeTab(user) {
+  await updateUserUI(user);
+  loadCategories();
+}
+
+function updateUserUI(userData) {
+  updateElement('user-name', userData.username);
+  updateElement('user-email', userData.email);
+  updateElement('user-avatar-img', userData.avatar_url, 'src');
+
+  if (userData.role !== 'seller') {
+    updateBuyerStats(userData);
+  } else {
+    updateSellerDashboard();
+  }
+}
+
+export async function loadCategories(user) {
   try {
     // Load categories
     const categories = await API.getCategories();
@@ -34,6 +52,29 @@ export async function initHomeTab(user) {
   }
 }
 
+function updateBuyerStats(userData) {
+  updateElement('orders-count', userData.ordersCount || 0);
+  updateElement('followings-count', userData.followingsCount || 0);
+  updateElement('favorites-count', userData.favoritesCount || 0);
+}
+
+function updateSellerDashboard(userData) {
+  changeDisplay('seller-board', 'block');
+  // Update seller stats
+  updateElement('seller-profole-views', userData.profileViews || 0);
+  updateElement('total-orders', userData.sellerOrders || 0);
+  
+  // Show seller profile link in profile tab
+  changeDisplay('seller-profile-link', 'block');
+  
+  const base = window.location.origin;
+  const link = `${base}/portfolio.html?id=${userData.sellerProfile.id}`;
+  updateElement('profile-link-btn', link, 'href');
+    
+  // Hide become seller button
+  changeDisplay('become-seller-btn', 'none');
+}
+
 function renderCategories(categories) {
   const categoriesList = document.querySelector('.categories-list');
   if (!categoriesList) return;
@@ -61,13 +102,6 @@ function renderCategories(categories) {
       </div>
     `;
     
-    /*categoryCard.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      const event = new CustomEvent('switchTab', { detail: 'tab-explore' });
-      document.dispatchEvent(event);
-    });
-    */
     categoriesList.appendChild(categoryCard);
   });
 }

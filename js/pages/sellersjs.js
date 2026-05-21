@@ -1,12 +1,12 @@
 import API from '../../api.js';
-import { viewSellerProfile } from '../utility/reconfig.js';
+import { followSeller, viewSellerProfile } from '../utility/reconfig.js';
 
 // Get category from URL
 const urlParams = new URLSearchParams(window.location.search);
 const categoryId = urlParams.get('category');
 
 // Category mapping
-async function categoryIno() {
+async function getCategories() {
   return await API.getCategories()/* || [
       { id: 'electronics', name: 'Electronics', icon: 'mobile-alt', description: 'Tech gadgets and devices' },
       { id: 'clothing', name: 'Clothing', icon: 'tshirt', description: 'Fashion and apparel' },
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function initPage() {
-  const categoryInfo = await categoryIno();
+  const categoryInfo = await getCategories();
   // update header with category info
   const category = categoryInfo.find(cat => cat.id === categoryId) || categoryInfo[4];
   document.getElementById('categoryTitle').textContent = category.name;
@@ -44,7 +44,6 @@ async function loadSellers() {
     loadingEl.style.display = 'block';
     emptyEl.style.display = 'none';
     
-    await new Promise(resolve => setTimeout(resolve, 50));
     const sellers = await API.getSellers(categoryId);
     
     // Hide loading

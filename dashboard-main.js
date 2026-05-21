@@ -1,14 +1,15 @@
-// dashboard-main.js - Core dashboard functionality    
+// Core dashboard functionality
 import API from './api.js';
 import { initHomeTab } from './js/tabs/home.js';
 import { initExploreTab } from './js/tabs/explore.js';
 import { initFavouritesTab } from './js/tabs/favourites.js';
 import { initProfileTab } from './js/tabs/profile.js';
-import { updateElement, changeDisplay } from './js/utility/reconfig.js'
+import { updateElement, changeDisplay } from './js/utility/reconfig.js';
 
 // Global state
 let currentUser = null;
 let searchTimeout = null;
+let currentTab;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
@@ -17,18 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function initDashboard() {
   try {
-    // Load user data first
     await loadUserData();
-
-    // Setup tab navigation
+    
     setupTabNavigation();
+    //const initialTab = getInitialTab();
+    //switchToTab(initialTab);
     
-    // Setup global event listeners
     setupGlobalEventListeners();
-    
-    // Load initial tab (Home)
-    loadTabContent('tab-home');
-    
   } catch (error) {
     console.error('Failed to initialize dashboard:', error);
     showErrorMessage('Failed to load dashboard. Please refresh the page.');
@@ -38,73 +34,36 @@ async function initDashboard() {
 // User Data Management
 async function loadUserData() {
   try {
+    console.log("here");
     const userData = currentUser || await API.getUserData();
     currentUser = userData;
-    
     localStorage.setItem('userData', JSON.stringify(userData));
-    updateUserUI(currentUser);
     
-    if (currentUser?.role === 'seller') {
-      updateSellerDashboard(currentUser);
-    }
   } catch (error) {
     console.error(`Failed to load user data:  ${error}`);
-    // Use default user data as fallback
+    // Default user data as fallback
     currentUser = {
       username: 'User',
       email: 'user@example.com',
       isSeller: false,
       role: 'buyer'
     };
-    updateUserUI(currentUser);
   }
 }
 
-function updateUserUI(userData) {
-  updateElement('user-name', userData.username);
-  updateElement('user-email', userData.email);
-  updateElement('profile-display-name', userData.username);
-  updateElement('profile-display-email', userData.email);
-  updateElement(
-    'profile-role',
-    userData.role === 'seller' ? 'Seller' : 'Buyer'
-  );
-
-  updateElement('user-avatar-img', userData.avatar_url, 'src');
-  updateElement('profile-avatar-img', userData.avatar_url, 'src');
-
-  if (userData.role !== 'seller') {
-    updateBuyerStats(userData);
-  }
-}
-
-function updateBuyerStats(userData) {
-  updateElement('orders-count', userData.ordersCount || 0);
-  updateElement('followings-count', userData.followingsCount || 0);
-  updateElement('favorites-count', userData.favoritesCount || 0);
-}
-
-function updateSellerDashboard(userData) {
-  changeDisplay('seller-board', 'block');
-  // Update seller stats
-  updateElement('seller-profole-views', userData.profileViews || 0);
-  updateElement('total-orders', userData.sellerOrders || 0);
+function getInitialTab() {
+  const hash = window.location.hash.replace('#', '');
   
-  // Show seller profile link in profile tab
-  changeDisplay('seller-profile-link', 'block');
+  const validTabs = [
+    'tab-home',
+    'tab-explore',
+    'tab-fav',
+    'tab-profile'
+  ];
   
-  const base = window.location.origin;
-  const link = `${base}/portfolio.html?id=${userData.sellerProfile.id}`;
-  updateElement('profile-link-btn', link, 'href');
-  
-  /*const profileLinkEl = document.getElementById('seller-profile-link');
-  if (profileLinkEl) {
-    profileLinkEl.style.display = 'block';
-    document.getElementById('profile-link-url').textContent = userData.profileLink || '';
-  }*/
-    
-  // Hide become seller button
-  changeDisplay('become-seller-btn', 'none');
+  return validTabs.includes(hash) 
+  ? hash
+  : 'tab-home';
 }
 
 // Tab Management
@@ -131,6 +90,10 @@ function setupTabNavigation() {
 }
 
 function switchToTab(tabId) {
+  if (currentTab === tabId) return;
+  
+  currentTab = tabId;
+  window.location.hash = tabId;
   // Update active tab in navigation
   const tabLinks = document.querySelectorAll('.nav-item[data-tab]');
   tabLinks.forEach(link => {
@@ -153,8 +116,9 @@ function switchToTab(tabId) {
   loadTabContent(tabId);
 }
 
+const loadedTabs = new Set();
 async function loadTabContent(tabId) {
-  // Cache check removed - tab will load every time
+  if (loadedTabs.has(tabId)) return;
   
   try {
     switch(tabId) {
@@ -172,7 +136,7 @@ async function loadTabContent(tabId) {
         break;
     }
     
-    // Cache setting removed
+    loadedTabs.add(tabId);
     
   } catch (error) {
     console.error(`Failed to load ${tabId}:`, error);
@@ -180,18 +144,15 @@ async function loadTabContent(tabId) {
   }
 }
 
-// Listen for tab switch events from other modules
 document.addEventListener('switchTab', (e) => {
   switchToTab(e.detail);
 });
+
 // Global Event Listeners
 function setupGlobalEventListeners() {
-  // Kebab menu toggle
   const kebabBtn = document.getElementById('profile-kebab-btn');
   const dropdown = document.getElementById('profile-dropdown');
   const setupSellerBtn = document.getElementById('setup-seller-btn');
-  const editAvatarInput = document.getElementById("edit-avatar-input");
-  const editAvatarBtn = document.getElementById('edit-avatar-btn');
   const addProductButton = document.getElementById('add-product-btn');
   const logoutBtn = document.getElementById('logout-btn');
   
@@ -200,8 +161,7 @@ function setupGlobalEventListeners() {
       e.stopPropagation();
       dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     });
-
-    // Close dropdown when clicking outside
+    
     document.addEventListener('click', function() {
       dropdown.style.display = 'none';
     });
@@ -229,87 +189,15 @@ function setupGlobalEventListeners() {
     });
   }
   
-  if (editAvatarBtn && editAvatarInput) {
-    editAvatarBtn.addEventListener('click', () => {
-      editAvatarInput.click();
-    });
-  }
-  if (editAvatarInput) {
-    editAvatarInput.addEventListener('change', function(e) {
-      const file = this.files[0];
-      if (!file) return;
-    
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file (JPG, PNG, etc.)');
-        return;
-      }
-    
-      if (file.size > 2 * 1024 * 1024) {
-        alert('Image file must be less than 1MB');
-        return;
-      }
-    
-      uploadProfileImage(file);
-    });
-  }
-  
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function() {
-      API.clearTokens()
-      window.location.href = 'signup.html?mode=signin'
-    })
-  }
-}
-
-async function uploadProfileImage(file) {
-  const UPLOAD_PRESET = 'seller_logo_unsigned';
-  
-  const editAvatarBtn = document.getElementById('edit-avatar-btn');
-  const profileAvatarImage = document.getElementById('profile-avatar-img');
-  
-  const formData = new FormData();
-  formData.append('file', file)
-  formData.append('upload_preset', UPLOAD_PRESET);
-  formData.append('folder', 'users/profile');
-  
-  profileAvatarImage.src = 'https://i.gifer.com/ZZ5H.gif';     // loading state
-  
-  try {
-    const resp = await API.uploadImage(formData);
-    const profileImageURL = resp.secure_url;
-    await API.updateProfile({avatar_url: profileImageURL});
-    
-    profileAvatarImage.src = profileImageURL;
-  } catch (err) {
-    alert('Logo upload failed. try again');
-    console.error(err);
-
-    profileAvatarImage.src = 'https://ui-avatars.com/api/?name=User&background=3483E0&color=fff';
+      API.clearTokens();
+      window.location.href = 'signup.html?mode=signin';
+    });
   }
 }
 
 // UI Feedback Functions
-function showSuccessMessage(message) {
-  const messageEl = document.createElement('div');
-  messageEl.className = 'success-message';
-  messageEl.innerHTML = `
-    <i class="fas fa-check-circle"></i>
-    <span>${message}</span>
-  `;
-  
-  // Insert at top of main content
-  const mainContent = document.querySelector('.dashboard-main');
-  if (mainContent) {
-    mainContent.insertBefore(messageEl, mainContent.firstChild);
-    
-    // Remove after 5 seconds
-    setTimeout(() => {
-      messageEl.remove();
-    }, 5000);
-  }
-}
-
 function showErrorMessage(message) {
   console.error('Error:', message);
 }
-

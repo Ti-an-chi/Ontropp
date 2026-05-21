@@ -100,4 +100,8 @@ export const orderHandler = {
     window.open(url, '_blank');
     showNotification('Opening WhatsApp...');
   }
+};
+
+async function togglefollowSeller(sellerId, button) {
+  return;
 }

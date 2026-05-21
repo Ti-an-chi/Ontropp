@@ -1,13 +1,60 @@
 // profile.js - Profile tab functionality
 import API from '../../api.js';
 import { renderProducts } from '../utility/shared.js';
+import { updateElement } from '../utility/reconfig.js';
+
+const userData = JSON.parse(localStorage.getItem('userData'));
 
 export async function initProfileTab() {
-
-  await loadProfileFavourites();
+  await setupEventListeners();
   
-  // Setup kebab menu interactions
-  setupKebabMenu();
+  await setupProfileUi(userData);
+  
+  await loadProfileFavourites();
+}
+
+async function setupEventListeners() {
+  const editAvatarInput = document.getElementById("edit-avatar-input");
+  const editAvatarBtn = document.getElementById('edit-avatar-btn');
+  if (editAvatarBtn && editAvatarInput) {
+    editAvatarBtn.addEventListener('click', () => {
+      editAvatarInput.click();
+    });
+  }
+  if (editAvatarInput) {
+    editAvatarInput.addEventListener('change', function(e) {
+      const file = this.files[0];
+      if (!file) return;
+    
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file (JPG, PNG, etc.)');
+        return;
+      }
+    
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image file must be less than 1MB');
+        return;
+      }
+    
+      uploadProfileImage(file);
+    });
+  }
+}
+
+function setupProfileUi(userData) {
+  updateElement('profile-display-name', userData.username);
+  updateElement('profile-display-email', userData.email);
+  updateElement(
+    'profile-role',
+    userData.role === 'seller' ? 'Seller' : 'Buyer'
+  );
+
+  updateElement('user-avatar-img', userData.avatar_url, 'src');
+  updateElement('profile-avatar-img', userData.avatar_url, 'src');
+
+  if (userData.role !== 'seller') {
+    updateBuyerStats(userData);
+  }
 }
 
 async function loadProfileFavourites() {
@@ -65,50 +112,35 @@ function formatPrice(price) {
   return new Intl.NumberFormat('en-NG').format(price);
 }
 
-function setupKebabMenu() {
-  const dropdown = document.getElementById('profile-dropdown');
-  if (!dropdown) return;
+function updateBuyerStats(userData) {
+  updateElement('orders-count', userData.ordersCount || 0);
+  updateElement('followings-count', userData.followingsCount || 0);
+  updateElement('favorites-count', userData.favoritesCount || 0);
+}
+
+async function uploadProfileImage(file) {
+  const UPLOAD_PRESET = 'seller_logo_unsigned';
   
-  // Setup individual button handlers
-  document.getElementById('edit-profile-btn')?.addEventListener('click', () => {
-    dropdown.style.display = 'none';
-    alert('Edit profile feature coming soon!');
-  });
+  const editAvatarBtn = document.getElementById('edit-avatar-btn');
+  const profileAvatarImage = document.getElementById('profile-avatar-img');
   
-  document.getElementById('account-settings-btn')?.addEventListener('click', () => {
-    dropdown.style.display = 'none';
-    alert('Account settings page coming soon!');
-  });
+  const formData = new FormData();
+  formData.append('file', file)
+  formData.append('upload_preset', UPLOAD_PRESET);
+  formData.append('folder', 'users/profile');
   
-  document.getElementById('help-support-btn')?.addEventListener('click', () => {
-    dropdown.style.display = 'none';
-    // In production: link to help page or open support modal
-    window.open('https://wa.me/1234567890', '_blank');
-  });
+  profileAvatarImage.src = 'https://i.gifer.com/ZZ5H.gif';     // loading state
   
-  document.getElementById('setup-seller-btn')?.addEventListener('click', () => {
-    dropdown.style.display = 'none';
+  try {
+    const resp = await API.uploadImage(formData);
+    const profileImageURL = resp.secure_url;
+    await API.updateProfile({avatar_url: profileImageURL});
     
-    if (confirm('Ready to start your seller journey? You\'ll be able to list products and grow your business.')) {
-      API.becomeSeller().then(response => {
-        alert('Welcome to the seller community!');
-        // Refresh page to show seller dashboard
-        window.location.reload();
-      }).catch(error => {
-        console.error('Failed to become seller:', error);
-        alert('Failed to setup seller account. Please try again.');
-      });
-    }
-  });
-  
-  document.getElementById('logout-btn')?.addEventListener('click', () => {
-    dropdown.style.display = 'none';
-    
-    if (confirm('Are you sure you want to log out?')) {
-      // Clear tokens and redirect
-      localStorage.removeItem('authToken');
-      sessionStorage.clear();
-      window.location.href = 'signup.html';
-    }
-  });
+    profileAvatarImage.src = profileImageURL;
+  } catch (err) {
+    alert('Logo upload failed. try again');
+    console.error(err);
+
+    profileAvatarImage.src = 'https://ui-avatars.com/api/?name=User&background=3483E0&color=fff';
+  }
 }
