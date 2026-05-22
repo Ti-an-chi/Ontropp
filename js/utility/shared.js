@@ -1,3 +1,5 @@
+import { showNotification } from './reconfig.js';
+
 export function renderProducts(products, containerId, type = 'product') {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -7,7 +9,7 @@ export function renderProducts(products, containerId, type = 'product') {
   // Configuration map for type-specific properties
   const config = {
     explore: {
-      tag: 'a',
+      tag: 'div',
       className: 'explore-product-card',
       imageClass: 'explore-product-image',
       detailsClass: 'explore-product-details',
@@ -97,7 +99,6 @@ export function renderProducts(products, containerId, type = 'product') {
   
   if (type === 'seller') setupSellerProductActions();
 }
-
 
 export async function setupSellerProductActions() {
   const container = document.getElementById('seller-products-grid');

@@ -1,3 +1,5 @@
+// ========== reconfig.js ==========
+
 export function updateElement(id, value, property = 'textContent') {
   const el = document.getElementById(id);
   if (!el || value === undefined || value === null) return;

@@ -1,7 +1,7 @@
 // profile.js - Profile tab functionality
 import API from '../../api.js';
 import { renderProducts } from '../utility/shared.js';
-import { updateElement } from '../utility/reconfig.js';
+import { updateElement, changeDisplay } from '../utility/reconfig.js';
 
 const userData = JSON.parse(localStorage.getItem('userData'));
 
