@@ -1,7 +1,7 @@
 import { ProductPagination } from '../utility/pagination.js';
 import {showNotification} from '../utility/reconfig.js';
 import API from '../../api.js';
-import { renderProducts } from '../utility/shared.js';
+import { ProductCardRenderer } from '../utility/product-card-render.js';
 import { StateManager } from '../utility/stateManager.js';
 
 let pagination;
@@ -29,13 +29,14 @@ async function loadPaginatedProducts() {
   const reqData = await pagination.initFromURL();
   
   try {
-    console.log('fetching products with:', reqData)
+    console.log('fetching products with:', reqData);
     const data = await API.getProductsPaginated(
       reqData.currentPage,
       reqData.limit,
       reqData.filters
     );
-    
+      console.log(data.products[3]);
+      
     pagination.paginationData = data.pagination;
 
     if (!data.products || data.products.length === 0) {
@@ -44,8 +45,8 @@ async function loadPaginatedProducts() {
     } else {
       container.clearState();
       container.dataState();
-      renderProducts(data.products, 'explore-product-grid', 'explore');
-      updateTotalProducts(data.pagination.totalProducts)
+      renderItems(data.products);
+      updateTotalProducts(data.pagination.totalProducts);
       pagination.updatePaginationUI();
     }
     
@@ -53,6 +54,15 @@ async function loadPaginatedProducts() {
     console.error('failed to load products:', err);
     showNotification('Failed to load products', 'error'); 
   }
+}
+
+function renderItems(products) {
+  const exploreRenderer = new ProductCardRenderer('explore-product-grid')
+      .withSeller(true)
+      .withPrice(true)
+      .withTitle(true);
+    
+  exploreRenderer.render(products);
 }
 
 function updateTotalProducts(count = 0) {
