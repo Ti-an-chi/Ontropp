@@ -37,16 +37,6 @@ async function loadProductData() {
   }
 }
 
-/*async function loadProductData() {
-  try {
-    productData = getFakeProduct();
-    renderProduct();
-  } catch (error) {
-    console.error(error);
-    showError('Failed to load product details');
-  }
-}*/
-
 function renderProduct() {
   // Hide loading, show content
     changeDisplay('loadingState', 'none');

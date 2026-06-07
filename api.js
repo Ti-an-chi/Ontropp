@@ -2,8 +2,9 @@ import { showNotification} from './js/utility/reconfig.js';
 
 /*========= API GATEWAY – api.js =========*/
 const API = {
-  basURL: 'http://localhost:5000/api',
-  baseURL: 'https://ontropp-backend.onrender.com/api',
+  basURL: 'http://localhost:8787',
+  basedURL: 'https://ontropp-backend.onrender.com/api',
+  baseURL: 'https://ontrop-api.dsub.workers.dev',
   
   // Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {
@@ -23,50 +24,63 @@ const API = {
   /*========= API GATEWAY =========*/
   
   /*---------- Core Fetch ----------*/
-  async _fetch(path, options = {}, _retry = false) {
-    const url = `${this.baseURL}${path.startsWith('/') ? path : `/${path}`}`;
+  
+  async _fetch(path, options = {}, retry = false) {
+    const url = `${this.baseURL}${path.startsWith('/') ? path : '/' + path}`;
+  
     const token = localStorage.getItem('ontrop_token');
-    
-    const defaults = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
-      }
+  
+    const headers = {
+      ...(options.body !== undefined && {
+        'Content-Type': 'application/json'
+      }),
+      ...(token && {
+        Authorization: `Bearer ${token}`
+      }),
+      ...(options.headers || {})
     };
-    
-    const resp = await fetch(url, { ...defaults, ...options });
-    const data = await resp.json();
-    
+  
+    const resp = await fetch(url, {
+      ...options,
+      headers
+    });
+  
+    let data = null;
+  
+    try {
+      const text = await resp.text();
+      data = text.trim() ? JSON.parse(text) : null;
+    } catch {
+      console.error('Response was not valid JSON');
+    }
+  
     if (!resp.ok) {
-      let msg = 'Request failed';
-      try {
-        msg = data.message || msg;
-      } catch {}
-      
-      if (resp.status === 401) {
-        if (data.code === 'TOKEN_EXPIRED' &&  !_retry) {
-          try {
-            await this.refresh();
-            return await this._fetch(path, options, true);
-          } catch {
-            this.clearTokens();
-            location.href = 'signup.html';
-            throw new Error('Session expired. Please login again.');
-          }
-        }
-        
-        if (data.code === 'AUTH_REQUIRED') {
-          showNotification('You need to continue', 'info', 'signup.html?mode=signin');
-          throw new error(msg);
+      const msg =
+        data?.message ||
+        data?.error ||
+        `HTTP ${resp.status}`;
+  
+      if (
+        resp.status === 401 &&
+        data?.code === 'TOKEN_EXPIRED' &&
+        !retry
+      ) {
+        try {
+          await this.refresh();
+          return this._fetch(path, options, true);
+        } catch {
+          this.clearTokens();
+          location.href = 'signup.html';
+          throw new Error('Session expired');
         }
       }
-      
-      showNotification(msg, 'error');
+  
       throw new Error(msg);
     }
-    
-    return await data;
+  
+    return data;
   },
+
   
   async refresh() {
     const refreshToken = localStorage.getItem('ontrop_refresh');
