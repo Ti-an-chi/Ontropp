@@ -118,10 +118,39 @@
   gap: 6px;
   background: var(--primary);
   color: var(--white);
+  transition: all 0.2s ease;
+}
+
+.follow-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.follow-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .follow-btn.following {
   background: var(--secondary);
+}
+
+.follow-btn.following:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.follow-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Action button variant with action-btn classes */
+.follow-btn.action-btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 /* Add Product Button */

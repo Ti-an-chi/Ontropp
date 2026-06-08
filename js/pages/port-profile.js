@@ -1,8 +1,8 @@
 import { 
   CONFIG, state, DataService, OrderHandler, FavoriteHandler, 
-  FollowHandler, StarRating, ShareController, Router 
+  StarRating, ShareController, Router 
 } from './portfolio.js';
-import { showNotification, updateElement, normalizePhoneNumber } from '../utility/reconfig.js';
+import { showNotification, updateElement, normalizePhoneNumber, FollowButtonManager } from '../utility/reconfig.js';
 import { formatPrice, formatNumber } from '../utility/shared.js';
 
 // ============ PRODUCT RENDERER ============
@@ -260,7 +260,9 @@ const PortfolioMode = {
     // Initialize follow button with API integration
     const followBtn = document.getElementById('followBtn');
     if (followBtn) {
-      FollowHandler.initButton(followBtn, state.sellerId, seller.isFollowing);
+      const seller = { id: state.sellerId, isFollowing: seller.isFollowing };
+      const newBtn = FollowButtonManager.createFollowButton(seller, null, 'action-btn follow');
+      followBtn.replaceWith(newBtn);
     }
   },
 

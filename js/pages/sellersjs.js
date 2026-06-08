@@ -1,11 +1,11 @@
 import API from '../../api.js';
-import { followSeller, viewSellerProfile } from '../utility/reconfig.js';
+import { viewSellerProfile, FollowButtonManager } from '../utility/reconfig.js';
 
 // Get category from URL
 const urlParams = new URLSearchParams(window.location.search);
 const categoryId = urlParams.get('category');
 
-// Category mapping
+// Category mapping 
 async function getCategories() {
   return await API.getCategories()/* || [
       { id: 'electronics', name: 'Electronics', icon: 'mobile-alt', description: 'Tech gadgets and devices' },
@@ -72,10 +72,9 @@ function renderSellers(sellers) {
   sellersGrid.innerHTML = '';
   
   sellers.forEach(seller => {
-    const sellerCard = document.createElement('div'); // Changed from <a> to <div>
+    const sellerCard = document.createElement('div');
     sellerCard.className = 'seller-card';
     sellerCard.dataset.sellerId = seller.id;
-    // Store ID in data attribute
     
     sellerCard.innerHTML = `
       <div class="seller-header">
@@ -114,13 +113,7 @@ function renderSellers(sellers) {
       </div>
       
       <div class="seller-actions">
-        <button class="follow-btn ${seller.isFollowing ? 'following' : ''}" 
-                  data-seller-id="${seller.id}" 
-                  ${seller.isFollowing ? 'disabled' : ''}>
-          <i class="fas ${seller.isFollowing ? 'fa-check' : 'fa-plus'}"></i>
-          ${seller.isFollowing ? 'Following' : 'Follow'}
-        </button>
-        
+        <div class="follow-btn-wrapper"></div>
         <a href="/portfolio.html?id=${seller.id}" class="view-btn">
           <i class="fas fa-eye"></i>
           View Shop
@@ -128,8 +121,15 @@ function renderSellers(sellers) {
       </div>
     `;
     
+    // Append card to grid
     sellersGrid.appendChild(sellerCard);
+    
+    // Create and append follow button using manager
+    const followWrapper = sellerCard.querySelector('.follow-btn-wrapper');
+    const followButton = FollowButtonManager.createFollowButton(seller);
+    followWrapper.appendChild(followButton);
   });
+  
   setupSellerCardListeners();
 }
 
@@ -144,20 +144,21 @@ function setupSellerCardListeners() {
     
     const sellerId = sellerCard.dataset.sellerId;
     
-    // Check if follow button was clicked
-    const followBtn = e.target.closest('.follow-btn');
-    if (followBtn) {
-      e.preventDefault();
-      handleFollowSeller(sellerId, followBtn);
-      return;
-    }
-    
-    // Check if view button was clicked (let the anchor tag handle navigation)
+    // Check if view button was clicked
     const viewBtn = e.target.closest('.view-btn');
     if (viewBtn) {
       // Anchor will handle navigation naturally
       return;
     }
+    
+    // Check if follow button was clicked
+    const followBtn = e.target.closest('.follow-btn');
+    if (followBtn) {
+      // Stop propagation so it doesn't trigger card click
+      return;
+    }
+    
+    // Card click - view seller profile
     viewSellerProfile(sellerId);
   });
 }

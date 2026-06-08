@@ -1,7 +1,7 @@
 // favourites.js - Favourites tab functionality
 import API from '../../api.js';
 import { formatPrice } from '../utility/shared.js';
-import {changeDisplay, viewSellerProfile, orderHandler} from '../utility/reconfig.js';
+import { changeDisplay, viewSellerProfile, orderHandler, FollowButtonManager } from '../utility/reconfig.js';
 
 export async function initFavouritesTab() {
   await loadFavouritesContent();
@@ -152,8 +152,7 @@ function renderFollowedSellers(sellers) {
   if (emptyEl) emptyEl.style.display = 'none';
   
   sellers.forEach(seller => {
-    const sellerCard = document.createElement('a');
-    sellerCard.href = '#';
+    const sellerCard = document.createElement('div');
     sellerCard.className = 'seller-card';
     sellerCard.dataset.sellerId = seller.id;
     sellerCard.innerHTML = `
@@ -171,10 +170,28 @@ function renderFollowedSellers(sellers) {
           </span>
         </div>
       </div>
-      <button class="unfollow-btn" data-seller-id="${seller.id}">
-        <i class="fas fa-user-minus"></i> Unfollow
-      </button>
+      <div class="follow-btn-wrapper"></div>
     `;
+    
+    // Create follow button with state inverted (isFollowing = true since they're in followed list)
+    const followWrapper = sellerCard.querySelector('.follow-btn-wrapper');
+    const followBtn = FollowButtonManager.createFollowButton(
+      { id: seller.id, isFollowing: true },
+      async (newState) => {
+        if (!newState) {
+          // User unfollowed, remove card from UI
+          sellerCard.remove();
+          const remaining = sellersList.querySelectorAll('.seller-card').length;
+          if (remaining === 0) {
+            emptyEl.style.display = 'flex';
+          }
+          if (countEl) {
+            countEl.textContent = `${remaining} ${remaining === 1 ? 'seller' : 'sellers'} followed`;
+          }
+        }
+      }
+    );
+    followWrapper.appendChild(followBtn);
     
     sellersList.appendChild(sellerCard);
   });
@@ -258,41 +275,22 @@ function setupFavouriteItemInteractions() {
 
 function setupFollowedItemInteractions() {
   const container = document.getElementById("sellers-list");
+  if (!container) return;
 
   container.addEventListener("click", async (e) => {
-    const button = e.target.closest(".unfollow-btn, .follow-btn");
     const card = e.target.closest(".seller-card");
     
     if (!card) return;
 
     const sellerId = card.dataset.sellerId;
     
-    if (button) {
-      e.preventDefault();
-      try {
-        button.disabled = true;
-      
-        if (button.classList.contains("unfollow-btn")) {
-          const res = await API.unfollowSeller(sellerId);
-      
-          if (res.success) {
-            switchToFollow(button);
-          }
-        } else {
-          const res = await API.followSeller(sellerId);
-          
-          if (res.success) {
-            switchToUnfollow(button);
-          }
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        button.disabled = false;
-      }
+    // Check if follow button was clicked - let the button handler deal with it
+    const followBtn = e.target.closest(".follow-btn");
+    if (followBtn) {
       return;
     }
-    e.preventDefault();
+    
+    // Card click - view seller profile
     viewSellerProfile(sellerId);
   });
 }

@@ -1,4 +1,4 @@
-import { showNotification, updateElement, normalizePhoneNumber } from '../utility/reconfig.js';
+import { showNotification, updateElement, normalizePhoneNumber, FollowButtonManager } from '../utility/reconfig.js';
 import {formatPrice,formatNumber} from '../utility/shared.js';
 import API from '../../api.js';
 
@@ -53,50 +53,7 @@ export const DataService = {
 };
 
 // ============ FOLLOW HANDLER ============
-export const FollowHandler = {
-  async toggle(button, sellerId) {
-    // Prevent duplicate clicks
-    if (state.pendingToggles.has(`follow-${sellerId}`)) return;
-    
-    const isFollowing = button.classList.contains('following');
-    const newState = !isFollowing;
-    
-    // Optimistic UI update
-    this.updateButton(button, newState);
-    state.pendingToggles.add(`follow-${sellerId}`);
-    
-    try {
-      if (newState) {
-        await API.followSeller(sellerId);
-        showNotification('You are now following this shop', 'success');
-      } else {
-        await API.unfollowSeller(sellerId);
-      }
-    } catch (error) {
-      // Revert on error
-      this.updateButton(button, isFollowing);
-      showNotification('Failed to update follow status', 'error');
-      console.error('Follow error:', error);
-    } finally {
-      state.pendingToggles.delete(`follow-${sellerId}`);
-    }
-  },
-
-  updateButton(button, isFollowing) {
-    if (isFollowing) {
-      button.innerHTML = '<i class="fas fa-user-check"></i> Following';
-      button.classList.add('following');
-    } else {
-      button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-      button.classList.remove('following');
-    }
-  },
-
-  initButton(button, sellerId, initialIsFollowing) {
-    this.updateButton(button, initialIsFollowing);
-    button.addEventListener('click', () => this.toggle(button, sellerId));
-  }
-};
+// Use FollowButtonManager from reconfig.js - it handles all follow/unfollow logic
 
 // ============ FAVORITE HANDLER ============
 export const FavoriteHandler = {

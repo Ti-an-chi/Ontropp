@@ -163,7 +163,8 @@
   gap: 8px;
 }
 
-.action-btn.follow {
+.action-btn.follow,
+.follow-btn.action-btn {
   background: rgba(52, 131, 224, 0.1);
   color: var(--primary);
   border: 1px solid rgba(52, 131, 224, 0.2);
@@ -171,11 +172,13 @@
   min-width: 100px;
 }
 
-.action-btn.follow:hover {
+.action-btn.follow:hover,
+.follow-btn.action-btn:hover:not(:disabled) {
   background: rgba(52, 131, 224, 0.2);
 }
 
-.action-btn.follow.following {
+.action-btn.follow.following,
+.follow-btn.action-btn.following {
   background: var(--success);
   color: var(--white);
   border-color: var(--success);
@@ -786,7 +789,8 @@ body.shop-mode {
   color: rgba(255,255,255,0.4);
 }
 
-.shop-follow-btn {
+.shop-follow-btn,
+.follow-btn {
   padding: 10px 20px;
   border-radius: 20px;
   border: 1px solid rgba(255,255,255,0.3);
@@ -802,13 +806,20 @@ body.shop-mode {
   white-space: nowrap;
 }
 
-.shop-follow-btn:hover {
+.shop-follow-btn:hover,
+.follow-btn:hover:not(:disabled) {
   background: rgba(255,255,255,0.1);
 }
 
-.shop-follow-btn.following {
+.shop-follow-btn.following,
+.follow-btn.following {
   background: #22c55e;
   border-color: #22c55e;
+}
+
+.follow-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Products Grid */
