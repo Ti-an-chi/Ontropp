@@ -29,13 +29,16 @@ const ProductRenderer = {
     card.href = `#`;
     card.className = 'portfolio-product-card';
     card.dataset.productId = product.id;
+    card.setAttribute('role', 'link');
+    card.setAttribute('aria-label', `Open product ${product.name}`);
+    card.tabIndex = 0;
     
     card.innerHTML = `
       <div class="product-image-portfolio">
         <img src="${product.cover_image}" alt="${product.name}" loading="lazy">
         <div class="product-overlay">
           <div class="quick-actions">
-            <button class="quick-action-btn" data-action="whatsapp" data-product-id="${product.id}" data-product-name="${product.name}">
+            <button class="quick-action-btn" data-action="whatsapp" data-product-id="${product.id}" data-product-name="${product.name}" aria-label="Order ${product.name} on WhatsApp">
               <i class="fab fa-whatsapp"></i> Order
             </button>
           </div>
@@ -218,6 +221,7 @@ const PortfolioMode = {
     try {
       const sellerResponse = await API.getSellerData(state.sellerId);
       state.sellerData = sellerResponse.seller;
+      console.log('Seller Data:', state.sellerData.location);
       
       this.updateHeroSection(state.sellerData);
       
@@ -240,7 +244,7 @@ const PortfolioMode = {
     updateElement('shopName', seller.shop_name);
     updateElement('shopTagline', seller.bio);
     updateElement('categoryTag', seller.category);
-    updateElement('locationTag', `Located in: ${seller.location || 'OAU'}`);
+    updateElement('locationTag', `Located in: ${seller.location || 'OAUC'}`);
     
     document.getElementById('followerCount').textContent = formatNumber(seller.followers?.[0]?.count ?? 0);
     document.getElementById('productCount').textContent = formatNumber(seller.products?.[0]?.count ?? 0);
@@ -260,9 +264,12 @@ const PortfolioMode = {
     // Initialize follow button with API integration
     const followBtn = document.getElementById('followBtn');
     if (followBtn) {
-      const seller = { id: state.sellerId, isFollowing: seller.isFollowing };
-      const newBtn = FollowButtonManager.createFollowButton(seller, null, 'action-btn follow');
-      followBtn.replaceWith(newBtn);
+      const followTarget = { id: state.sellerId, isFollowing: seller.isFollowing };
+      const newBtn = FollowButtonManager.createFollowButton(followTarget, (isFollowing) => {
+        if (!state.sellerData) state.sellerData = {};
+        state.sellerData.isFollowing = !!isFollowing;
+      }, 'action-btn follow');
+      if (newBtn && followBtn.parentNode) followBtn.replaceWith(newBtn);
     }
   },
 

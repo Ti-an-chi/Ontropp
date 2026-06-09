@@ -88,7 +88,7 @@ function renderSellers(sellers) {
           <div class="seller-name">${seller.shop_name}</div>
           <div class="seller-rating">
             <i class="fas fa-star"></i>
-            ${seller.rating || 5} (0 reviews)
+            ${seller.rating || 5.0} (0 reviews)
           </div>
         </div>
       </div>

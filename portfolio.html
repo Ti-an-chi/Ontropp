@@ -8,6 +8,33 @@
   <link rel="stylesheet" href="/css/components.css">
   <link rel="stylesheet" href="/css/pages/portfolio.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Compact responsive tweaks for portfolio page */
+    .products-grid-portfolio{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .portfolio-product-card{ display:block; text-decoration:none; color:inherit; }
+    .product-image-portfolio{ width:100%; height:auto; overflow:hidden; border-radius:8px; }
+    .product-image-portfolio img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .shop-avatar-large img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .hero-header-bg img{ width:100%; height:180px; object-fit:cover; display:block; }
+
+    .action-btn{ padding:10px 14px; border-radius:8px; }
+    @media (max-width:480px){
+      .hero-content-wrapper{ padding:14px; }
+      .hero-avatar-container{ margin-top:-48px; }
+      .product-image-portfolio{ height:140px; }
+      .portfolio-tabs{ padding:8px; }
+      .hero-actions{ display:flex; flex-direction:column; gap:8px; }
+      .action-btn{ width:100%; }
+    }
+
+    /* Visible focus for keyboard users */
+    .portfolio-product-card:focus{ outline:3px solid rgba(34,150,243,0.25); outline-offset:2px; }
+  </style>
 </head>
 <body>
 
@@ -76,13 +103,13 @@
         
         <!-- Action Buttons -->
         <div class="hero-actions">
-          <button class="action-btn follow" id="followBtn">
+          <button class="action-btn follow" id="followBtn" aria-label="Follow shop">
             <i class="fas fa-user-plus"></i> Follow
           </button>
-          <button class="action-btn whatsapp" id="contactBtn">
+          <button class="action-btn whatsapp" id="contactBtn" aria-label="Contact shop on WhatsApp">
             <i class="fab fa-whatsapp"></i> Contact on whatsapp
           </button>
-          <button class="action-btn share" id="shareBtn" title="Share">
+          <button class="action-btn share" id="shareBtn" title="Share" aria-label="Share shop">
             <i class="fas fa-share-alt"></i>
           </button>
         </div>

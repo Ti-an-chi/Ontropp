@@ -1,6 +1,5 @@
 import { 
-  CONFIG, state, DataService, OrderHandler, FavoriteHandler, 
-  FollowHandler, ShareController, Router 
+  CONFIG, state, DataService, OrderHandler, FavoriteHandler, ShareController, Router 
 } from './portfolio.js';
 import { showNotification, updateElement, normalizePhoneNumber } from '../utility/reconfig.js';
 import { formatPrice, formatNumber } from '../utility/shared.js';
