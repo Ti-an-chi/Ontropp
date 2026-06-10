@@ -182,15 +182,16 @@ otpInputs.forEach((input, i) => {
 
 /* ----------  Submit Handler  ---------- */
 signupForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    
-    const email = $('email').value.trim();
-    const pass = $('password').value;
-    
-    setLoadingState(true);
-    hideMessage();
+  e.preventDefault();
+  if (!validateForm()) return;
+  
+  const email = $('email').value.trim();
+  const pass = $('password').value;
+  
+  setLoadingState(true);
+  hideMessage();
 
+<<<<<<< HEAD
     try {
         if (mode === 'signup') {
             // Step 1: Request OTP
@@ -221,7 +222,43 @@ signupForm.addEventListener('submit', async e => {
         showMessage(err.message);
     } finally {
         setLoadingState(false);
+=======
+  try {
+    if (mode === 'signup') {
+      // Step 1: Request OTP
+      const response = await window.API.createTestAccount(
+        email,
+        pass,
+        $('username').value.trim(),
+      )
+      
+      //pendingEmail = email;
+      //localStorage.setItem('pendingSignupEmail', email);
+      showMessage('Account created successfully! redirecting...');
+      const loginResponse = await window.API.login(email, pass);
+      sessionStorage.setItem(
+        'bootstrap',
+        JSON.stringify(loginResponse.bootstrap)
+      );
+      location.href = 'dashboard.html';
+    
+    } else if (mode === 'signin') {
+      // Direct login
+      const response = await window.API.dashLogin(email, pass);
+      if (!response.success) throw new Error(response.message || 'Login failed');
+      
+      sessionStorage.setItem(
+        'bootstrap',
+        JSON.stringify(response.bootstrap)
+      );
+      location.href = 'dashboard.html';
+>>>>>>> 996e330 (fixed number of requests for login)
     }
+  } catch (err) {
+    showMessage(err.message);
+  } finally {
+    setLoadingState(false);
+  }
 });
 
 /* ----------  OTP Verification  ---------- */
@@ -247,7 +284,7 @@ verifyBtn.addEventListener('click', async () => {
         const response = await window.API.verifyOtp(pendingEmail, code);
         if (!response.success) throw new Error(response.message || 'Invalid code');
         
-        // Success! Store tokens and redirect
+        // Redirect
         window.API.setTokens(response);
         UserSession.setCurrentUser(response.user);
         localStorage.removeItem('pendingSignupEmail');
@@ -301,9 +338,20 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
     try {
         const token = localStorage.getItem('ontrop_token');
         if (token) {
+<<<<<<< HEAD
             // Verify token is still valid
             const { data } = await window.API.tokenPing();
             if (data?.success) location.href = 'dashboard.html';
+=======
+          // Verify token is still valid
+          // const data = await window.API.tokenPing();
+          console.log(data);
+          if (data?.success) {
+            location.href = 'dashboard.html';
+          } else {
+            console.log("suppose to login straight")
+          }
+>>>>>>> 996e330 (fixed number of requests for login)
         }
     } catch {
         // Token invalid, clear it

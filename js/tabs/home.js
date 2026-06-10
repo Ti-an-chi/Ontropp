@@ -4,33 +4,59 @@ import { renderProducts } from '../utility/shared.js';
 import { updateElement, changeDisplay } from '../utility/reconfig.js';
 
 let seller = null;
+let userData = null;
 
-export async function initHomeTab(user) {
-  await updateUserUI(user);
-  await loadCategories(user);
+export async function initHomeTab() {
+  window.bootstrap = await JSON.parse(sessionStorage.getItem('bootstrap')) || await loadUserData();
+  
+  sessionStorage.removeItem('bootstrap');
+  
+  userData = window.bootstrap?.userData;
+  
+  await updateUserUI();
+  await loadDashItems();
 }
 
-function updateUserUI(userData) {
+async function updateUserUI() {
   updateElement('user-name', userData.username);
   updateElement('user-email', userData.email);
   updateElement('user-avatar-img', userData.avatar_url, 'src');
 
   if (userData.role !== 'seller') {
-    updateBuyerStats(userData);
+    updateBuyerStats();
   } else {
-    updateSellerDashboard(userData);
+    updateSellerDashboard();
   }
 }
 
-export async function loadCategories(user) {
+async function loadUserData() {
+  try {
+    window.bootstrap = await API.getUserDash();
+    
+    console.log(window.bootstrap.userData);
+    
+    return window.bootstrap;
+  } catch (error) {
+    console.error(`Failed to load user data:  ${error}`);
+    // Default user data as fallback
+    return { userData: {
+      username: 'User',
+      email: 'user@example.com',
+      isSeller: false,
+      role: 'buyer'
+    }};
+  }
+}
+
+export async function loadDashItems() {
   try {
     // Load categories
-    const categories = await API.getCategories();
+    const categories = window.bootstrap.categories || await API.getCategories();
     renderCategories(categories);
     
     // Load recommended products
-    const products = await API.getRecommendedProducts(1, 8);
-    renderProducts(products, 'recommended-list', 'recommended');
+    const products = window.bootstrap.recommended || await API.getRecommendedProducts(1, 8);
+    renderProducts(products.data, 'recommended-list', 'recommended');
     
     // Update empty state
     const emptyRecEl = document.getElementById('empty-recommendations');
@@ -44,13 +70,13 @@ export async function loadCategories(user) {
   }
 }
 
-function updateBuyerStats(userData) {
+function updateBuyerStats() {
   updateElement('orders-count', userData.ordersCount || 0);
   updateElement('followings-count', userData.followingsCount || 0);
   updateElement('favorites-count', userData.favoritesCount || 0);
 }
 
-async function updateSellerDashboard(userData) {
+async function updateSellerDashboard() {
   updateElement('seller-profole-views', userData.profileViews || 0);
   
   updateElement('total-orders', userData.sellerOrders || 0);

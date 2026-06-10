@@ -2,6 +2,8 @@ import { showNotification} from './js/utility/reconfig.js';
 
 /*========= API GATEWAY – api.js =========*/
 const API = {
+  requestCount: 0,
+  
   basURL: 'http://localhost:8787',
   basedURL: 'https://ontropp-backend.onrender.com/api',
   baseURL: 'https://ontrop-api.dsub.workers.dev',
@@ -26,6 +28,12 @@ const API = {
   /*---------- Core Fetch ----------*/
   
   async _fetch(path, options = {}, retry = false) {
+    this.requestCount ++
+    
+    console.log(`[API REQUEST #${this.requestCount}]`,
+      options.method || 'GET',
+      path
+    )
     const url = `${this.baseURL}${path.startsWith('/') ? path : '/' + path}`;
   
     const token = localStorage.getItem('ontrop_token');
@@ -80,7 +88,6 @@ const API = {
   
     return data;
   },
-
   
   async refresh() {
     const refreshToken = localStorage.getItem('ontrop_refresh');
@@ -149,6 +156,18 @@ const API = {
     }
     return response;
   },
+
+  async dashLogin(email, password) {
+    const response = await this._fetch('/login/dashboard', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+    if (response.success) {
+      const {bootstrap, ...tokens} = response;
+      this.setTokens(tokens);
+    }
+    return response;
+  },
   
   async logout() {
     await this._fetch('/auth/logout', { method: 'POST' });
@@ -162,6 +181,11 @@ const API = {
   async getUserData() {
     const response = await this._fetch('/user/dashboard');
     return response.data;
+  },
+  
+  async getUserDash() {
+    const resp = await this._fetch('/user/dash');
+    return resp.bootstrap;
   },
   
   async updateProfile(updates) {
@@ -228,12 +252,14 @@ const API = {
   async getRecommendedProducts(page = 1, limit = 8) {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     const response = await this._fetch(`/products/recommended?${params}`);
-    return response.data;
+    return response;
   },
   
   async getFavourites(page = 1, limit = 20, search = '') {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), search });
-    const resp = await this._fetch(`/user/favorites?${params}`);
+    const resp = window.fav || await this._fetch(`/user/favorites?${params}`);
+    
+    window.fav = resp.data
     return resp.data;
   },
   

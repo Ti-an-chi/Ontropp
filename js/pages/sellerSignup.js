@@ -11,7 +11,7 @@ let sellerLogoUrl = null;
 
 function autoFillUserData() {
   try {
-    const userData = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     
     if (userData.username) {
       const shopNameInput = document.getElementById('shopName');

@@ -7,7 +7,6 @@ import { initProfileTab } from './js/tabs/profile.js';
 import { updateElement, changeDisplay } from './js/utility/reconfig.js';
 
 // Global state
-let currentUser = null;
 let searchTimeout = null;
 let currentTab;
 
@@ -18,36 +17,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function initDashboard() {
   try {
-    setupGlobalEventListeners();
-    
     setupTabNavigation();
-    
-    await loadUserData();
     const initialTab = getInitialTab();
     switchToTab(initialTab);
     
+    setupGlobalEventListeners();
   } catch (error) {
     console.error('Failed to initialize dashboard:', error);
     showErrorMessage('Failed to load dashboard. Please refresh the page.');
-  }
-}
-
-// User Data Management
-async function loadUserData() {
-  try {
-    const userData = currentUser || await API.getUserData();
-    currentUser = userData;
-    localStorage.setItem('userData', JSON.stringify(userData));
-    
-  } catch (error) {
-    console.error(`Failed to load user data:  ${error}`);
-    // Default user data as fallback
-    currentUser = {
-      username: 'User',
-      email: 'user@example.com',
-      isSeller: false,
-      role: 'buyer'
-    };
   }
 }
 
@@ -116,7 +93,7 @@ async function loadTabContent(tabId) {
   try {
     switch(tabId) {
       case 'tab-home':
-        await initHomeTab(currentUser);
+        await initHomeTab();
         break;
       case 'tab-explore':
         await initExploreTab();

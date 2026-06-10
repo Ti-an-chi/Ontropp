@@ -3,14 +3,33 @@ import API from '../../api.js';
 import { renderProducts } from '../utility/shared.js';
 import { updateElement, changeDisplay } from '../utility/reconfig.js';
 
-const userData = JSON.parse(localStorage.getItem('userData'));
+let userData = null;
 
 export async function initProfileTab() {
-  await setupEventListeners();
+  userData = window.bootstrap.userData || await loadUserData();
   
-  await setupProfileUi(userData);
+  await setupEventListeners();
+  await setupProfileUi();
   
   await loadProfileFavourites();
+}
+
+async function loadUserData() {
+  try {
+    const resp = await API.getUserDash();
+    window.bootstrap = resp;
+    
+    return window.bootstrap;
+  } catch (error) {
+    console.error(`Failed to load user data:  ${error}`);
+    // Default user data as fallback
+    return { userData: {
+      username: 'User',
+      email: 'user@example.com',
+      isSeller: false,
+      role: 'buyer'
+    }};
+  }
 }
 
 async function setupEventListeners() {
@@ -41,7 +60,7 @@ async function setupEventListeners() {
   }
 }
 
-function setupProfileUi(userData) {
+function setupProfileUi() {
   updateElement('profile-display-name', userData.username);
   updateElement('profile-display-email', userData.email);
   updateElement(
@@ -67,7 +86,6 @@ function setupProfileUi(userData) {
 async function loadProfileFavourites() {
   try {
     const favourites = await API.getFavourites();
-    console.log(favourites)
     renderProfileFavourites(favourites.slice(0, 4)); // Show only 4
   } catch (error) {
     console.error('Failed to load profile favourites:', error);
