@@ -191,38 +191,6 @@ signupForm.addEventListener('submit', async e => {
   setLoadingState(true);
   hideMessage();
 
-<<<<<<< HEAD
-    try {
-        if (mode === 'signup') {
-            // Step 1: Request OTP
-            const response = await window.API.createTestAccount(
-                email,
-                pass,
-                $('username').value.trim(),
-            );
-            
-            //pendingEmail = email;
-            //localStorage.setItem('pendingSignupEmail', email);
-            showMessage('Account created successfully! redirecting...');
-            const loginResponse = await window.API.login(email, pass);
-            window.API.setTokens(loginResponse);
-            location.href = 'dashboard.html';
-            // Account created! Check your email for the code.', 'success
-            // openVerifyUI(email);
-            
-        } else if (mode === 'signin') {
-            // Direct login
-            const response = await window.API.login(email, pass);
-            if (!response.success) throw new Error(response.message || 'Login failed');
-            
-            window.API.setTokens(response);
-            location.href = 'dashboard.html';
-        }
-    } catch (err) {
-        showMessage(err.message);
-    } finally {
-        setLoadingState(false);
-=======
   try {
     if (mode === 'signup') {
       // Step 1: Request OTP
@@ -252,7 +220,6 @@ signupForm.addEventListener('submit', async e => {
         JSON.stringify(response.bootstrap)
       );
       location.href = 'dashboard.html';
->>>>>>> 996e330 (fixed number of requests for login)
     }
   } catch (err) {
     showMessage(err.message);
@@ -334,30 +301,23 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
 });
 
 /* ----------  Session Check on Load  ---------- */
-/*(async () => {
+(async () => {
     try {
         const token = localStorage.getItem('ontrop_token');
         if (token) {
-<<<<<<< HEAD
-            // Verify token is still valid
-            const { data } = await window.API.tokenPing();
-            if (data?.success) location.href = 'dashboard.html';
-=======
           // Verify token is still valid
-          // const data = await window.API.tokenPing();
-          console.log(data);
+          const data = await window.API.tokenPing();
           if (data?.success) {
             location.href = 'dashboard.html';
           } else {
             console.log("suppose to login straight")
           }
->>>>>>> 996e330 (fixed number of requests for login)
         }
     } catch {
         // Token invalid, clear it
         window.API.clearTokens();
     }
-})();*/
+})();
 
 /*========= Session Helper =========*/
 window.UserSession = {
