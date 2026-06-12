@@ -33,7 +33,6 @@ async function loadUserData() {
   try {
     window.bootstrap = await API.getUserDash();
     
-    console.log(window.bootstrap.userData);
     
     return window.bootstrap;
   } catch (error) {

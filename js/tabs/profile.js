@@ -6,7 +6,12 @@ import { updateElement, changeDisplay } from '../utility/reconfig.js';
 let userData = null;
 
 export async function initProfileTab() {
-  userData = window.bootstrap.userData || await loadUserData();
+  console.log('Initializing profile tab...');
+  if (!window.bootstrap || !window.bootstrap.userData) {
+    console.log('No bootstrap data found, loading user data...');
+    window.bootstrap = await loadUserData();
+  }
+  userData = window.bootstrap.userData
   
   await setupEventListeners();
   await setupProfileUi();
@@ -16,10 +21,12 @@ export async function initProfileTab() {
 
 async function loadUserData() {
   try {
+    console.log('Loading user data for profile tab...');
     const resp = await API.getUserDash();
-    window.bootstrap = resp;
+    console.log(resp);
+    // window.bootstrap = resp;
     
-    return window.bootstrap;
+    return resp;
   } catch (error) {
     console.error(`Failed to load user data:  ${error}`);
     // Default user data as fallback
