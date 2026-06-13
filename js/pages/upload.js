@@ -311,7 +311,7 @@ async function setupFormSubmission() {
   
   if (!form || !submitBtn) return;
   
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const completedImages = productImageUrls
