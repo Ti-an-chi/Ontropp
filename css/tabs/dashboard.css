@@ -269,6 +269,110 @@
   margin-top: 24px;
 }
 
+/* Seller board header (logo, shop name, rating) */
+.seller-board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.seller-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.seller-avatar-large {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seller-avatar-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.seller-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.seller-shop-name {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.seller-rating {
+  font-size: 14px;
+  color: var(--secondary);
+  margin-top: 4px;
+}
+
+/* Keep seller action buttons compact */
+.seller-actions-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Pagination controls styling */
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pagination-btn {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.pagination-btn.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.pagination span {
+  font-weight: 600;
+  color: var(--hash);
+}
+
+/* Responsive layout: stack header on narrow screens */
+@media (max-width: 767px) {
+  .seller-board-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .seller-actions-group {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
 /* Responsive */
 @media (min-width: 768px) {
   .banner-title {

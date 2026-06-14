@@ -14,6 +14,7 @@ export async function initExploreTab() {
     container._injectDefaultStylesheet();
 
     pagination = new ProductPagination('explore-product-grid');
+    pagination.setPageChangeHandler(loadPaginatedProducts);
     loadPaginatedProducts();
     
     setupExploreInteractions();

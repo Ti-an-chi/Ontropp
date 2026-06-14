@@ -218,7 +218,13 @@ const API = {
   
   async getMyProducts(page = 1, limit = 20, search = '') {
     const params = new URLSearchParams({ page, limit, search });
-    return this._fetch(`/seller/products?${params}`);
+    const sellerId = localStorage.getItem('ontrop_sellerid');
+
+    if (!sellerId) {
+      showNotification('You are not registered as a seller.', 'error');
+      return { data: [], total: 0 };
+    }
+    return this._fetch(`/seller/products${sellerId}?${params}`);
   },
   
   async getSellerProducts(sellerId = undefined, page = 1, limit = 20) {

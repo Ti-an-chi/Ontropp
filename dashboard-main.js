@@ -124,6 +124,9 @@ function setupGlobalEventListeners() {
   const dropdown = document.getElementById('profile-dropdown');
   const setupSellerBtn = document.getElementById('setup-seller-btn');
   const addProductButton = document.getElementById('add-product-btn');
+  const profileAddProductButton = document.getElementById('profile-add-product-btn');
+  const manageProductsButton = document.getElementById('manage-products-btn');
+  const manageProductsProfileButton = document.getElementById('manage-products-profile-btn');
   const logoutBtn = document.getElementById('logout-btn');
   
   if (kebabBtn && dropdown) {
@@ -155,6 +158,27 @@ function setupGlobalEventListeners() {
     addProductButton.addEventListener('click', function(e) {
       e.stopPropagation();
       location.href = 'upload.html';
+    });
+  }
+
+  if (profileAddProductButton) {
+    profileAddProductButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      location.href = 'upload.html';
+    });
+  }
+
+  if (manageProductsButton) {
+    manageProductsButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      location.href = 'seller-products.html';
+    });
+  }
+
+  if (manageProductsProfileButton) {
+    manageProductsProfileButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      location.href = 'seller-products.html';
     });
   }
   

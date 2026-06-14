@@ -160,14 +160,28 @@
       </section>
       <!-- —————— Seller Board —————— -->
       <section class="seller-board" id="seller-board" style="display: none;">
-        <div class="section-header">
-          <h2 class="section-title">Seller Dashboard</h2>
-          <button class="add-product-btn" id="add-product-btn">
-            <i class="fas fa-plus"></i>
-            Add Product
-          </button>
+        <div class="section-header seller-board-header">
+          <div class="seller-header">
+            <div class="seller-avatar-large">
+              <img src="" alt="Shop logo" id="seller-logo" onerror="this.src='https://ui-avatars.com/api/?name=Shop&amp;background=ddd&amp;color=333'">
+            </div>
+            <div class="seller-meta">
+              <h2 class="seller-shop-name" id="seller-shop-name">Seller Shop</h2>
+              <div class="seller-rating" id="seller-rating">&starf; 0.0</div>
+            </div>
+          </div>
+          <div class="seller-actions-group">
+            <button class="add-product-btn" id="add-product-btn">
+              <i class="fas fa-plus"></i>
+              Add Product
+            </button>
+            <!-- <button class="add-product-btn" id="manage-products-btn">
+              <i class="fas fa-list"></i>
+              Manage Products
+            </button> -->
+          </div>
         </div>
-        
+
         <!-- Seller Stats -->
         <div class="seller-stats">
           <div class="stat-card">
@@ -175,18 +189,18 @@
               <i class="fas fa-eye"></i>
             </div>
             <div class="stat-details">
-              <h3 class="stat-title">followers</h3>
-              <p class="stat-value" id="followers">0</p>
+              <h3 class="stat-title">Profile views</h3>
+              <p class="stat-value" id="profile-views">0</p>
             </div>
           </div>
           
           <div class="stat-card">
             <div class="stat-icon">
-              <i class="fas fa-shopping-bag"></i>
+              <i class="fas fa-user-friends"></i>
             </div>
             <div class="stat-details">
-              <h3 class="stat-title">Orders</h3>
-              <p class="stat-value" id="total-orders">0</p>
+              <h3 class="stat-title">Followers</h3>
+              <p class="stat-value" id="followers">0</p>
             </div>
           </div>
         </div>
@@ -195,12 +209,13 @@
         <div class="seller-products-section">
           <div class="section-header">
             <h3 class="section-subtitle">Your Products</h3>
+            <div id="pagination-controls" class="pagination-controls"></div>
           </div>
           <div class="products-grid" id="seller-products-grid">
-          <div class="loading-seller-products">
-            <div class="loading-spinner"></div>
-            <p>Loading your products...</p>
-          </div>
+            <div class="loading-seller-products" id="loading-seller-products" style="display: none;">
+              <div class="loading-spinner"></div>
+              <p>Loading your products...</p>
+            </div>
           </div>
         </div>
       </section>
@@ -546,9 +561,14 @@
       <section class="profile-seller-dashboard" id="profile-seller-dashboard" style="display: none;">
         <div class="section-header">
           <h2 class="section-title">Seller Dashboard</h2>
-          <button class="add-product-btn">
-            <i class="fas fa-plus"></i> Add Product
-          </button>
+          <div class="seller-actions-group">
+            <button class="add-product-btn" id="profile-add-product-btn">
+              <i class="fas fa-plus"></i> Add Product
+            </button>
+            <button class="add-product-btn" id="manage-products-profile-btn">
+              <i class="fas fa-list"></i> Manage Products
+            </button>
+          </div>
         </div>
     
         <div class="seller-quick-stats">
@@ -578,7 +598,7 @@
         <div class="profile-products-section">
           <div class="section-header">
             <h3 class="section-subtitle">Your Products</h3>
-            <a href="#" class="see-all">View All</a>
+            <a href="seller-products.html" class="see-all">View All</a>
           </div>
           <div class="products-grid" id="profile-seller-products">
           </div>

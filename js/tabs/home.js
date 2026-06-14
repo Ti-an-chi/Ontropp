@@ -2,9 +2,11 @@
 import API from '../../api.js';
 import { renderProducts } from '../utility/shared.js';
 import { updateElement, changeDisplay } from '../utility/reconfig.js';
+import { ProductPagination } from '../utility/pagination.js';
 
 let seller = null;
 let userData = null;
+let sellerPagination = null;
 
 export async function initHomeTab() {
   window.bootstrap = await JSON.parse(sessionStorage.getItem('bootstrap')) || await loadUserData();
@@ -12,6 +14,7 @@ export async function initHomeTab() {
   sessionStorage.removeItem('bootstrap');
   
   userData = window.bootstrap?.userData;
+  console.log('User data loaded:', userData);
   
   await updateUserUI();
   await loadDashItems();
@@ -32,7 +35,6 @@ async function updateUserUI() {
 async function loadUserData() {
   try {
     window.bootstrap = await API.getUserDash();
-    
     
     return window.bootstrap;
   } catch (error) {
@@ -76,21 +78,92 @@ function updateBuyerStats() {
 }
 
 async function updateSellerDashboard() {
-  updateElement('seller-profole-views', userData.profileViews || 0);
-  
-  updateElement('total-orders', userData.sellerOrders || 0);
-  
-  // update seller info
-  changeDisplay('seller-board', 'block');
+  if (!userData || !userData.sellerProfile) {
+    console.error('User data or seller profile missing');
+    return;
+  }
+  try {
     seller = userData.sellerProfile;
-    if (userData?.role === 'seller') {
-      const resp = await API.getSellerProducts(seller.id, 1, 8);
-      const sellerProducts = resp.products || [];
-      // console.warn(sellerProducts);
-      renderProducts(sellerProducts, 'seller-products-grid', 'seller');
+    console.log('Seller profile:', seller);
+
+    updateElement('seller-profile-views', seller.profile_views || 0);
+    updateElement('followers', seller.follows[0]?.count || 0);
+      
+    updateElement('profile-views', seller.profile_views || 0);
+      
+    // update seller info
+    changeDisplay('seller-board', 'block');
+
+    // header info (logo, shop name, rating)
+    const logoEl = document.getElementById('seller-logo');
+    const nameEl = document.getElementById('seller-shop-name');
+    const ratingEl = document.getElementById('seller-rating');
+    if (logoEl) logoEl.src = seller.logo_url || '';
+    if (nameEl) nameEl.textContent = seller.shop_name || 'Your Shop';
+    if (ratingEl) ratingEl.textContent = `★ ${seller.rating || 0}`;
+
+    // setup pagination for seller products
+    if (!sellerPagination) {
+      sellerPagination = new ProductPagination('seller-products-grid');
+      sellerPagination.limit = 8;
+      sellerPagination.setPageChangeHandler(async () => {
+        await loadSellerProductsSellerBoard();
+      });
     }
-  // Hide become seller button
-  changeDisplay('become-seller-btn', 'none');
+
+    await loadSellerProductsSellerBoard();
+    // Hide become seller button
+    changeDisplay('setup-seller-btn', 'none');
+  } catch (error) {
+    console.error('Error updating seller dashboard:', error);
+  }
+}
+
+async function loadSellerProductsSellerBoard(force = false) {
+  const loadingEl = document.getElementById('loading-seller-products');
+  if (loadingEl) loadingEl.style.display = 'flex';
+
+  try {
+    if (!sellerPagination.paginationData || force) {
+      await sellerPagination.initFromURL();
+    }
+
+    const request = {
+      page: sellerPagination.currentPage,
+      limit: sellerPagination.limit,
+      search: sellerPagination.filters.search || ''
+    };
+
+    const resp = await API.getSellerProducts(seller.id, request.page, request.limit);
+    const products = normalizeResponseProducts(resp);
+    const paginationInfo = resp.pagination || resp.data?.pagination || getPaginationFallback(request.page, products);
+
+    sellerPagination.paginationData = paginationInfo;
+    renderProducts(products, 'seller-products-grid', 'seller');
+    sellerPagination.updatePaginationUI();
+  } catch (error) {
+    console.error('Failed to load seller products:', error);
+  } finally {
+    if (loadingEl) loadingEl.style.display = 'none';
+  }
+}
+
+function normalizeResponseProducts(response) {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response.products)) return response.products;
+  if (Array.isArray(response.data)) return response.data;
+  if (Array.isArray(response.data?.products)) return response.data.products;
+  return [];
+}
+
+function getPaginationFallback(currentPage, products) {
+  return {
+    currentPage,
+    hasNextPage: products.length === sellerPagination.limit,
+    hasPrevPage: currentPage > 1,
+    totalProducts: products.length
+  };
 }
 
 function renderCategories(categories) {

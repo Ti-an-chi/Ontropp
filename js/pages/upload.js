@@ -1,7 +1,7 @@
 import API from '../../api.js';
 import {showNotification, updateElement} from '../utility/reconfig.js';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   setupRoute();
   setupImageUpload();
   setupSpecifications();

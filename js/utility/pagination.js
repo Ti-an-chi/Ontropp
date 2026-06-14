@@ -10,6 +10,7 @@ export class ProductPagination {
     this.currentPage = 1;
     this.limit = 20;
     this.isLoading = false;
+    this.onPageChange = null;
 
     // SINGLE source of truth for filters
     this.filters = {
@@ -20,6 +21,11 @@ export class ProductPagination {
     };
 
     this.paginationData = null;
+  }
+
+  setPageChangeHandler(handler) {
+    this.onPageChange = handler;
+    return this;
   }
 
   /* ================= CORE ================= */
@@ -72,18 +78,30 @@ export class ProductPagination {
 
   async nextPage() {
     if (this.paginationData?.pagination.hasNextPage) {
-      return await this.buildPage(this.currentPage + 1);
+      const request = await this.buildPage(this.currentPage + 1);
+      if (typeof this.onPageChange === 'function') {
+        await this.onPageChange(request);
+      }
+      return request;
     }
   }
 
   async prevPage() {
     if (this.paginationData?.pagination.hasPrevPage) {
-      return await this.buildPage(this.currentPage - 1);
+      const request = await this.buildPage(this.currentPage - 1);
+      if (typeof this.onPageChange === 'function') {
+        await this.onPageChange(request);
+      }
+      return request;
     }
   }
 
   async goToPage(page) {
-    return await this.buildPage(page);
+    const request = await this.buildPage(page);
+    if (typeof this.onPageChange === 'function') {
+      await this.onPageChange(request);
+    }
+    return request;
   }
 
   
