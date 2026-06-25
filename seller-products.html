@@ -1,4 +1,4 @@
-statu<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,6 +10,58 @@ statu<!DOCTYPE html>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+  <!-- Seller Authentication Modal -->
+  <div class="seller-auth-overlay" id="seller-auth-overlay">
+    <div class="seller-auth-modal">
+      <div class="auth-modal-header">
+        <div class="auth-logo">ONTROPP.</div>
+      </div>
+      <form class="auth-modal-form" id="seller-auth-form">
+        <h2>Seller Dashboard</h2>
+        <p class="auth-subtitle">Sign in to manage your products</p>
+        
+        <div class="auth-form-group">
+          <label for="shop-name">Shop Name</label>
+          <input 
+            type="text" 
+            id="shop-name" 
+            name="shop-name" 
+            placeholder="Your shop name" 
+            required
+            autocomplete="off"
+          >
+        </div>
+        
+        <div class="auth-form-group">
+          <label for="seller-passkey">Seller Passkey</label>
+          <input 
+            type="password" 
+            id="seller-passkey" 
+            name="seller-passkey" 
+            placeholder="Enter your passkey (optional for older sellers)" 
+            autocomplete="off"
+          >
+          <p class="form-help" style="font-size:0.9rem; color: var(--admin-muted); margin-top: 6px;">If your shop was created before passkey setup, leave this blank.</p>
+        </div>
+
+        <div class="auth-error" id="auth-error" style="display: none;"></div>
+        
+        <button type="submit" class="auth-submit-btn" id="auth-submit-btn">
+          Access Dashboard
+        </button>
+        
+        <div class="auth-action-row">
+          <p class="auth-footer-text">
+            Don't have a shop? <a href="sellerSignup.html">Register as seller</a>
+          </p>
+          <button type="button" class="auth-secondary-btn" id="set-passkey-btn">
+            Set passkey
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <header class="dashboard-header">
     <div class="header-container">
       <a href="dashboard.html" class="icon-btn" aria-label="Back to dashboard">

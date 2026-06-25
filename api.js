@@ -383,12 +383,65 @@ const API = {
 
   /* ---------------- UTILITY ---------------- */
   async startSelling(userInfo) {
-    return await this._fetch('/upgrade', {
+    const response = await this._fetch('/upgrade', {
       method: 'POST',
       body: JSON.stringify(userInfo)
     });
+
+    if (response?.success) {
+      await this.storeSellerAccount(userInfo);
+    }
+
+    return response;
   },
-  
+
+  _getSellerStore() {
+    if (typeof localStorage === 'undefined') return {};
+    return JSON.parse(localStorage.getItem('ontrop_seller_accounts') || '{}');
+  },
+
+  _saveSellerStore(store) {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem('ontrop_seller_accounts', JSON.stringify(store));
+  },
+
+  async getSellerAccount(shopName) {
+    if (!shopName) return null;
+    const store = this._getSellerStore();
+    return store[shopName.trim().toLowerCase()] || null;
+  },
+
+  async storeSellerAccount(account) {
+    if (!account || !account.shopName) return null;
+    const id = account.shopName.trim().toLowerCase();
+    const store = this._getSellerStore();
+    const existing = store[id] || {};
+    store[id] = {
+      ...existing,
+      ...account,
+      shopName: account.shopName.trim(),
+      updatedAt: Date.now()
+    };
+    this._saveSellerStore(store);
+    return store[id];
+  },
+
+  async setSellerPasskey({ shopName, passkey }) {
+    if (!shopName || !passkey) {
+      throw new Error('Shop name and passkey are required');
+    }
+    const account = await this.getSellerAccount(shopName) || { shopName };
+    account.passkey = passkey;
+    return this.storeSellerAccount(account);
+  },
+
+  async verifySellerPasskey(shopName, passkey) {
+    const account = await this.getSellerAccount(shopName);
+    if (!account) return false;
+    if (!account.passkey) return false;
+    return account.passkey === passkey;
+  },
+
   /*---------- LOAD DATA ----------*/
   // PING
   async ping() {

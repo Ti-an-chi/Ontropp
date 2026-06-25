@@ -43,6 +43,71 @@
   margin-bottom: 40px;
 }
 
+/* ===== Passkey Setup Modal ===== */
+.seller-passkey-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+.seller-passkey-modal {
+  width: 100%;
+  max-width: 500px;
+  background: var(--white);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 24px 45px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.passkey-modal-header h2 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.passkey-modal-header p {
+  margin: 0 0 24px;
+  color: var(--hash);
+  line-height: 1.5;
+}
+
+.passkey-form .form-group {
+  margin-bottom: 20px;
+}
+
+.passkey-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+#passkey-skip-btn {
+  flex: 1 1 140px;
+}
+
+#passkey-save-btn {
+  flex: 1 1 180px;
+}
+
+.passkey-actions .btn {
+  min-width: 140px;
+}
+
+#passkey-error {
+  padding: 12px 14px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  border-radius: 12px;
+  color: #b91c1c;
+  margin-bottom: 16px;
+}
 .seller-benefits h3 {
   font-size: 20px;
   font-weight: 700;

@@ -1,0 +1,6 @@
+can you also suggest and implement a way for sellers to set their passkey given that there are already some sellers without passkey (though I'm the only seller), maybe the passkey should be part of the seller signup form, but it wont reaally fit in. mybe there should be a modal after submission of the seller signup that asks for the passkey they want to use.
+
+ As for me who is alredy a seller maybe on the seller login page it will show a button that asks you to set passkey then it will open the seller signup page and show the modal for setting passkey
+
+ for the sake of UX I think when signing up as a seller users should be able to skip the setting of passkey (or not)
+You are the profession UI/UX designer that has been with this prject from the very start so your decision on how this whole thing should work mattersa

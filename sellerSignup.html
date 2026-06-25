@@ -166,10 +166,36 @@
           Become a Seller
         </button>
       </div>
-    </form>
-  </div>
+        </form>
+      </div>
 
-  <!-- Benefits Section -->
+      <!-- Passkey Setup Modal -->
+      <div class="seller-passkey-overlay" id="seller-passkey-overlay" style="display:none;">
+        <div class="seller-passkey-modal">
+          <div class="passkey-modal-header">
+            <h2>Secure your seller account</h2>
+            <p>Set a passkey now to access the seller dashboard faster. You can skip this and do it later.</p>
+          </div>
+          <form id="seller-passkey-form" class="passkey-form">
+            <div class="form-group">
+              <label for="passkeyInput">Create a passkey</label>
+              <input type="password" id="passkeyInput" class="form-control" placeholder="Enter a strong passkey" minlength="6" autocomplete="new-password">
+              <p class="form-help">Minimum 6 characters. You can skip this step and set it later.</p>
+            </div>
+            <div class="form-group">
+              <label for="confirmPasskeyInput">Confirm passkey</label>
+              <input type="password" id="confirmPasskeyInput" class="form-control" placeholder="Repeat your passkey" autocomplete="new-password">
+            </div>
+            <div class="auth-error" id="passkey-error" style="display:none;"></div>
+            <div class="passkey-actions">
+              <button type="button" class="btn btn-outline" id="passkey-skip-btn">Skip for now</button>
+              <button type="submit" class="btn btn-success" id="passkey-save-btn">Save passkey</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Benefits Section -->
   <div class="seller-benefits">
     <h3>Why Sell on ONTROPP?</h3>
     <div class="benefits-grid">

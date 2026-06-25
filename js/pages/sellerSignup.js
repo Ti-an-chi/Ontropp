@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setupCategories();
   setupLogoUpload();
   setupFormSubmission();
+  setupPasskeyFlow();
 });
 
 let sellerLogoUrl = null;
@@ -201,8 +202,14 @@ function setupFormSubmission() {
     
     try {
       const response = await API.startSelling(formData);
-      alert('Congratulations! You are now a seller on ONTROPP.');
-      window.location.href = 'dashboard.html';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+
+      if (response?.success) {
+        showPasskeySetup();
+      } else {
+        throw new Error(response?.message || 'Failed to become a seller.');
+      }
     } catch (error) {
       console.error('Failed to become seller:', error);
       alert(error.message || 'Failed to setup seller account. Please try again.');
@@ -210,4 +217,85 @@ function setupFormSubmission() {
       submitBtn.disabled = false;
     }
   });
+}
+
+function setupPasskeyFlow() {
+  const query = new URLSearchParams(window.location.search);
+  const showModal = query.get('showPasskeyModal') === '1';
+  const passkeyOverlay = document.getElementById('seller-passkey-overlay');
+  const passkeyForm = document.getElementById('seller-passkey-form');
+  const passkeyInput = document.getElementById('passkeyInput');
+  const confirmPasskeyInput = document.getElementById('confirmPasskeyInput');
+  const passkeyError = document.getElementById('passkey-error');
+  const passkeySkipBtn = document.getElementById('passkey-skip-btn');
+
+  if (!passkeyOverlay || !passkeyForm || !passkeyInput || !confirmPasskeyInput || !passkeySkipBtn) return;
+
+  if (showModal) {
+    passkeyOverlay.style.display = 'grid';
+  }
+
+  passkeyForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    clearPasskeyError();
+
+    const passkey = passkeyInput.value.trim();
+    const confirmPasskey = confirmPasskeyInput.value.trim();
+
+    if (!passkey) {
+      return showPasskeyError('Enter a passkey or choose skip to continue.');
+    }
+
+    if (passkey.length < 6) {
+      return showPasskeyError('Passkey must be at least 6 characters.');
+    }
+
+    if (passkey !== confirmPasskey) {
+      return showPasskeyError('Passkeys do not match.');
+    }
+
+    try {
+      await saveSellerPasskey(passkey);
+      alert('Passkey saved successfully. You can now use it on seller login.');
+      passkeyOverlay.style.display = 'none';
+      window.location.href = 'dashboard.html';
+    } catch (error) {
+      console.error('Could not save passkey:', error);
+      showPasskeyError('Unable to save passkey. Try again later.');
+    }
+  });
+
+  passkeySkipBtn.addEventListener('click', function() {
+    passkeyOverlay.style.display = 'none';
+    window.location.href = 'dashboard.html';
+  });
+}
+
+function showPasskeySetup() {
+  const passkeyOverlay = document.getElementById('seller-passkey-overlay');
+  if (passkeyOverlay) {
+    passkeyOverlay.style.display = 'grid';
+  }
+}
+
+function showPasskeyError(message) {
+  const passkeyError = document.getElementById('passkey-error');
+  if (!passkeyError) return;
+  passkeyError.textContent = message;
+  passkeyError.style.display = 'block';
+}
+
+function clearPasskeyError() {
+  const passkeyError = document.getElementById('passkey-error');
+  if (!passkeyError) return;
+  passkeyError.textContent = '';
+  passkeyError.style.display = 'none';
+}
+
+async function saveSellerPasskey(passkey) {
+  const sellerData = {
+    passkey,
+    shopName: document.getElementById('shopName').value.trim(),
+  };
+  await API.setSellerPasskey(sellerData);
 }
