@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONTROPP - Open Your Shop </title>
+  <link rel="stylesheet" href="/css/CORE.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages/designerSignup.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/signupDesigner.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-container">
+      <div class="logo">ONTROPP</div>
+      <div class="header-actions">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="designer-signup-container">
+    <!-- Header Section -->
+    <div class="designer-signup-header">
+      <h1 id="pageTitle">Launch Your On ONTROPP</h1>
+      <p id="pageSubtitle">Turn your passion into profit. Create your brand profile and reach thousands of customers.</p>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="signup-progress">
+      <div class="progress-step active" data-step="1">
+        <div class="step-number">1</div>
+        <div class="step-label">Brand Profile</div>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" data-step="2">
+        <div class="step-number">2</div>
+        <div class="step-label">Designer Key</div>
+      </div>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="designer-signup-card">
+      <form id="designerSignupForm" class="designer-signup-form">
+
+        <!-- ===== STEP 1: Brand Profile ===== -->
+        <div class="form-step" id="step1">
+          <!-- Shop Name -->
+          <div class="form-group">
+            <label for="shopName" class="required">
+              <i class="fas fa-store"></i>
+              Brand / Shop Name
+            </label>
+            <input
+              class="form-control"
+              type="text"
+              id="shopName"
+              name="shopName"
+              placeholder="Enter your brand name"
+              required
+              maxlength="50">
+            <p class="form-help">This will be displayed as your brand name on the marketplace</p>
+          </div>
+
+          <!-- Logo Upload -->
+          <div class="form-group">
+            <label for="shopLogo">
+              <i class="fas fa-image"></i>
+              Brand Logo
+            </label>
+            <div class="logo-upload-section" id="logoUploadArea">
+              <div class="logo-upload-content" id="logoUploadContent">
+                <div class="logo-upload-icon">
+                  <i class="fas fa-camera"></i>
+                </div>
+                <div class="logo-upload-text">
+                  <h4>Upload Brand Logo</h4>
+                  <p>Click to upload or drag and drop</p>
+                </div>
+                <button type="button" class="logo-upload-btn" id="logoUploadBtn">
+                  <i class="fas fa-upload"></i>
+                  Choose File
+                </button>
+                <input type="file" id="logoFileInput" accept="image/*" style="display: none;">
+              </div>
+              <div class="logo-preview" id="logoPreview">
+                <div class="logo-preview-image">
+                  <img id="logoPreviewImage" src="" alt="Logo Preview">
+                </div>
+                <button type="button" class="logo-change-btn" id="logoChangeBtn">
+                  <i class="fas fa-sync-alt"></i>
+                  Change Logo
+                </button>
+              </div>
+            </div>
+            <p class="form-help">Recommended: Square image, 500x500px, PNG or JPG</p>
+          </div>
+
+          <!-- Bio -->
+          <div class="form-group">
+            <label for="shopBio" class="required">
+              <i class="fas fa-pen"></i>
+              Brand Bio
+            </label>
+            <textarea
+              class="form-control"
+              id="shopBio"
+              name="shopBio"
+              placeholder="Tell buyers about your brand, what you sell, and your story..."
+              required
+              maxlength="500"></textarea>
+            <div class="form-help">
+              <i class="fas fa-lightbulb"></i>
+              A good bio helps build trust with customers. Keep it professional and friendly.
+            </div>
+          </div>
+
+          <!-- WhatsApp Number -->
+          <div class="form-group">
+            <label for="whatsappNumber" class="required">
+              <i class="fab fa-whatsapp"></i>
+              WhatsApp Number
+            </label>
+            <input
+              class="form-control"
+              type="tel"
+              id="whatsappNumber"
+              name="whatsappNumber"
+              placeholder="e.g., 08012345678"
+              required
+              pattern="[0-9]{11}">
+            <div class="whatsapp-note">
+              <i class="fas fa-info-circle"></i>
+              This number will be used for customer communication. Include country code if international.
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="form-group">
+            <label for="operatingLocation" class="required">
+              <i class="fa fa-location-dot"></i>
+              Operating Location
+            </label>
+            <input
+              class="form-control"
+              type="text"
+              id="operatingLocation"
+              name="operatingLocation"
+              placeholder="e.g., Akure, Ondo state"
+              required
+              maxlength="50">
+            <div class="location-note">
+              <i class="fas fa-info-circle"></i>
+              This is for customers to know where you operate.
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div class="form-group">
+            <label class="required">
+              <i class="fas fa-tags"></i>
+              Which Category do you fit in?
+            </label>
+            <div class="category-grid" id="categoryGrid">
+              <!-- Categories will be populated by JavaScript -->
+            </div>
+            <input type="hidden" id="selectedCategory" name="category" required>
+          </div>
+
+          <!-- Step 1 Actions -->
+          <div class="form-actions">
+            <a href="dashboard.html" class="btn btn-outline">
+              <i class="fas fa-arrow-left"></i>
+              Back to Dashboard
+            </a>
+            <button type="button" class="btn btn-primary" id="nextStepBtn">
+              Next: Set PassKey
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 2: Designer Key ===== -->
+        <div class="form-step hidden" id="step2">
+          <div class="key-intro">
+            <div class="key-icon">
+              <i class="fas fa-key"></i>
+            </div>
+            <h3>Your passKey</h3>
+            <p>This key is your master password for your designer dashboard. It lets you create, edit, and manage all your products. <strong>Keep it safe.</strong></p>
+          </div>
+
+          <div class="form-group">
+            <label for="passKey" class="required">
+              <i class="fas fa-lock"></i>
+              Create PassKey
+            </label>
+            <div class="password-input-wrap">
+              <input
+                class="form-control"
+                type="password"
+                id="passKey"
+                name="passKey"
+                placeholder="Enter a strong key"
+                minlength="6"
+                autocomplete="new-password"
+                required>
+              <button type="button" class="toggle-password" id="togglePassKey" tabindex="-1">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <p class="form-help">Minimum 6 characters. This is your master key for managing products.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassKey" class="required">
+              <i class="fas fa-lock"></i>
+              Confirm passKey
+            </label>
+            <div class="password-input-wrap">
+              <input
+                class="form-control"
+                type="password"
+                id="confirmPassKey"
+                name="confirmPassKey"
+                placeholder="Repeat your key"
+                autocomplete="new-password"
+                required>
+            </div>
+          </div>
+
+          <div class="key-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>You can change this key later from your designer dashboard, but don't lose it — you'll need it to manage your products.</span>
+          </div>
+
+          <div class="auth-error" id="PassKey-error" style="display:none;"></div>
+
+          <!-- Step 2 Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="backStepBtn">
+              <i class="fas fa-arrow-left"></i>
+              Back to Profile
+            </button>
+            <button type="submit" class="btn btn-success" id="submitBtn">
+              <i class="fas fa-check-circle"></i>
+              <span id="submitBtnText">Open Shop </span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Benefits Section -->
+    <div class="designer-benefits">
+      <h3>Why Sell on ONTROPP?</h3>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h4 class="benefit-title">Reach More Audience</h4>
+          <p class="benefit-description">Access an array of audience for your brand</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h4 class="benefit-title">Grow Your Business</h4>
+          <p class="benefit-description">Tools and insights to help you succeed</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <h4 class="benefit-title">Designer Support</h4>
+          <p class="benefit-description">Dedicated support to help you grow</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h4 class="benefit-title">Safe & Secure</h4>
+          <p class="benefit-description">Protected payments and secure transactions</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 ONTROPP. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Terms</a>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script type="module" src="/js/pages/designerSignup.js"></script>
+</body>
+</html>

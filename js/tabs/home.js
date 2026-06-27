@@ -84,7 +84,7 @@ async function updateSellerDashboard() {
   }
   try {
     seller = userData.sellerProfile;
-    console.log('Seller profile:', seller);
+    console.log('Designer profile:', seller);
 
     updateElement('seller-profile-views', seller.profile_views || 0);
     updateElement('followers', seller.follows[0]?.count || 0);
@@ -174,7 +174,7 @@ function renderCategories(categories) {
   
   categories.forEach(category => {
     const categoryCard = document.createElement('a');
-    categoryCard.href = `sellers.html?category=${category.id}`;
+    categoryCard.href = `designers.html?category=${category.id}`;
     categoryCard.className = 'category-card';
     categoryCard.dataset.category = category.id;
     
@@ -185,7 +185,7 @@ function renderCategories(categories) {
         </div>
         <div class="category-details">
           <h3 class="category-title">${category.name}</h3>
-          <p class="category-count">${category.sellerCount} sellers</p>
+          <p class="category-count">${category.sellerCount} designers</p>
         </div>
       </div>
       <div class="category-arrow">

@@ -149,7 +149,7 @@ function setupGlobalEventListeners() {
       dropdown.style.display = 'none';
       
       if (confirm('Ready to start your seller journey? You\'ll be able to list products and grow your business.')) {
-          location.href = 'sellerSignup.html';
+          location.href = 'designerSignup.html';
       }
     });
   }
@@ -171,14 +171,14 @@ function setupGlobalEventListeners() {
   if (manageProductsButton) {
     manageProductsButton.addEventListener('click', function(e) {
       e.stopPropagation();
-      location.href = 'seller-products.html';
+      location.href = 'designerDashboard.html';
     });
   }
 
   if (manageProductsProfileButton) {
     manageProductsProfileButton.addEventListener('click', function(e) {
       e.stopPropagation();
-      location.href = 'seller-products.html';
+      location.href = 'designerDashboard.html';
     });
   }
   

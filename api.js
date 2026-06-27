@@ -4,9 +4,9 @@ import { showNotification} from './js/utility/reconfig.js';
 const API = {
   requestCount: 0,
   
-  basURL: 'http://localhost:8787',
+  baseURL: 'http://localhost:8787',
   basedURL: 'https://ontropp-backend.onrender.com/api',
-  baseURL: 'https://ontrop-api.dsub.workers.dev',
+  basURL: 'https://ontrop-api.dsub.workers.dev',
   
   // Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {
@@ -28,7 +28,7 @@ const API = {
   /*---------- Core Fetch ----------*/
   
   async _fetch(path, options = {}, retry = false) {
-    this.requestCount ++
+    this.requestCount ++;
     
     console.log(`[API REQUEST #${this.requestCount}]`,
       options.method || 'GET',
@@ -70,7 +70,7 @@ const API = {
   
       if (
         resp.status === 401 &&
-        data?.code === 'TOKEN_EXPIRED' &&
+        data?.code === 'INVALID_TOKEN' &&
         !retry
       ) {
         try {
@@ -78,7 +78,7 @@ const API = {
           return this._fetch(path, options, true);
         } catch {
           this.clearTokens();
-          location.href = 'signup.html';
+          window.location.href = 'signup.html';
           throw new Error('Session expired');
         }
       }
@@ -392,6 +392,19 @@ const API = {
       await this.storeSellerAccount(userInfo);
     }
 
+    return response;
+  },
+  
+  async openStore(userInfo) {
+    const response = await this._fetch('/brand/launch', {
+      method: 'POST',
+      body: JSON.stringify(userInfo)
+    });
+    /*if (response?.success) {
+      const {passkey, ...designerData} = userInfo;
+      this.storeSellerAccount(designerData);
+    }*/
+    
     return response;
   },
 

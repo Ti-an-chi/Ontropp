@@ -106,40 +106,46 @@
           <button class="icon-btn notification-btn" aria-label="Notifications">
             <i class="fas fa-bell"></i>
           </button>
-          <button class="icon-btn cart-btn" aria-label="Cart">
-            <i class="fas fa-shopping-cart"></i>
+          <button class="icon-btn inbox-btn" aria-label="Messages and communities">
+            <i class="fas fa-comments"></i>
+            <span class="badge" id="inbox-badge">3</span> <!-- unread count -->
           </button>
-            <div class="kebab-menu-container">
-              <button class="kebab-menu-btn" id="profile-kebab-btn">
-                <i class="fas fa-ellipsis-h"></i>
+          <div class="kebab-menu-container">
+            <button class="kebab-menu-btn" id="profile-kebab-btn">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+            
+            <div class="kebab-dropdown" id="profile-dropdown" style="display: none;">
+              <button class="dropdown-item become-seller-item" id="setup-seller-btn">
+                <i class="fas fa-store"></i>
+                <span>Start Selling</span>
               </button>
               
-              <div class="kebab-dropdown" id="profile-dropdown" style="display: none;">
-                <button class="dropdown-item become-seller-item" id="setup-seller-btn">
-                  <i class="fas fa-store"></i>
-                  <span>Start Selling</span>
-                </button>
-                <div class="dropdown-divider"></div>
-                <button class="dropdown-item" id="edit-profile-btn">
-                  <i class="fas fa-user-edit"></i>
-                  <span>Edit Profile</span>
-                </button>
-                <button class="dropdown-item" id="account-settings-btn">
-                  <i class="fas fa-cog"></i>
-                  <span>Account Settings</span>
-                </button>
-                <button class="dropdown-item" id="help-support-btn">
-                  <i class="fas fa-question-circle"></i>
-                  <span>Help & Support</span>
-                </button>
-                <div class="dropdown-divider"></div>
-                <button class="dropdown-item logout-item" id="logout-btn">
-                  <i class="fas fa-sign-out-alt"></i>
-                  <span>Log Out</span>
-                </button>
-              </div>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" id="edit-profile-btn">
+                <i class="fas fa-user-edit"></i>
+                <span>Edit Profile</span>
+              </button>
+              
+              <button class="dropdown-item" id="account-settings-btn">
+                <i class="fas fa-cog"></i>
+                <span>Account Settings</span>
+              </button>
+              
+              <button class="dropdown-item" id="help-support-btn">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+              </button>
+              
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item logout-item" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Log Out</span>
+              </button>
+              
             </div>
           </div>
+        </div>
       </div>
     </header>
       
@@ -175,10 +181,10 @@
               <i class="fas fa-plus"></i>
               Add Product
             </button>
-            <!-- <button class="add-product-btn" id="manage-products-btn">
+            <button class="add-product-btn" id="manage-products-btn">
               <i class="fas fa-list"></i>
               Manage Products
-            </button> -->
+            </button>
           </div>
         </div>
 
@@ -243,82 +249,54 @@
           <h2 class="section-title">Browse Categories</h2>
         </div>
         <div class="categories-list">
-          <a href="#" class="category-card" data-category="electronics">
+          
+          <a href="sellers.html?category=beauty" class="category-card" data-category="beauty">
             <div class="category-info">
-              <div class="category-icon">
-                <i class="fas fa-mobile-alt"></i>
-              </div>
+              <div class="category-icon"><i class="fas fa-spa"></i></div>
               <div class="category-details">
-                <h3 class="category-title">Loading</h3>
+                <h3 class="category-title">Beauty & Care</h3>
                 <p class="category-count">loading...</p>
               </div>
             </div>
-            <div class="category-arrow">
-              <i class="fas fa-chevron-right"></i>
-            </div>
+            <div class="category-arrow"><i class="fas fa-chevron-right"></i></div>
           </a>
-
-          <a href="#" class="category-card" data-category="clothing">
+      
+          <a href="sellers.html?category=accessories" class="category-card" data-category="accessories">
             <div class="category-info">
-              <div class="category-icon">
-                <i class="fas fa-tshirt"></i>
-              </div>
+              <div class="category-icon"><i class="fas fa-gem"></i></div>
               <div class="category-details">
-                <h3 class="category-title">Loading</h3>
+                <h3 class="category-title">Accessories</h3>
                 <p class="category-count">loading...</p>
               </div>
             </div>
-            <div class="category-arrow">
-              <i class="fas fa-chevron-right"></i>
-            </div>
+            <div class="category-arrow"><i class="fas fa-chevron-right"></i></div>
           </a>
-
-          <a href="#" class="category-card" data-category="home">
+      
+          <a href="sellers.html?category=mens" class="category-card" data-category="mens">
             <div class="category-info">
-              <div class="category-icon">
-                <i class="fas fa-home"></i>
-              </div>
+              <div class="category-icon"><i class="fas fa-male"></i></div>
               <div class="category-details">
-                <h3 class="category-title">Loading</h3>
+                <h3 class="category-title">Men's Fashion</h3>
                 <p class="category-count">loading...</p>
               </div>
             </div>
-            <div class="category-arrow">
-              <i class="fas fa-chevron-right"></i>
-            </div>
+            <div class="category-arrow"><i class="fas fa-chevron-right"></i></div>
           </a>
-
-          <a href="#" class="category-card" data-category="beauty">
+      
+          <a href="sellers.html?category=womens" class="category-card" data-category="womens">
             <div class="category-info">
-              <div class="category-icon">
-                <i class="fas fa-spa"></i>
-              </div>
+              <div class="category-icon"><i class="fas fa-female"></i></div>
               <div class="category-details">
-                <h3 class="category-title">Loading</h3>
+                <h3 class="category-title">Women's Fashion</h3>
                 <p class="category-count">loading...</p>
               </div>
             </div>
-            <div class="category-arrow">
-              <i class="fas fa-chevron-right"></i>
-            </div>
+            <div class="category-arrow"><i class="fas fa-chevron-right"></i></div>
           </a>
-
-          <a href="#" class="category-card" data-category="other">
-            <div class="category-info">
-              <div class="category-icon">
-                <i class="fas fa-box"></i>
-              </div>
-              <div class="category-details">
-                <h3 class="category-title">Loading</h3>
-                <p class="category-count">loading...</p>
-              </div>
-            </div>
-            <div class="category-arrow">
-              <i class="fas fa-chevron-right"></i>
-            </div>
-          </a>
+      
         </div>
       </section>
+
 
       <!-- Recommended Section -->
       <section class="recommended-section">
