@@ -2,6 +2,7 @@ import API from '../../api.js';
 import { ProductPagination } from '../utility/pagination.js';
 import { showNotification } from '../utility/reconfig.js';
 import { renderSellerAdminProducts, bindSellerAdminActions } from '../utility/seller-product-admin.js';
+import StoreApi from '../storeApi.js';
 
 const PRODUCT_LIMIT = 12;
 const pagination = new ProductPagination('seller-products-grid');
@@ -30,119 +31,91 @@ const authElements = {
   setPasskeyBtn: document.getElementById('set-passkey-btn'),
 };
 
-function initSellerAuth() {
-  const authenticated = checkSellerSession();
+window.addEventListener('DOMContentLoaded', initSellerAuth);
+
+async function initSellerAuth() {
+  const authenticated = await checkSellerSession();
   setupAuthForm();
-  setupPasskeyButton();
+  // setupPasskeyButton();
 
   if (!authenticated) {
     authElements.overlay?.classList.remove('authenticated');
+    return;
   }
+  initSellerProductsPage();
 }
 
-function checkSellerSession() {
-  const sellerSession = JSON.parse(localStorage.getItem('seller_session') || 'null');
-  if (!sellerSession) return false;
-
-  const { shopName, passkey } = sellerSession;
-  if (!shopName || !passkey) return false;
+async function checkSellerSession() {
+  const response = await StoreApi.tokenPing()
+  if (!response.success) return false;
 
   authElements.overlay.classList.add('authenticated');
   authElements.overlay.dataset.authenticated = 'true';
-  console.log(`✓ Seller authenticated: ${shopName}`);
+  console.log(`✓ Designer authenticated`);
 
-  initSellerProductsPage();
   return true;
 }
 
 function setupAuthForm() {
   authElements.form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    await handleSellerLogin();
+    const shopName = authElements.shopNameInput.value.trim();
+    const passkey = authElements.passkeyInput.value.trim();
+  
+    if (!shopName) {
+      showAuthError('Please enter your shop name');
+      return;
+    }
+  
+    if (shopName.length < 3) {
+      showAuthError('Shop name must be at least 3 characters');
+      return;
+    }
+    try {
+      setAuthLoading(true);
+      let authenticated = false;
+      
+      const response = await StoreApi.designerAuth(shopName, passkey);
+      if ( !response?.success ) { 
+        showNotification( response.message, 'error')
+        return;
+      }
+      
+      authenticated = true;
+      authElements.overlay.classList.add('authenticated');
+      initSellerProductsPage();
+      
+    } catch (error) {
+      console.error('Auth error:', error);
+      showNotification(error, 'error');
+      // showAuthError('Authentication failed. Please try again.');
+    } finally {
+      authElements.overlay.dataset.authenticated = authenticated;
+      setAuthLoading(false);
+    }
   });
 }
 
-function setupPasskeyButton() {
+/*function setupPasskeyButton() {
   authElements.setPasskeyBtn?.addEventListener('click', () => {
     const signupUrl = new URL('sellerSignup.html', window.location.origin);
     signupUrl.searchParams.set('showPasskeyModal', '1');
     window.location.href = signupUrl.toString();
   });
-}
-
-async function handleSellerLogin() {
-  const shopName = authElements.shopNameInput.value.trim();
-  const passkey = authElements.passkeyInput.value.trim();
-
-  if (!shopName) {
-    showAuthError('Please enter your shop name');
-    return;
-  }
-
-  if (shopName.length < 3) {
-    showAuthError('Shop name must be at least 3 characters');
-    return;
-  }
-
-  setAuthLoading(true);
-
-  try {
-    const sellerAccount = await API.getSellerAccount(shopName);
-    if (!sellerAccount) {
-      showAuthError('No seller profile found for this shop name.');
-      return;
-    }
-
-    let authenticated = false;
-    if (!passkey && !sellerAccount.passkey) {
-      authenticated = true;
-    } else if (passkey) {
-      authenticated = await API.verifySellerPasskey(shopName, passkey);
-    }
-
-    if (!authenticated) {
-      showAuthError(sellerAccount.passkey
-        ? 'Incorrect shop name or passkey.'
-        : 'This seller has no passkey set. Leave the passkey blank to continue or set one now.');
-      return;
-    }
-
-    const sellerSession = {
-      shopName,
-      passkey: sellerAccount.passkey || passkey,
-      timestamp: Date.now(),
-    };
-
-    localStorage.setItem('seller_session', JSON.stringify(sellerSession));
-    hideAuthError();
-    authElements.overlay.classList.add('authenticated');
-
-    setTimeout(() => {
-      initSellerProductsPage();
-    }, 300);
-  } catch (error) {
-    console.error('Auth error:', error);
-    showAuthError('Authentication failed. Please try again.');
-  } finally {
-    setAuthLoading(false);
-  }
-}
+}*/
 
 function showAuthError(message) {
   authElements.errorMsg.textContent = message;
   authElements.errorMsg.style.display = 'block';
-}
-
-function hideAuthError() {
-  authElements.errorMsg.style.display = 'none';
+  setTimeout(() => {
+    authElements.errorMsg.style.display = 'none';
+  }, 3000)
 }
 
 function setAuthLoading(loading) {
   authElements.submitBtn.disabled = loading;
   authElements.submitBtn.textContent = loading ? 'Verifying...' : 'Access Dashboard';
 }
-
-window.addEventListener('DOMContentLoaded', initSellerAuth);
 
 async function initSellerProductsPage() {
   setupPagination();
@@ -193,7 +166,7 @@ async function loadSellerProducts(force = false) {
       search: pagination.filters.search || ''
     };
 
-    const response = await API.getMyProducts(request.page, request.limit, request.search);
+    const response = await StoreApi.getMyProducts(request.page, request.limit, request.search);
     const products = normalizeResponseProducts(response);
     const paginationInfo = response.pagination || response.data?.pagination || getPaginationFallback(request.page, products);
 

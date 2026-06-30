@@ -57,6 +57,7 @@ export async function loadDashItems() {
     
     // Load recommended products
     const products = window.bootstrap.recommended || await API.getRecommendedProducts(1, 8);
+    console.log(products.data);
     renderProducts(products.data, 'recommended-list', 'recommended');
     
     // Update empty state

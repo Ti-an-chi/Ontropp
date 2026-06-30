@@ -271,7 +271,7 @@ function setupFormSubmission() {
       location: document.getElementById('operatingLocation').value.trim(),
       category: document.getElementById('selectedCategory').value,
       passKey: PassKey,
-      logoUrl: designerLogoUrl
+      logoUrl: designerLogoUrl ? designerLogoUrl: ''
     };
 
     const originalText = submitBtn.innerHTML;

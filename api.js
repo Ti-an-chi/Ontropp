@@ -14,6 +14,7 @@ const API = {
     localStorage.setItem('ontrop_refresh', refreshToken);
     localStorage.setItem('ontrop_userid', userId);
   },
+  
   // Clear everything on logout
   clearTokens() {
     localStorage.removeItem('ontrop_token');
@@ -23,20 +24,34 @@ const API = {
     localStorage.removeItem('pendingSignupEmail');
   },
   
+  tokenStorage: {
+    user: {
+        access: 'ontrop_access',
+        refresh: 'ontrop_refresh'
+    },
+    designer: {
+        access: 'shop_access',
+        refresh: 'shop_refresh'
+    }
+  },
+  
   /*========= API GATEWAY =========*/
   
   /*---------- Core Fetch ----------*/
+  async _fetch(path, options = {}, retry = false, tokenType = 'user') {
+    this.requestCount++;
   
-  async _fetch(path, options = {}, retry = false) {
-    this.requestCount ++;
-    
-    console.log(`[API REQUEST #${this.requestCount}]`,
+    console.log(
+      `[API REQUEST #${this.requestCount}]`,
       options.method || 'GET',
       path
-    )
+    );
+  
     const url = `${this.baseURL}${path.startsWith('/') ? path : '/' + path}`;
   
-    const token = localStorage.getItem('ontrop_token');
+    const keys = this.tokenStorage[tokenType];
+    console.log(keys.access);
+    const token = localStorage.getItem(keys.access);
   
     const headers = {
       ...(options.body !== undefined && {
@@ -48,10 +63,19 @@ const API = {
       ...(options.headers || {})
     };
   
-    const resp = await fetch(url, {
-      ...options,
-      headers
-    });
+    let resp;
+  
+    try {
+      resp = await fetch(url, {
+        ...options,
+        headers
+      });
+    } catch (err) {
+      // Network failure
+      throw new Error(
+        'Unable to connect to the server. Check your internet connection and try again.'
+      );
+    }
   
     let data = null;
   
@@ -74,10 +98,10 @@ const API = {
         !retry
       ) {
         try {
-          await this.refresh();
-          return this._fetch(path, options, true);
+          await this.refresh(tokenType);
+          return this._fetch(path, options, true, tokenType);
         } catch {
-          this.clearTokens();
+          this.clearTokens(tokenType);
           window.location.href = 'signup.html';
           throw new Error('Session expired');
         }
@@ -88,22 +112,34 @@ const API = {
   
     return data;
   },
-  
-  async refresh() {
-    const refreshToken = localStorage.getItem('ontrop_refresh');
-    if (!refreshToken) throw new Error('No refresh token');
     
-    const response = await this._fetch('/auth/refresh', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token: refreshToken })
-    }, true);
-    if (response.success) {
-      localStorage.setItem('ontrop_token', response.accessToken);
-      localStorage.setItem('ontrop_refresh', response.refreshToken);
+  /** * @param {String} tokenType - Whether user is following */
+  async refresh(tokenType = 'user') {
+    const keys = this.tokenStorage[tokenType];
+  
+    const refreshToken = localStorage.getItem(keys.refresh);
+  
+    if (!refreshToken) {
+      throw new Error('No refresh token');
     }
+  
+    const response = await this._fetch(
+      '/auth/refresh',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          token: refreshToken
+        })
+      },
+      true,
+      tokenType
+    );
+  
+    if (response.success) {
+      localStorage.setItem(keys.access, response.accessToken);
+      localStorage.setItem(keys.refresh, response.refreshToken);
+    }
+  
     return response;
   },
   
@@ -216,19 +252,11 @@ const API = {
     return response;
   },
   
-  async getMyProducts(page = 1, limit = 20, search = '') {
-    const params = new URLSearchParams({ page, limit, search });
-    const sellerId = localStorage.getItem('ontrop_sellerid');
-
-    if (!sellerId) {
-      showNotification('You are not registered as a seller.', 'error');
-      return { data: [], total: 0 };
-    }
-    return this._fetch(`/seller/products${sellerId}?${params}`);
-  },
-  
   async getSellerProducts(sellerId = undefined, page = 1, limit = 20) {
-    const params = new URLSearchParams({ page, limit });
+    const params = new URLSearchParams({ 
+      page: page.toString(), 
+      limit: limit.toString()
+    });
     if (sellerId) return await this._fetch(`/products/seller/${sellerId}?${params}`);
     return await this._fetch(`/seller/products?${params}`);
   },
@@ -265,7 +293,7 @@ const API = {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), search });
     const resp = window.fav || await this._fetch(`/user/favorites?${params}`);
     
-    window.fav = resp.data
+    window.fav = resp.data;
     return resp.data;
   },
   
@@ -382,19 +410,6 @@ const API = {
   },
 
   /* ---------------- UTILITY ---------------- */
-  async startSelling(userInfo) {
-    const response = await this._fetch('/upgrade', {
-      method: 'POST',
-      body: JSON.stringify(userInfo)
-    });
-
-    if (response?.success) {
-      await this.storeSellerAccount(userInfo);
-    }
-
-    return response;
-  },
-  
   async openStore(userInfo) {
     const response = await this._fetch('/brand/launch', {
       method: 'POST',
@@ -416,13 +431,23 @@ const API = {
   _saveSellerStore(store) {
     if (typeof localStorage === 'undefined') return;
     localStorage.setItem('ontrop_seller_accounts', JSON.stringify(store));
-  },
-
-  async getSellerAccount(shopName) {
-    if (!shopName) return null;
-    const store = this._getSellerStore();
-    return store[shopName.trim().toLowerCase()] || null;
-  },
+  },  
+  /*=============== Store Logic ===============*/
+ /* async designerAuth(shopName, passkey) {
+    if (!shopName || !passkey ) {
+      throw new Error('Shop name and passkey are required');
+    }
+    const response = API._fetch('/brand/auth', {
+      method: 'POST',
+      body: JSON.stringify({shopName, passkey})
+    });
+    
+    if (response?.success) {
+      this.setShopTokens(response.tokens);
+    }
+     
+    return response;
+  }, */
 
   async storeSellerAccount(account) {
     if (!account || !account.shopName) return null;
@@ -443,13 +468,13 @@ const API = {
     if (!shopName || !passkey) {
       throw new Error('Shop name and passkey are required');
     }
-    const account = await this.getSellerAccount(shopName) || { shopName };
+    const account = await this.designerAuth(shopName) || { shopName };
     account.passkey = passkey;
     return this.storeSellerAccount(account);
   },
 
   async verifySellerPasskey(shopName, passkey) {
-    const account = await this.getSellerAccount(shopName);
+    const account = await this.designerAuth(shopName);
     if (!account) return false;
     if (!account.passkey) return false;
     return account.passkey === passkey;
