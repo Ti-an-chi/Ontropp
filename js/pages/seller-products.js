@@ -46,11 +46,16 @@ async function initSellerAuth() {
 }
 
 async function checkSellerSession() {
-  const response = await StoreApi.tokenPing()
+  const refreshToken = await localStorage.getItem('shop_refresh');
+  console.log(refreshToken);
+  if (!refreshToken) return false;
+  
+  const response = await StoreApi.tokenPing();
   if (!response.success) return false;
 
   authElements.overlay.classList.add('authenticated');
   authElements.overlay.dataset.authenticated = 'true';
+  showNotification('Resume session')
   console.log(`✓ Designer authenticated`);
 
   return true;

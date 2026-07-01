@@ -12,7 +12,14 @@ const StoreApi = {
   },
   
   async _fetch(path, options) {
-    return await API._fetch(`/brand/${path}`, options, false, 'designer');
+    try {
+      return await API._fetch(`/brand/${path}`, options, false, 'designer');
+    } catch (err) {
+      if (err.code === 'SESSION_EXPIRED') {
+        this.clearShopTokens();
+        location.reload();
+      }
+    }
   },
   
   /* =============== Auth =============== */

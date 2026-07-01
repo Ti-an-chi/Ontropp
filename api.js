@@ -101,6 +101,11 @@ const API = {
           await this.refresh(tokenType);
           return this._fetch(path, options, true, tokenType);
         } catch {
+          if (tokenType === 'designer') {
+            const err = new Error('Session expired');
+            err.code = 'SESSION_EXPIRED';
+            throw err;
+          }
           this.clearTokens(tokenType);
           window.location.href = 'signup.html';
           throw new Error('Session expired');
