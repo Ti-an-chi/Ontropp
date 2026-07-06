@@ -2,304 +2,373 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ONTROPP Designer Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-    {
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
-
-body{
-    background:#f4f4f4;
-}
-
-.dashboard{
-    display:flex;
-    min-height:100vh;
-}
-
-/* Sidebar */
-
-.sidebar{
-    width:250px;
-    background:white;
-    border-right:1px solid #ddd;
-    padding:30px;
-}
-
-.logo{
-    font-size:28px;
-    font-weight:bold;
-    margin-bottom:40px;
-}
-
-nav{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-}
-
-nav a{
-    text-decoration:none;
-    color:#333;
-}
-
-/* Main */
-
-main{
-    flex:1;
-    padding:40px;
-}
-
-/* Header */
-
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:35px;
-}
-
-/* Stats */
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
-    margin-bottom:30px;
-}
-
-.card{
-    height:120px;
-    background:white;
-    border-radius:15px;
-    border:1px solid #ddd;
-    padding:20px;
-}
-
-/* Action */
-
-.action-required{
-    margin-bottom:30px;
-}
-
-.actions{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
-    margin-top:15px;
-}
-
-.action-card{
-    height:120px;
-    background:white;
-    border:1px solid #ddd;
-    border-radius:15px;
-}
-
-/* Analytics */
-
-.analytics{
-    display:grid;
-    grid-template-columns:3fr 1fr;
-    gap:20px;
-    margin-bottom:30px;
-}
-
-.chart{
-    height:320px;
-    background:white;
-    border-radius:15px;
-    border:1px solid #ddd;
-}
-
-.overview{
-    height:320px;
-    background:white;
-    border-radius:15px;
-    border:1px solid #ddd;
-}
-
-/* Bottom */
-
-.bottom-grid{
-    display:grid;
-    grid-template-columns:2fr 1.5fr 1.5fr;
-    gap:20px;
-    margin-bottom:30px;
-}
-
-.orders,
-.messages,
-.top-designs{
-    background:white;
-    border-radius:15px;
-    border:1px solid #ddd;
-    min-height:320px;
-    padding:20px;
-}
-
-/* Quick Buttons */
-
-.quick-actions{
-    display:flex;
-    gap:20px;
-}
-
-.quick-actions button{
-    padding:15px 30px;
-}
-</style>
-
+    <link rel="stylesheet" href="./css/CORE.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="./designersdashboard.css">
 </head>
-
 <body>
 
-<div class="dashboard">
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Sidebar -->
-    <aside class="sidebar">
-
-        <div class="logo">
-            ONTROPP
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo">ONTROPP.</span>
         </div>
 
-        <nav>
+        <nav class="nav-section">
+            <div class="section-label">Main</div>
+            <a href="#dashboard" class="designers-nav-item active" data-page="dashboard">
+                <i class="fas fa-th-large"></i>
+                <span class="nav-label">Dashboard</span>
+            </a>
+            <a href="#products" class="designers-nav-item" data-page="products">
+                <i class="fas fa-box"></i>
+                <span class="nav-label">Products</span>
+            </a>
+            <a href="#messages" class="designers-nav-item" data-page="messages">
+                <i class="fas fa-comment-alt"></i>
+                <span class="nav-label">Messages</span>
+            </a>
 
-            <a href="#">Dashboard</a>
-            <a href="#">Products</a>
-            <a href="#">Orders</a>
-            <a href="#">Messages</a>
-            <a href="#">Analytics</a>
-            <a href="#">Customers</a>
-            <a href="#">Reviews</a>
-            <a href="#">Settings</a>
+            <div class="section-label" style="margin-top: 16px;">Insights</div>
+            <a href="#analytics" class="designers-nav-item" data-page="analytics">
+                <i class="fas fa-chart-line"></i>
+                <span class="nav-label">Analytics</span>
+            </a>
+            <a href="#customers" class="designers-nav-item" data-page="customers">
+                <i class="fas fa-users"></i>
+                <span class="nav-label">Customers</span>
+            </a>
+            <a href="#reviews" class="designers-nav-item" data-page="reviews">
+                <i class="fas fa-star"></i>
+                <span class="nav-label">Reviews</span>
+            </a>
 
+            <div class="section-label" style="margin-top: 16px;">System</div>
+            <a href="#settings" class="designers-nav-item" data-page="settings">
+                <i class="fas fa-cog"></i>
+                <span class="nav-label">Settings</span>
+            </a>
         </nav>
 
+        <a href="#settings" class="account-section" id="accountBtn">
+            <div class="account-avatar"><i class="fas fa-user"></i></div>
+            <div class="account-info">
+                <div class="account-name">Frederick</div>
+                <div class="account-role">Designer</div>
+            </div>
+        </a>
+
+        <button class="signout-btn" id="signoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sign Out</span>
+        </button>
     </aside>
 
-
+    <!-- Topbar -->
+    <header class="topbar" id="topbar">
+        <div class="topbar-left">
+            <button class="topbar-btn" id="sidebarToggle" title="Toggle sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="topbar-btn" id="backBtn" title="Go back">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo">ONTROPP<span>.</span></div>
+            <h2 class="topbar-title" id="pageTitle">Dashboard</h2>
+        </div>
+        <div class="topbar-right">
+            <button class="topbar-btn" title="Notifications">
+                <i class="fas fa-bell"></i>
+            </button>
+        </div>
+    </header>
 
     <!-- Main Content -->
-
-    <main>
-
-        <!-- Header -->
-
-        <header class="header">
-
-            <div>
-
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard Page -->
+        <section class="page-section active" id="page-dashboard">
+            <div class="page-header">
                 <h1>Good Day, Frederick</h1>
-
                 <p>Here's how your brand is performing today.</p>
-
             </div>
-
-            <button>
-                Quick Action
-            </button>
-
-        </header>
-
-
-
-        <!-- Statistics -->
-
-        <section class="stats">
-
-            <div class="card"
+            <div class="placeholder-card">
+                <i class="fas fa-th-large"></i>
+                <h3>Dashboard</h3>
+                <p>Your dashboard content will appear here. Start by adding widgets or viewing your stats.</p>
+            </div>
         </section>
 
-
-
-        <!-- Action Required -->
-
-        <section class="action-required">
-
-            <h2>Action Required</h2>
-
-            <div class="actions">
-
-                <div class="action-card"></div>
-
-                <div class="action-card"></div>
-
-                <div class="action-card"></div>
-
-                <div class="action-card"></div>
-
+        <!-- Products Page -->
+        <section class="page-section" id="page-products">
+            <div class="page-header">
+                <h1>Products</h1>
+                <p>Manage your product listings and inventory.</p>
             </div>
-
+            <div class="placeholder-card">
+                <i class="fas fa-box"></i>
+                <h3>Products</h3>
+                <p>Your product catalog will appear here.</p>
+            </div>
         </section>
 
-
-
-        <!-- Analytics -->
-
-        <section class="analytics">
-
-            <div class="chart">
-
+        <!-- Messages Page -->
+        <section class="page-section" id="page-messages">
+            <div class="page-header">
+                <h1>Messages</h1>
+                <p>Chat with customers and collaborators.</p>
             </div>
-
-            <aside class="overview">
-
-            </aside>
-
+            <div class="placeholder-card">
+                <i class="fas fa-comment-alt"></i>
+                <h3>Messages</h3>
+                <p>Your conversations will appear here.</p>
+            </div>
         </section>
 
-
-
-        <!-- Lower Grid -->
-
-        <section class="bottom-grid">
-
-            <div class="orders">
-
-                <h3>Recent Orders</h3>
-
+        <!-- Analytics Page -->
+        <section class="page-section" id="page-analytics">
+            <div class="page-header">
+                <h1>Analytics</h1>
+                <p>Deep dive into your performance metrics.</p>
             </div>
-
-            <div class="messages">
-
-                <h3>Recent Messages</h3>
-
+            <div class="placeholder-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Analytics</h3>
+                <p>Your analytics charts will appear here.</p>
             </div>
-
-            <div class="top-designs">
-
-                <h3>Top Performing Designs</h3>
-
-            </div>
-
         </section>
 
-
-
-        <!-- Floating Quick Actions -->
-
-        <section class="quick-actions">
-
-            <button>Upload Design</button>
-
-            <button>Add Product</button>
-
-            <button>Create Collection</button>
-
-            <button>Share Portfolio</button>
-
+        <!-- Customers Page -->
+        <section class="page-section" id="page-customers">
+            <div class="page-header">
+                <h1>Customers</h1>
+                <p>View and manage your customer base.</p>
+            </div>
+            <div class="placeholder-card">
+                <i class="fas fa-users"></i>
+                <h3>Customers</h3>
+                <p>Your customer list will appear here.</p>
+            </div>
         </section>
 
+        <!-- Reviews Page -->
+        <section class="page-section" id="page-reviews">
+            <div class="page-header">
+                <h1>Reviews</h1>
+                <p>See what customers are saying about you.</p>
+            </div>
+            <div class="placeholder-card">
+                <i class="fas fa-star"></i>
+                <h3>Reviews</h3>
+                <p>Your reviews will appear here.</p>
+            </div>
+        </section>
+
+        <!-- Settings Page -->
+        <section class="page-section" id="page-settings">
+            <div class="page-header">
+                <h1>Settings</h1>
+                <p>Customize your account and preferences.</p>
+            </div>
+            <div class="placeholder-card">
+                <i class="fas fa-cog"></i>
+                <h3>Settings</h3>
+                <p>Your settings panel will appear here.</p>
+            </div>
+        </section>
     </main>
 
-</div>
+    <script>
+        // ==================== STATE ====================
+        const state = {
+            sidebarOpen: true,
+            sidebarPinned: true,
+            currentPage: 'dashboard',
+            isMobile: window.innerWidth < 1024
+        };
 
+        // ==================== DOM ELEMENTS ====================
+        const sidebar = document.getElementById('sidebar');
+        const topbar = document.getElementById('topbar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const backBtn = document.getElementById('backBtn');
+        const pageTitle = document.getElementById('pageTitle');
+        const accountBtn = document.getElementById('accountBtn');
+        const signoutBtn = document.getElementById('signoutBtn');
+        const navItems = document.querySelectorAll('.designers-nav-item');
+
+        // ==================== SIDEBAR LOGIC ====================
+
+        function initSidebar() {
+            state.isMobile = window.innerWidth < 1024;
+
+            if (state.isMobile) {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.remove('mobile-open');
+                topbar.classList.remove('sidebar-collapsed');
+                mainContent.classList.remove('sidebar-collapsed');
+                state.sidebarOpen = false;
+            } else {
+                sidebar.classList.remove('mobile-open');
+                sidebar.classList.remove('collapsed');
+                topbar.classList.remove('sidebar-collapsed');
+                mainContent.classList.remove('sidebar-collapsed');
+                state.sidebarOpen = true;
+                state.sidebarPinned = true;
+            }
+        }
+
+        function toggleSidebar() {
+            state.isMobile = window.innerWidth < 1024;
+
+            if (state.isMobile) {
+                const isOpen = sidebar.classList.toggle('mobile-open');
+                sidebarOverlay.classList.toggle('show', isOpen);
+                state.sidebarOpen = isOpen;
+            } else {
+                const isCollapsed = sidebar.classList.toggle('collapsed');
+                topbar.classList.toggle('sidebar-collapsed', isCollapsed);
+                mainContent.classList.toggle('sidebar-collapsed', isCollapsed);
+                state.sidebarOpen = !isCollapsed;
+                state.sidebarPinned = !isCollapsed;
+            }
+        }
+
+        function closeMobileSidebar() {
+            sidebar.classList.remove('mobile-open');
+            sidebarOverlay.classList.remove('show');
+            state.sidebarOpen = false;
+        }
+
+        // Desktop hover peek behavior
+        let hoverTimeout;
+        sidebar.addEventListener('mouseenter', () => {
+            if (!state.isMobile && !state.sidebarPinned && sidebar.classList.contains('collapsed')) {
+                clearTimeout(hoverTimeout);
+                sidebar.classList.remove('collapsed');
+                topbar.classList.remove('sidebar-collapsed');
+                mainContent.classList.remove('sidebar-collapsed');
+            }
+        });
+
+        sidebar.addEventListener('mouseleave', () => {
+            if (!state.isMobile && !state.sidebarPinned && !sidebar.classList.contains('collapsed')) {
+                hoverTimeout = setTimeout(() => {
+                    sidebar.classList.add('collapsed');
+                    topbar.classList.add('sidebar-collapsed');
+                    mainContent.classList.add('sidebar-collapsed');
+                }, 300);
+            }
+        });
+
+        // ==================== PAGE NAVIGATION ====================
+
+        function navigateTo(page) {
+            navItems.forEach(item => {
+                item.classList.toggle('active', item.dataset.page === page);
+            });
+
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            const targetSection = document.getElementById(`page-${page}`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            const titles = {
+                dashboard: 'Dashboard',
+                products: 'Products',
+                messages: 'Messages',
+                analytics: 'Analytics',
+                customers: 'Customers',
+                reviews: 'Reviews',
+                settings: 'Settings'
+            };
+            pageTitle.textContent = titles[page] || 'Dashboard';
+
+            state.currentPage = page;
+
+            if (state.isMobile) {
+                closeMobileSidebar();
+            }
+
+            window.location.hash = page;
+        }
+
+        // ==================== EVENT LISTENERS ====================
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', closeMobileSidebar);
+
+        backBtn.addEventListener('click', () => {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                navigateTo('dashboard');
+            }
+        });
+
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = item.dataset.page;
+                if (page) navigateTo(page);
+            });
+        });
+
+        accountBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            navigateTo('settings');
+        });
+
+        signoutBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                alert('Signed out successfully!');
+            }
+        });
+
+        window.addEventListener('hashchange', () => {
+            const page = window.location.hash.replace('#', '') || 'dashboard';
+            if (document.getElementById(`page-${page}`)) {
+                navigateTo(page);
+            }
+        });
+
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const wasMobile = state.isMobile;
+                state.isMobile = window.innerWidth < 1024;
+                if (wasMobile !== state.isMobile) {
+                    initSidebar();
+                }
+            }, 150);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'b' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                const tag = document.activeElement.tagName;
+                if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+                    toggleSidebar();
+                }
+            }
+        });
+
+        // ==================== INIT ====================
+        const initialPage = window.location.hash.replace('#', '') || 'dashboard';
+        initSidebar();
+        if (document.getElementById(`page-${initialPage}`)) {
+            navigateTo(initialPage);
+        }
+    </script>
 </body>
 </html>
