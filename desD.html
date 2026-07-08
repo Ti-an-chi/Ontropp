@@ -5,35 +5,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DESIGNER DASHBOARD</title>
+    <style>
+        body{
+            font-family: Arial;
+            background-color:#c9ecdf;
+        }
+        .main-section{
+            width:1500px
+            padding: 40px 20px;
+            background-color: aqua;
+        }
+        .container {
+            display: flex;
+            gap:20px;
+            align-items: flex-start;
+            padding:20px;
+        }
+        .large-card{
+            width: 140px;
+            height:250px;
+            background:#ffffff;
+            border-radius:16px;
+            padding:20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+
+
+    .small-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 100px);
+    column-gap: 60px;
+    row-gap:30px;
+    }
+
+
+    .small-card {
+    width: 100px;
+    height: 100px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .major-section {
+        width:100%;
+        padding:40px 20px;
+        background-color:rgb(61, 194, 127);
+    }
+    button{
+        padding:4px;
+        border-radius:15px;
+        border:2px solid black;
+    }
+    .containers{
+        display:flex;
+        gap:20px;
+        align-items:flex-start;
+        padding:20px;
+    }
+    .big-cards{
+    display:grid;
+    grid-template-columns:repeat(2,300px);
+    column-gap:60px;
+    row-gap:30px;
+    }
+    .big-card{
+    width:200px;
+    height:350px;
+    background:#ffffff;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    }
+    .minor-section{
+        width:100%;
+        padding:40px 20px;
+        background-color: rgb(21, 134, 134);
+    }
+    .contaners{
+        display:flex;
+        gap:20px;
+        align-items:flex-start;
+        padding:20px;
+    }
+    .medium-cards{
+        display:grid;
+        grid-template-columns:repeat(2,300px);
+        column-gap:60px;
+        row-gap:30px;
+    }
+    .medium-card{
+        width:250px;
+        height:180px;
+        background:#ffffff;
+        border-radius:20px;
+        padding:20px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    </style>
 </head>
 <body>
     <h1>DESIGNER DASHBOARD</h1>
     <h2>Good Morning, Fred </h2>
     <h3>Here's how your brand is performing today</h3>
-    <section>
-        <div class="performing-card">
-            <h3>Best Performing Product</h3>
-            <footer>4.5 rating.</footer>
+    <section class="main-section">
+        <div class="container">
+        <div class="large-card">
+            <h3>BEST PERFORMING PRODUCTS</h3>
+            <br></br>
+            <footer>4.5 Review</footer>
         </div>
-        <div class="portfolio-card">
-            <h3>PORTFOLIO VIEWS</h3>
-            <p>20</p>
+        <div class="small-cards">
+        <div class="small-card">
+        <h3>PORTFOLIO VIEW</h3>
+        <p>20</p>
         </div>
-        <div clas="product-card">
-            <h3>PRODUCTS LISTED</h3>
-            <P>8</P>
+        <div class="small-card">
+             <h3>PRODUCTS LISTED</h3>
+             <P>8</P>
         </div>
-        <div class="followers-card">
+        <div class="small-card">
             <h3>NEW FOLLOWERS</h3>
             <p>150</p>
         </div>
-        <div class="saved-card">
-            <h3>PRODUCT SAVED</h3>
-            <p>3</p>
+        <div class="small-card">
+            <h3>PRODUCTS SAVED</h3>
+            <p>4</p>
         </div>
+       </div> 
     </section>
-    <section>
-        <div class="action-card">
+    <section class="major-section">
+        <div class="containers">
+        <div class="big-cards">
+            <div class="big-card">
             <h3>Actions Needed</h3>
             <ul>
                 <li>
@@ -55,7 +160,7 @@
         </li>
         </ul>
         </div>
-        <div class="quick-card">
+        <div class="big-card">
             <h3>QUICK ACTIONS</h3>
             <ul>
             <li>
@@ -82,18 +187,22 @@
             </button>
             </li>
             </ul>
+            </div>
         </div>
+    </div>
     </section>
-    <section>
-        <div class="others-card">
+    <section class="minor-section">
+        <div class="contaners">
+        <div class="medium-cards">
+        <div class="medium-card">
             <h3>OTHER DESIGNERS</h3>
-            <div class="g-card">Gown For Sale</div>
             <footer>see more</footer>
         </div>
-        <div class="you-card">
+        <div class="medium-card">
             <h3>YOU MIGHT ALSO LIKE</h3>
-            <div class="k-card">Facial Scrub For Sale</div>
             <footer>see more</footer>
+        </div>
+        </div>
         </div>
     </section>
 </body>
