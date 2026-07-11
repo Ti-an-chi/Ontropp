@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ONTROPP - Seller Product Manager</title>
+  <title>ONTROPP - Designer Product Manager</title>
   <link rel="stylesheet" href="./css/CORE.css">
   <link rel="stylesheet" href="./css/components.css">
   <link rel="stylesheet" href="./css/pages/seller-products.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <!-- Seller Authentication Modal -->
+  <!-- Designer Authentication Modal -->
   <div class="seller-auth-overlay" id="seller-auth-overlay">
     <div class="seller-auth-modal">
       <div class="auth-modal-header">
         <div class="auth-logo">ONTROPP.</div>
       </div>
       <form class="auth-modal-form" id="seller-auth-form">
-        <h2>Seller Dashboard</h2>
+        <h2>Designer Dashboard</h2>
         <p class="auth-subtitle">Sign in to manage your products</p>
         
         <div class="auth-form-group">
@@ -38,10 +38,12 @@
             type="password" 
             id="seller-passkey" 
             name="seller-passkey" 
-            placeholder="Enter your passkey (optional for older sellers)" 
+            placeholder="Enter your passkey (123456 for old designers)" 
             autocomplete="off"
           >
-          <p class="form-help" style="font-size:0.9rem; color: var(--admin-muted); margin-top: 6px;">If your shop was created before passkey setup, leave this blank.</p>
+          <p class="form-help" style="font-size:0.9rem; color:
+          var(--admin-muted); margin-top: 6px;">If your shop was created before
+          passkey setup, use "123456".</p>
         </div>
 
         <div class="auth-error" id="auth-error" style="display: none;"></div>

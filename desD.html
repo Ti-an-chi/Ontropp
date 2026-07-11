@@ -1,212 +1,275 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESIGNER'S DASHBOARD</title>
-    <style>
-        body{
-            font-family: Arial;
-            background-color:azure;
-        }
-        .main-section{
-            width:1500px
-            padding: 40px 20px;
-            background-color: aqua;
-        }
-        .container {
-            display: flex;
-            gap:20px;
-            align-items: flex-start;
-            padding:20px;
-        }
-        .large-card{
-            width: 140px;
-            height:250px;
-            background:#ffffff;
-            border-radius:16px;
-            padding:20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-
-
-    .small-cards {
-    display: grid;
-    grid-template-columns: repeat(2, 100px);
-    column-gap: 60px;
-    row-gap:30px;
-    }
-
-
-    .small-card {
-    width: 100px;
-    height: 100px;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .major-section {
-        width:100%;
-        padding:40px 20px;
-        background-color:rgb(61, 194, 127);
-    }
-    button{
-        padding:4px;
-        border-radius:15px;
-        border:2px solid black;
-    }
-    .containers{
-        display:flex;
-        gap:20px;
-        align-items:flex-start;
-        padding:20px;
-    }
-    .big-cards{
-    display:grid;
-    grid-template-columns:repeat(2,300px);
-    column-gap:60px;
-    row-gap:30px;
-    }
-    .big-card{
-    width:200px;
-    height:350px;
-    background:#ffffff;
-    border-radius:20px;
-    padding:20px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
-    }
-    .minor-section{
-        width:100%;
-        padding:40px 20px;
-        background-color: rgb(21, 134, 134);
-    }
-    .contaners{
-        display:flex;
-        gap:20px;
-        align-items:flex-start;
-        padding:20px;
-    }
-    .medium-cards{
-        display:grid;
-        grid-template-columns:repeat(2,300px);
-        column-gap:60px;
-        row-gap:30px;
-    }
-    .medium-card{
-        width:250px;
-        height:180px;
-        background:#ffffff;
-        border-radius:20px;
-        padding:20px;
-        box-shadow:0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designer Dashboard — ONTROPP</title>
+  <link rel="stylesheet" href="./css/CORE.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/pages/designer-dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <h1>Good Morning, Fred</h1>
-    <h3>Here's how your brand is performing today</h3>
-    <section class="main-section">
-        <div class="container">
-        <div class="large-card">
-            <h3>BEST PERFORMING PRODUCTS</h3>
-            <br></br>
-            <footer>4.5 Review</footer>
-        </div>
-        <div class="small-cards">
-        <div class="small-card">
-        <h3>PORTFOLIO VIEW</h3>
-        <p>20</p>
-        </div>
-        <div class="small-card">
-             <h3>PRODUCTS LISTED</h3>
-             <P>8</P>
-        </div>
-        <div class="small-card">
-            <h3>NEW FOLLOWERS</h3>
-            <p>150</p>
-        </div>
-        <div class="small-card">
-            <h3>PRODUCTS SAVED</h3>
-            <p>4</p>
-        </div>
-       </div> 
-    </section>
-    <section class="major-section">
-        <div class="containers">
-        <div class="big-cards">
-            <div class="big-card">
-            <h3>Actions Needed</h3>
-            <ul>
-                <li>
-        <button>
-            <h4>Reply to 2 customers</h4>
+
+<!-- TOP BAR — matches ONTROPP fingerprint -->
+  <header class="dashboard-header">
+    <div class="header-container">
+      <div class="logo">ONTROPP.</div>
+      <div class="header-actions">
+        <button class="icon-btn" id="messages-btn" aria-label="Messages">
+          <i class="fas fa-comment"></i>
+          <span class="badge" style="position:absolute;top:4px;right:4px;background:var(--error);color:white;border-radius:50%;width:16px;height:16px;font-size:10px;display:flex;align-items:center;justify-content:center;">2</span>
         </button>
-        <br></br>
-        </li>
-        <li>
-        <button>
-            <h4>Complete New Collection</h4>
-        </button>
-        <br></br>
-        </li>
-        <li>
-        <button>
-            <h4>Upload a Product</h4>
-        </button>
-        </li>
-        </ul>
-        </div>
-        <div class="big-card">
-            <h3>QUICK ACTIONS</h3>
-            <ul>
-            <li>
-            <button>
-                <h4>Add Designs</h4>
-            </button>
-            <br></br>
-             </li>
-             <li>
-            <button>
-                <h4>Add Product</h4>
-            </button>
-            <br></br>
-            </li>
-            <li>
-            <button>
-                <h4>Create a Collection</h4>
-            </button>
-            <br></br>
-            </li>
-            <li>
-            <button>
-                <h4>Post an Update</h4>
-            </button>
-            </li>
-            </ul>
-            </div>
-        </div>
+        <a href="designerDashboard.html" class="add-product-btn">
+          <i class="fas fa-box"></i>
+          My Products
+        </a>
+      </div>
     </div>
-    </section>
-    <section class="minor-section">
-        <div class="contaners">
-        <div class="medium-cards">
-        <div class="medium-card">
-            <h3>OTHER DESIGNERS</h3>
-            <footer>see more</footer>
+  </header>
+
+
+  <!-- WELCOME -->
+  <div class="welcome-wrap animate-in">
+    <div class="welcome">
+      <div class="welcome-text">
+        <h1>Good morning, Frederick</h1>
+        <p>Here's how your brand is doing today</p>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        Store Active
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: BEST SELLER + STATUS -->
+  <section class="section animate-in delay-1">
+    <div class="hero-grid">
+      <!-- Best Seller (Top Left) -->
+      <div class="best-seller">
+        <div class="best-seller-header">
+          <h2>Best Performing This Week</h2>
+          <span class="trend-badge"><i class="fas fa-arrow-trend-up"></i> Trending</span>
         </div>
-        <div class="medium-card">
-            <h3>YOU MIGHT ALSO LIKE</h3>
-            <footer>see more</footer>
+        <div class="best-seller-img">
+          <img src="./img/bestseller.jpg" alt="Abstract Geo Tee">
         </div>
+        <div class="best-seller-meta">
+          <h3>Abstract Geo Tee</h3>
+          <div class="rating"><i class="fas fa-star"></i> 4.5</div>
         </div>
+        <div class="best-seller-views">
+          <i class="fas fa-eye"></i>
+          <strong>1,247</strong> views this week
         </div>
-    </section>
+      </div>
+
+      <!-- Status Cards (Right Side) -->
+      <div class="status-cards">
+        <div class="status-card accent">
+          <span class="label">Portfolio Views</span>
+          <span class="value">3,842</span>
+          <span class="hint up"><i class="fas fa-arrow-up"></i> 12% vs yesterday</span>
+        </div>
+        <div class="status-card">
+          <span class="label">Products Listed</span>
+          <span class="value">8</span>
+          <span class="hint">2 drafts pending</span>
+        </div>
+        <div class="status-card">
+          <span class="label">New Followers</span>
+          <span class="value">150</span>
+          <span class="hint up"><i class="fas fa-arrow-up"></i> 8% vs yesterday</span>
+        </div>
+        <div class="status-card">
+          <span class="label">Products Saved</span>
+          <span class="value">47</span>
+          <span class="hint">Across all listings</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: TODAY'S ANALYTICS + INSIGHTS -->
+  <section class="section animate-in delay-2">
+    <div class="analytics-grid">
+      <!-- Weekly Bar Chart -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>This Week's Activity</h2>
+          <span class="period">vs last week</span>
+        </div>
+        <div class="chart-area">
+          <div class="chart-bars">
+            <div class="chart-bar" style="height:35%" data-label="Mon" data-value="420"></div>
+            <div class="chart-bar" style="height:55%" data-label="Tue" data-value="680"></div>
+            <div class="chart-bar" style="height:45%" data-label="Wed" data-value="540"></div>
+            <div class="chart-bar" style="height:70%" data-label="Thu" data-value="890"></div>
+            <div class="chart-bar" style="height:60%" data-label="Fri" data-value="720"></div>
+            <div class="chart-bar" style="height:85%" data-label="Sat" data-value="1,050"></div>
+            <div class="chart-bar today" style="height:75%" data-label="Sun" data-value="940"></div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background:var(--primary)"></span>
+              Total listing views
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:var(--primary2)"></span>
+              Unique visitors
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Insights -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Quick Insights</h2>
+        </div>
+        <div class="insights-list">
+          <div class="insight-item">
+            <div class="insight-icon green"><i class="fas fa-arrow-trend-up"></i></div>
+            <div class="insight-body">
+              <h4>Top Mover</h4>
+              <p>"Abstract Geo Tee" views up 34% today</p>
+            </div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-icon amber"><i class="fas fa-bolt"></i></div>
+            <div class="insight-body">
+              <h4>Fastest Growing</h4>
+              <p>"Minimalist Hoodie" gaining 12 saves/hour</p>
+            </div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-icon blue"><i class="fas fa-lightbulb"></i></div>
+            <div class="insight-body">
+              <h4>Visibility Tip</h4>
+              <p>Add 2 more images to boost search ranking</p>
+            </div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-icon rose"><i class="fas fa-envelope"></i></div>
+            <div class="insight-body">
+              <h4>Action Needed</h4>
+              <p>2 unread customer messages waiting</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: DISCOVERY -->
+  <section class="section animate-in delay-3">
+    <div class="discovery-grid">
+      <!-- Top Designers in Category (Bottom Left) -->
+      <div class="discovery-panel">
+        <div class="panel-header">
+          <h2>Top Designers in Fashion</h2>
+          <span class="see-more">See more →</span>
+        </div>
+        <div class="designer-cards">
+          <div class="designer-card">
+            <img src="./img/designer1.jpg" alt="Mara" class="designer-avatar">
+            <div class="designer-info">
+              <h4>@maradesigns</h4>
+              <p>12 products · 8.4k views</p>
+            </div>
+            <button class="follow-btn">Follow</button>
+          </div>
+          <div class="designer-card">
+            <img src="./img/designer2.jpg" alt="Leaf" class="designer-avatar">
+            <div class="designer-info">
+              <h4>@leafstudio</h4>
+              <p>8 products · 5.2k views</p>
+            </div>
+            <button class="follow-btn">Follow</button>
+          </div>
+          <div class="designer-card">
+            <img src="./img/designer3.jpg" alt="Volt" class="designer-avatar">
+            <div class="designer-info">
+              <h4>@voltapparel</h4>
+              <p>15 products · 11k views</p>
+            </div>
+            <button class="follow-btn">Follow</button>
+          </div>
+          <div class="designer-card">
+            <img src="./img/designer4.jpg" alt="Urban" class="designer-avatar">
+            <div class="designer-info">
+              <h4>@urbanthread</h4>
+              <p>6 products · 3.1k views</p>
+            </div>
+            <button class="follow-btn">Follow</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trending in Your Category (Bottom Right) -->
+      <div class="discovery-panel">
+        <div class="panel-header">
+          <h2>Trending in Fashion</h2>
+          <span class="see-more">See more →</span>
+        </div>
+        <div class="product-thumbs">
+          <div class="product-thumb">
+            <div class="product-thumb-img">
+              <img src="./img/product1.jpg" alt="Ocean Breeze Set">
+            </div>
+            <div class="product-thumb-info">
+              <h4>Ocean Breeze Set</h4>
+              <p>12k views this week</p>
+            </div>
+          </div>
+          <div class="product-thumb">
+            <div class="product-thumb-img">
+              <img src="./img/product2.jpg" alt="Pink Horizon Bag">
+            </div>
+            <div class="product-thumb-info">
+              <h4>Pink Horizon Bag</h4>
+              <p>8.4k views this week</p>
+            </div>
+          </div>
+          <div class="product-thumb">
+            <div class="product-thumb-img">
+              <img src="./img/product3.jpg" alt="Lavender Dream Scarf">
+            </div>
+            <div class="product-thumb-info">
+              <h4>Lavender Dream Scarf</h4>
+              <p>6.1k views this week</p>
+            </div>
+          </div>
+          <div class="product-thumb">
+            <div class="product-thumb-img">
+              <img src="./img/product4.jpg" alt="Sunset Runner Shoes">
+            </div>
+            <div class="product-thumb-info">
+              <h4>Sunset Runner Shoes</h4>
+              <p>5.3k views this week</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="bottom-spacer"></div>
+
+  <!-- QUICK ACTIONS BAR -->
+  <div class="quick-bar">
+    <div class="quick-bar-inner">
+      <button class="quick-btn" onclick="location.href='upload.html'">
+        <i class="fas fa-plus"></i>
+        <span class="qa-text">Add Product</span>
+      </button>
+      <button class="quick-btn highlight" onclick="location.href='designerDashboard.html'">
+        <i class="fas fa-layer-group"></i>
+        <span class="qa-text">My Products</span>
+      </button>
+    </div>
+  </div>
+
 </body>
 </html>
-
-
-
-
