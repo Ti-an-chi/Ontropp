@@ -1,0 +1,871 @@
+     <!DOCTYPE html>
+     <html lang="en">
+     <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Community — Designer's Dashboard</title>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --white:       #FFFFFF;
+            --panel:       #F7F9FC;
+            --panel-line:  #ECEFF3;
+    
+            --blue:        #3483E0;
+            --blue-deep:   #1D5FAE;
+            --blue-pale:   #EDF4FD;
+            --blue-pale-2: #E3EEFC;
+            --ink:         #14161B;
+            --ink-soft:    #6B6E76;
+            --ink-faint:   #9CA0A8;
+            --line:        #E7ECF2;
+    
+            --font-display: "Fraunces", Georgia, serif;
+            --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;28          --font-mono: "JetBrains Mono", ui-monospace, monospace;
+        }
+    
+        *, *::before, *::after{ box-sizing: border-box; margin: 0; padding: 0; }
+    
+        html, body{
+            height: 100%;
+        }
+      body{
+            background: var(--white);
+            color: var(--ink);
+            font-family: var(--font-body);
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
+  44      }
+  45      a{ color: inherit; text-decoration: none; }
+  46      button{ font-family: var(--font-body); cursor: pointer; border: none; background: none; }
+  47  
+  48      /* Custom scrollbar */
+  49      ::-webkit-scrollbar{ width: 5px; height: 5px; }
+  50      ::-webkit-scrollbar-track{ background: transparent; }
+  51      ::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 999px; }
+  52      ::-webkit-scrollbar-thumb:hover{ background: var(--ink-faint); }
+  53  
+  54      .shell{
+  55          display: grid;
+  56          grid-template-columns: 76px 260px 1fr 240px;
+  57          height: 100vh;
+  58      }
+  59  
+  60      /* ===== RAIL ===== */
+  61      .rail{
+  62          background: var(--white);
+  63          border-right: 1px solid var(--line);
+  64          display: flex;
+  65          flex-direction: column;
+  66          align-items: center;
+  67          gap: 14px;
+  68          padding: 20px 0;
+  69      }
+  70      .rail-icon{
+  71          width: 46px;
+  72          height: 46px;
+  73          border-radius: 16px;
+  74          display: flex;
+  75          align-items: center;
+  76          justify-content: center;
+  77          font-family: var(--font-display);
+  78          font-weight: 600;
+  79          font-size: 15px;
+  80          transition: border-radius 0.2s ease, background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  81      }
+  82      .rail-icon.is-active{
+  83          background: var(--blue);
+  84          color: var(--white);
+  85          border-radius: 14px;
+  86          box-shadow: 0 2px 8px rgba(52, 131, 224, 0.25);
+  87      }
+  88      .rail-icon.is-muted{
+  89          background: var(--panel);
+  90          color: var(--ink-faint);
+  91      }
+  92      .rail-icon.is-muted:hover{
+  93          border-radius: 14px;
+  94          background: var(--blue-pale);
+  95          color: var(--blue);
+  96          transform: translateY(-1px);
+  97      }
+  98      .rail-divider{
+  99          width: 28px;
+ 100          height: 1px;
+ 101          background: var(--line);
+ 102          margin: 2px 0;
+ 103      }
+ 104      .rail-add{
+ 105          width: 46px;
+ 106          height: 46px;
+ 107          border-radius: 50%;
+ 108          border: 1.5px dashed var(--line);
+ 109          color: var(--ink-faint);
+ 110          display: flex;
+ 111          align-items: center;
+ 112          justify-content: center;
+ 113          font-size: 20px;
+ 114          font-weight: 300;
+ 115          transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+ 116          margin-top: auto;
+ 117      }
+ 118      .rail-add:hover{ border-color: var(--blue); color: var(--blue); background: var(--blue-pale); }
+ 119  
+ 120      /* ===== CHANNELS ===== */
+ 121      .channels{
+ 122          background: var(--panel);
+ 123          border-right: 1px solid var(--line);
+ 124          display: flex;
+ 125          flex-direction: column;
+ 126      }
+ 127      .channels-head{
+ 128          height: 60px;
+ 129          display: flex;
+ 130          align-items: center;
+ 131          justify-content: space-between;
+ 132          padding: 0 18px;
+ 133          border-bottom: 1px solid var(--panel-line);
+ 134          flex-shrink: 0;
+ 135      }
+ 136      .channels-head strong{
+ 137          font-size: 15px;
+ 138          font-weight: 700;
+ 139      }
+ 140      .channels-head .chev{
+ 141          color: var(--ink-faint);
+ 142          font-size: 11px;
+ 143          cursor: pointer;
+ 144          transition: transform 0.2s ease, color 0.2s ease;
+ 145      }
+ 146      .channels-head .chev:hover{ color: var(--ink-soft); transform: rotate(180deg); }
+ 147      .channels-list{
+ 148          flex: 1;
+ 149          overflow-y: auto;
+ 150          padding: 18px 12px;
+ 151      }
+ 152      .cat-label{
+ 153          font-family: var(--font-mono);
+ 154          font-size: 11px;
+ 155          font-weight: 700;
+ 156          letter-spacing: 0.07em;
+ 157          color: var(--ink-faint);
+ 158          padding: 0 10px;
+ 159          margin: 18px 0 6px;
+ 160      }
+ 161      .cat-label:first-child{ margin-top: 0; }
+ 162      .channel-item{
+ 163          display: flex;
+ 164          align-items: center;
+ 165          gap: 9px;
+ 166          padding: 8px 10px;
+ 167          border-radius: 8px;
+ 168          font-size: 14px;
+ 169          font-weight: 500;
+ 170          color: var(--ink-soft);
+ 171          margin-bottom: 2px;
+ 172          position: relative;
+ 173          cursor: pointer;
+ 174          transition: background-color 0.15s ease, color 0.15s ease;
+ 175      }
+ 176      .channel-item .hash{
+ 177          color: var(--ink-faint);
+ 178          font-weight: 600;
+ 179          transition: color 0.15s ease;
+ 180      }
+ 181      .channel-item:hover{ background: var(--blue-pale-2); color: var(--ink); }
+ 182      .channel-item:hover .hash{ color: var(--blue); }
+ 183      .channel-item.is-active{
+ 184          background: var(--white);
+ 185          color: var(--ink);
+ 186          box-shadow: 0 1px 3px rgba(20,22,27,0.06);
+ 187      }
+ 188      .channel-item.is-active .hash{ color: var(--blue); }
+ 189      .channel-item .unread{
+ 190          margin-left: auto;
+ 191          min-width: 18px;
+ 192          height: 18px;
+ 193          border-radius: 999px;
+ 194          background: var(--blue);
+ 195          color: var(--white);
+ 196          font-family: var(--font-mono);
+ 197          font-size: 10px;
+ 198          font-weight: 700;
+ 199          display: flex;
+ 200          align-items: center;
+ 201          justify-content: center;
+ 202          padding: 0 5px;
+ 203      }
+ 204  
+ 205      .self-bar{
+ 206          height: 62px;
+ 207          border-top: 1px solid var(--panel-line);
+ 208          display: flex;
+ 209          align-items: center;
+ 210          gap: 10px;
+ 211          padding: 0 14px;
+ 212          flex-shrink: 0;
+ 213          transition: background-color 0.15s ease;
+ 214      }
+ 215      .self-bar:hover{ background: var(--blue-pale); }
+ 216      .self-avatar{
+ 217          width: 32px;
+ 218          height: 32px;
+ 219          border-radius: 50%;
+ 220          background: linear-gradient(160deg, var(--blue) 0%, var(--blue-deep) 100%);
+ 221          color: var(--white);
+ 222          font-size: 12px;
+ 223          font-weight: 700;
+ 224          display: flex;
+ 225          align-items: center;
+ 226          justify-content: center;
+ 227          position: relative;
+ 228          flex-shrink: 0;
+ 229      }
+ 230      .status-dot{
+ 231          position: absolute;
+ 232          width: 10px;
+ 233          height: 10px;
+ 234          border-radius: 50%;
+ 235          background: var(--blue);
+ 236          border: 2px solid var(--panel);
+ 237          bottom: -2px;
+ 238          right: -2px;
+ 239      }
+ 240      .self-name{ font-size: 13px; font-weight: 700; line-height: 1.2; }
+ 241      .self-role{ font-size: 11px; color: var(--ink-faint); }
+ 242      .self-gear{
+ 243          margin-left: auto;
+ 244          color: var(--ink-faint);
+ 245          font-size: 16px;
+ 246          width: 28px;
+ 247          height: 28px;
+ 248          display: flex;
+ 249          align-items: center;
+ 250          justify-content: center;
+ 251          border-radius: 6px;
+ 252          transition: color 0.15s ease, background-color 0.15s ease;
+ 253      }
+ 254      .self-gear:hover{ color: var(--blue); background: var(--blue-pale-2); }
+ 255  
+ 256      /* ===== MAIN ===== */
+ 257      .main{
+ 258          display: flex;
+ 259          flex-direction: column;
+ 260          min-width: 0;
+ 261      }
+ 262      .channel-head{
+ 263          height: 60px;
+ 264          border-bottom: 1px solid var(--line);
+ 265          display: flex;
+ 266          align-items: center;
+ 267          padding: 0 22px;
+ 268          gap: 10px;
+ 269          flex-shrink: 0;
+ 269      }
+ 270      .channel-head .hash{ color: var(--ink-faint); font-weight: 700; font-size: 17px; }
+ 271      .channel-head h1{
+ 272          font-size: 15px;
+ 273          font-weight: 700;
+ 274          margin: 0;
+ 275      }
+ 276      .channel-head .topic{
+ 277          font-size: 13px;
+ 278          color: var(--ink-faint);
+           margin-left: 8px;
+           padding-left: 14px;
+           border-left: 1px solid var(--line);
+       }
+        283      .channel-head .head-actions{
+ 284          margin-left: auto;
+ 285          display: flex;
+ 286          gap: 6px;
+ 287          color: var(--ink-faint);
+ 288          font-size: 15px;
+ 289      }
+ 290      .channel-head .head-actions span{
+ 291          width: 32px;
+ 292          height: 32px;
+ 293          display: flex;
+ 294          align-items: center;
+ 295          justify-content: center;
+ 296          border-radius: 8px;
+ 297          transition: color 0.15s ease, background-color 0.15s ease;
+ 298          cursor: pointer;
+ 299      }
+ 300      .channel-head .head-actions span:hover{ color: var(--blue); background: var(--blue-pale); }
+ 301  
+ 302      .feed{
+ 303          flex: 1;
+ 304          overflow-y: auto;
+ 305          padding: 22px 0 8px;
+ 306      }
+ 307  
+ 308      .day-divider{
+ 309          display: flex;
+ 310          align-items: center;
+ 311          gap: 14px;
+ 312          color: var(--ink-faint);
+ 313          font-family: var(--font-mono);
+ 314          font-size: 11px;
+ 315          font-weight: 700;
+ 316          letter-spacing: 0.06em;
+ 317          text-transform: uppercase;
+ 318          padding: 0 22px;
+ 319          margin: 4px 0 18px;
+ 320      }
+ 321      .day-divider::before, .day-divider::after{
+ 322          content: "";
+ 323          flex: 1;
+ 324          height: 1px;
+ 325          background: var(--line);
+ 326      }
+ 327  
+ 328      .msg-group{
+ 329          padding: 6px 22px;
+ 330          display: flex;
+ 331          gap: 14px;
+ 332          position: relative;
+ 333          border-radius: 10px;
+ 334          margin: 0 8px;
+ 335          transition: background-color 0.15s ease;
+ 336      }
+ 337      .msg-group + .msg-group{ margin-top: 2px; }
+ 338      .msg-group:hover{ background: var(--blue-pale); }
+ 339      .msg-avatar{
+ 340          width: 38px;
+ 341          height: 38px;
+ 342          border-radius: 50%;
+ 343          background: var(--blue-pale);
+ 344          color: var(--blue-deep);
+ 345          font-size: 13px;
+ 346          font-weight: 700;
+ 346          display: flex;
+ 347          align-items: center;
+ 348          justify-content: center;
+ 349          flex-shrink: 0;
+ 350          margin-top: 2px;
+ 351          transition: transform 0.15s ease;
+ 352      }
+ 353      .msg-group:hover .msg-avatar{ transform: scale(1.04); }
+ 354      .msg-avatar.is-you{
+ 355          background: linear-gradient(160deg, var(--blue) 0%, var(--blue-deep) 100%);
+ 356          color: var(--white);
+ 357      }
+ 358      .msg-body{ flex: 1; min-width: 0; }
+ 359      .msg-head{
+ 360          display: flex;
+ 361          align-items: baseline;
+ 362          gap: 9px;
+ 363          margin-bottom: 2px;
+ 364      }
+ 365      .msg-name{ font-size: 14.5px; font-weight: 700; }
+ 366      .msg-name.is-you{ color: var(--blue-deep); }
+ 367      .msg-badge{
+ 368          font-family: var(--font-mono);
+ 369          font-size: 9.5px;
+ 370          font-weight: 700;
+ 371          letter-spacing: 0.04em;
+ 372          color: var(--white);
+ 373          background: var(--blue);
+ 374          padding: 2px 7px;
+ 375          border-radius: 5px;
+ 376      }
+ 377      .msg-time{ font-size: 11.5px; color: var(--ink-faint); }
+ 378      .msg-line{
+ 379          font-size: 14.5px;
+ 380          color: var(--ink);
+ 381          margin: 3px 0;
+ 382          max-width: 62ch;
+ 383          line-height: 1.55;
+ 384      }
+ 385      .msg-line + .msg-line{ margin-top: 5px; }
+ 386  
+ 387      .reactions{
+ 388          display: flex;
+ 389          gap: 6px;
+ 390          margin-top: 8px;
+ 391      }
+ 392      .reaction{
+ 393          display: inline-flex;
+ 394          align-items: center;
+ 395          gap: 5px;
+ 396          font-size: 12px;
+ 397          padding: 3px 9px;
+ 398          border-radius: 999px;
+ 399          border: 1px solid var(--line);
+ 400          color: var(--ink-soft);
+           401          background: var(--white);
+ 402          cursor: pointer;
+ 403          transition: border-color 0.15s ease, transform 0.1s ease;
+ 404      }
+ 405      .reaction:hover{ border-color: var(--ink-faint); transform: translateY(-1px); }
+ 406      .reaction.is-mine{
+ 407          background: var(--blue-pale);
+ 408          border-color: var(--blue);
+ 409          color: var(--blue-deep);
+ 410      }
+ 411      .reaction.is-mine:hover{ background: var(--blue-pale-2); }
+ 412  
+ 413      /* ===== EMBEDS ===== */
+ 414      .embed{
+ 415          border-left: 3px solid var(--blue);
+ 416          background: var(--panel);
+ 417          border-radius: 0 10px 10px 0;
+ 418          padding: 14px 16px;
+ 419          margin-top: 8px;
+ 420          max-width: 460px;
+ 421          transition: box-shadow 0.2s ease;
+ 422      }
+ 423      .embed:hover{ box-shadow: 0 4px 12px rgba(20,22,27,0.06); }
+ 424      .embed-title{ font-size: 13.5px; font-weight: 700; margin-bottom: 6px; }
+ 425      .embed-desc{ font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; line-height: 1.5; }
+ 426      .embed-bars{ display: flex; flex-direction: column; gap: 8px; }
+ 427      .embed-bar-row{
+ 428          display: flex;
+ 429          align-items: center;
+ 430          gap: 10px;
+ 431          font-size: 12.5px;
+ 432      }
+ 433      .embed-bar-track{
+ 434          flex: 1;
+ 435          height: 8px;
+ 436          border-radius: 999px;
+ 437          background: var(--blue-pale-2);
+ 438          overflow: hidden;
+ 439      }
+ 440      .embed-bar-fill{
+ 441          height: 100%;
+ 442          background: var(--blue);
+ 443          border-radius: 999px;
+ 444      }
+ 445      .embed-thumbs{
+ 446          display: flex;
+ 447          gap: 8px;
+ 448      }
+ 449      .embed-thumb{
+ 450          width: 90px;
+ 451          height: 68px;
+ 452          border-radius: 8px;
+ 453          background: linear-gradient(150deg, var(--blue-pale) 0%, var(--blue-pale-2) 100%);
+ 454          border: 1px solid var(--panel-line);
+ 455          cursor: pointer;
+ 456          transition: transform 0.15s ease, box-shadow 0.15s ease;
+ 457      }
+ 458      .embed-thumb:hover{ transform: translateY(-2px); box-shadow: 0 4px 8px rgba(20,22,27,0.08); }
+ 459  
+ 460      .msg-actions{
+ 461          position: absolute;
+ 462          top: -12px;
+ 463          right: 14px;
+ 464          display: none;
+ 465          gap: 4px;
+ 466          background: var(--white);
+ 467          border: 1px solid var(--line);
+ 468          border-radius: 10px;
+ 469          padding: 4px;
+ 470          box-shadow: 0 6px 18px -8px rgba(20,22,27,0.18);
+ 471          animation: fade-in 0.15s ease;
+ 472      }
+ 473      @keyframes fade-in {
+ 474          from { opacity: 0; transform: translateY(3px); }
+ 475          to { opacity: 1; transform: translateY(0); }
+ 476      }
+ 477      .msg-group:hover .msg-actions{ display: flex; }
+ 478      .msg-actions button{
+ 479          width: 28px;
+ 480          height: 28px;
+ 481          border-radius: 6px;
+ 482          display: flex;
+ 483          align-items: center;
+ 484          justify-content: center;
+ 485          color: var(--ink-soft);
+ 486          font-size: 13px;
+ 487          transition: background-color 0.15s ease, color 0.15s ease;
+ 488      }
+ 489      .msg-actions button:hover{ background: var(--blue-pale); color: var(--blue); }
+ 490  
+ 491      .composer-wrap{
+ 492          padding: 0 22px 20px;
+ 493          flex-shrink: 0;
+ 494      }
+ 495      .composer{
+ 496          display: flex;
+ 497          align-items: center;
+ 498          gap: 12px;
+ 499          background: var(--panel);
+ 500          border: 1px solid var(--line);
+ 501          border-radius: 16px;
+ 502          padding: 12px 16px;
+ 503          transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+ 504      }
+ 505      .composer:focus-within{
+ 506          border-color: var(--blue);
+ 507          background: var(--white);
+ 508          box-shadow: 0 0 0 3px var(--blue-pale), 0 4px 12px rgba(52, 131, 224, 0.08);
+ 509      }
+ 510      .composer .plus{
+ 511          width: 26px;
+ 512          height: 26px;
+ 513          border-radius: 50%;
+ 514          border: 1.5px solid var(--ink-faint);
+ 515          color: var(--ink-faint);
+ 516          display: flex;
+ 517          align-items: center;
+ 518          justify-content: center;
+ 519          font-size: 15px;
+ 520          flex-shrink: 0;
+ 521          cursor: pointer;
+ 522          transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+ 523      }
+ 524      .composer .plus:hover{ border-color: var(--blue); color: var(--blue); background: var(--blue-pale); }
+ 525      .composer input{
+ 526          border: none;
+ 527          background: none;
+ 528          outline: none;
+ 529          flex: 1;
+ 530          font-family: var(--font-body);
+ 531          font-size: 14px;
+ 532          color: var(--ink);
+ 533      }
+ 534      .composer input::placeholder{ color: var(--ink-faint); }
+ 535      .composer .emoji{
+ 536          color: var(--ink-faint);
+ 537          font-size: 16px;
+ 538          cursor: pointer;
+ 539          width: 28px;
+ 540          height: 28px;
+ 541          display: flex;
+ 542          align-items: center;
+ 543          justify-content: center;
+ 544          border-radius: 6px;
+ 545          transition: color 0.15s ease, background-color 0.15s ease;
+ 546      }
+ 547      .composer .emoji:hover{ color: var(--blue); background: var(--blue-pale); }
+ 548      .composer .send{
+ 549          color: var(--blue);
+ 550          font-weight: 700;
+ 551          font-size: 13px;
+ 552          padding: 6px 12px;
+ 553          border-radius: 8px;
+ 554          transition: background-color 0.15s ease;
+ 555          cursor: pointer;
+ 556      }
+ 557      .composer .send:hover{ background: var(--blue-pale); }
+ 558  
+ 559      /* ===== MEMBERS ===== */
+ 560      .members{ 561      .members{
+ 562          background: var(--white);
+ 563          border-left: 1px solid var(--line);
+ 564          padding: 20px 16px;
+ 565          overflow-y: auto;
+ 566      }
+ 567      .member-label{
+ 568          font-family: var(--font-mono);
+ 569          font-size: 11px;
+ 570          font-weight: 700;
+ 571          letter-spacing: 0.06em;
+ 572          color: var(--ink-faint);
+ 573          margin: 18px 0 8px;
+ 574          padding: 0 6px;
+ 575      }
+ 576      .member-label:first-child{ margin-top: 0; }
+ 577      .member-row{
+ 578          display: flex;
+ 579          align-items: center;
+ 580          gap: 10px;
+ 581          padding: 7px 6px;
+ 582          border-radius: 8px;
+ 583          cursor: pointer;
+ 584          transition: background-color 0.15s ease, transform 0.1s ease;
+ 585      }
+ 586      .member-row:hover{ background: var(--blue-pale-2); transform: translateX(2px); }
+ 587      .member-avatar{
+ 588          width: 30px;
+ 589          height: 30px;
+ 590          border-radius: 50%;
+ 591          background: var(--blue-pale);
+ 592          color: var(--blue-deep);
+ 593          font-size: 11px;
+ 594          font-weight: 700;
+ 595          display: flex;
+ 596          align-items: center;
+ 597          justify-content: center;
+ 598          position: relative;
+ 599          flex-shrink: 0;
+ 600      }
+ 601      .member-avatar .status-dot{ border-color: var(--white); }
+ 602      .member-avatar.is-offline{ opacity: 0.55; }
+ 603      .member-avatar .status-dot.is-offline{ background: var(--white); border: 1.5px solid var(--ink-faint); }
+ 604      .member-name{ font-size: 13.5px; font-weight: 500; }
+ 605      .member-name.is-offline{ color: var(--ink-faint); }
+ 606      .member-role{
+ 607          font-family: var(--font-mono);
+ 608          font-size: 9.5px;
+ 609          font-weight: 700;
+ 608          color: var(--blue);
+ 609          margin-left: auto;
+ 610      }
+ 611  
+ 612      /* ===== RESPONSIVE ===== */
+ 613      @media (max-width: 980px){
+ 614          .shell{ grid-template-columns: 0 0 1fr 0; }
+ 615          .rail, .channels, .members{ display: none; }
+ 616          html, body{ overflow: auto; height: auto; }
+ 617          .feed{ overflow-y: visible; }
+ 618      }
+ 619  
+ 620      @media (prefers-reduced-motion: reduce){
+ 621          *{ transition: none !important; animation: none !important; }
+ 622      }
+ 623  </style>
+ 624  </head>
+ 625  <body>
+ 626  
+ 627  <div class="shell">
+ 628  
+ 629      <!-- Community rail -->
+ 630      <div class="rail">
+ 631          <div class="rail-icon is-active">D.</div>
+ 632          <div class="rail-divider"></div>
+ 633          <div class="rail-icon is-muted">TW</div>
+ 634          <div class="rail-icon is-muted">PX</div>
+ 635          <div class="rail-add">+</div>
+ 636      </div>
+ 637  
+ 638      <!-- Channel sidebar -->
+ 639      <div class="channels">
+ 640          <div class="channels-head">
+ 641              <strong>Fred's Studio</strong>
+ 642              <span class="chev">▾</span>
+ 643          </div>
+ 644          <div class="channels-list">
+ 645              <div class="cat-label">ANNOUNCEMENTS</div>
+ 646              <div class="channel-item is-active"><span class="hash">#</span> updates</div>
+ 647              <div class="channel-item"><span class="hash">#</span> qa-live <span class="unread">1</span></div>
+ 648  
+ 649              <div class="cat-label">COMMUNITY</div>
+ 650              <div class="channel-item"><span class="hash">#</span> general <span class="unread">6</span></div>
+ 651              <div class="channel-item"><span class="hash">#</span> showcase</div>
+ 652              <div class="channel-item"><span class="hash">#</span> feedback <span class="unread">3</span></div>
+ 653          </div>
+ 654          <div class="self-bar">
+ 655              <div class="self-avatar">FR<span class="status-dot"></span></div>
+ 656              <div>
+ 657                  <div class="self-name">Fred</div>
+ 658                  <div class="self-role">Designer</div>
+ 659              </div>
+ 660              <span class="self-gear">⚙</span>
+ 661          </div>
+ 662      </div>
+ 663  
+ 664      <!-- Main feed -->
+ 665      <div class="main">
+ 666          <div class="channel-head">
+ 667              <span class="hash">#</span>
+ 668              <h1>updates</h1>
+ 669              <span class="topic">Behind-the-scenes and polls for followers</span>
+ 670              <div class="head-actions">
+ 671                  <span>🔍</span>
+ 672                  <span>👥</span>
+ 673              </div>
+ 674          </div>
+ 675  
+ 676          <div class="feed">
+ 677              <div class="day-divider">Today</div>
+ 678  
+ 679              <div class="msg-group">
+ 680                  <div class="msg-avatar is-you">FR</div>
+ 681                  <div class="msg-body">
+ 682                      <div class="msg-head">
+ 683                          <span class="msg-name is-you">Fred</span>
+ 684                          <span class="msg-badge">DESIGNER</span>
+ 685                          <span class="msg-time">2:14 PM</span>
+ 686                      </div>
+ 687                      <p class="msg-line">Pick the grid for the new type specimen — two directions on the table.</p>
+ 688                      <div class="embed">
+ 689                          <div class="embed-title">Poll · Grid direction</div>
+ 690                          <div class="embed-desc">An even 12-column grid vs. an asymmetric split that gives the headline more room.</div>
+ 691                          <div class="embed-thumbs">
+ 692                              <div class="embed-thumb"></div>
+ 693                              <div class="embed-thumb"></div>
+ 694                          </div>
+ 695                          <div class="embed-bars" style="margin-top:12px;">
+ 696                              <div class="embed-bar-row">
+ 697                                  <span style="width:78px;">12-column</span>
+ 698                                  <div class="embed-bar-track"><div class="embed-bar-fill" style="width:36%;"></div></div>
+ 699                                  <span>36%</span>
+ 700                              </div>
+ 701                              <div class="embed-bar-row">
+ 702                                  <span style="width:78px;">Asymmetric</span>
+ 703                                  <div class="embed-bar-track"><div class="embed-bar-fill" style="width:64%;"></div></div>
+ 704                                  <span>64%</span>
+ 705                              </div>
+ 706                          </div>
+ 707                      </div>
+ 708                      <div class="reactions">
+ 709                          <span class="reaction is-mine">👍 24</span>
+ 710                          <span class="reaction">🔥 9</span>
+ 711                      </div>
+ 712                  </div>
+ 713                  <div class="msg-actions">
+ 714                      <button>😀</button>
+ 715                      <button>↩</button>
+ 716                      <button>⋯</button>
+ 717                  </div>
+ 718              </div>
+ 719  
+ 720              <div class="msg-group">
+         721              <div class="msg-group">
+ 722                  <div class="msg-avatar">PM</div>
+ 723                  <div class="msg-body">
+ 724                      <div class="msg-head">
+ 725                          <span class="msg-name">Priya M.</span>
+ 726                          <span class="msg-time">2:39 PM</span>
+ 727                      </div>
+ 728                      <p class="msg-line">The asymmetric one gives the headline so much more space to breathe. My vote.</p>
+ 729                  </div>
+ 730                  <div class="msg-actions">
+ 731                      <button>😀</button>
+ 732                      <button>↩</button>
+ 733                      <button>⋯</button>
+ 734                  </div>
+ 735              </div>
+ 736  
+ 737              <div class="msg-group">
+ 738                  <div class="msg-avatar">OT</div>
+ 739                  <div class="msg-body">
+ 740                      <div class="msg-head">
+ 741                          <span class="msg-name">Owen T.</span>
+ 742                          <span class="msg-time">2:58 PM</span>
+ 743                      </div>
+ 744                      <p class="msg-line">Curious how the 12-column holds up on smaller screens — could you post a mobile crop?</p>
+ 745                  </div>
+ 746                  <div class="msg-actions">
+ 747                      <button>😀</button>
+ 748                      <button>↩</button>
+ 749                      <button>⋯</button>
+ 750                  </div>
+ 751              </div>
+ 752  
+ 753              <div class="msg-group">
+ 754                  <div class="msg-avatar is-you">FR</div>
+ 755                  <div class="msg-body">
+ 756                      <div class="msg-head">
+ 757                          <span class="msg-name is-you">Fred</span>
+ 758                          <span class="msg-badge">DESIGNER</span>
+ 759                          <span class="msg-time">3:16 PM</span>
+ 760                      </div>
+ 761                      <p class="msg-line">Good call — adding a mobile version to the poll tonight. 🙌</p>
+ 762                      <div class="reactions">
+ 763                          <span class="reaction">🙌 6</span>
+ 764                      </div>
+ 765                  </div>
+ 766                  <div class="msg-actions">
+ 767                      <button>😀</button>
+ 768                      <button>↩</button>
+ 769                      <button>⋯</button>
+ 770                  </div>
+ 771              </div>
+ 772  
+ 773              <div class="day-divider">Yesterday</div>
+ 774  
+ 775              <div class="msg-group">
+ 776                  <div class="msg-avatar">MK</div>
+ 777                  <div class="msg-body">
+ 778                      <div class="msg-head">
+ 779                          <span class="msg-name">Marcus L.</span>
+ 780                          <span class="msg-time">11:02 AM</span>
+ 781                      </div>
+ 782                      <p class="msg-line">This framework for picking type pairings is exactly what I needed — always got stuck comparing moods first.</p>
+ 783                  </div>
+ 784                  <div class="msg-actions">
+ 785                      <button>😀</button>
+ 786                      <button>↩</button>
+ 787                      <button>⋯</button>
+ 788                  </div>
+ 789              </div>
+ 790  
+ 791              <div class="msg-group">
+ 792                  <div class="msg-avatar is-you">FR</div>
+ 793                  <div class="msg-body">
+ 794                      <div class="msg-head">
+ 795                          <span class="msg-name is-you">Fred</span>
+ 796                          <span class="msg-badge">DESIGNER</span>
+ 797                          <span class="msg-time">11:30 AM</span>
+ 798                      </div>
+ 799                      <p class="msg-line">Packaging refresh — first physical proof came back today. The fold is holding better than the digital mockup suggested.</p>
+ 800                      <div class="embed">
+ 801                          <div class="embed-title">Die-line test · Round 1</div>
+ 802                          <div class="embed-thumbs">
+ 803                              <div class="embed-thumb"></div>
+ 804                              <div class="embed-thumb"></div>
+ 805                              <div class="embed-thumb"></div>
+ 806                          </div>
+ 807                      </div>
+ 808                      <div class="reactions">
+ 809                          <span class="reaction">😍 31</span>
+ 810                          <span class="reaction">👏 14</span>
+ 811                      </div>
+ 812                  </div>
+ 813                  <div class="msg-actions">
+ 814                      <button>😀</button>
+ 815                      <button>↩</button>
+ 816                      <button>⋯</button>
+ 817                  </div>
+ 818              </div>
+ 819          </div>
+ 820  
+ 821          <div class="composer-wrap">
+ 822              <div class="composer">
+ 823                  <div class="plus">+</div>
+ 824                  <input type="text" placeholder="Message #updates" disabled>
+ 825                  <span class="emoji">🙂</span>
+ 826                  <span class="send">Send</span>
+ 827              </div>
+ 828          </div>
+ 829      </div>
+ 830  
+ 831      <!-- Member list -->
+ 832      <div class="members">
+ 833          <div class="member-label">ONLINE — 4</div>
+ 834          <div class="member-row">
+ 835              <div class="member-avatar">FR<span class="status-dot"></span></div>
+ 836              <span class="member-name">Fred</span>
+ 837              <span class="member-role">YOU</span>
+           </div>
+           <div class="member-row">
+               <div class="member-avatar">PM<span class="status-dot"></span></div>
+               <span class="member-name">Priya M.</span>
+           </div>
+           <div class="member-row">
+               <div class="member-avatar">OT<span class="status-dot"></span></div>
+               <span class="member-name">Owen T.</span>
+           </div>
+           <div class="member-row">
+               <div class="member-avatar">HK<span class="status-dot"></span></div>
+               <span class="member-name">Hana K.</span>
+           </div>
+   
+           <div class="member-label">OFFLINE — 3</div>
+           <div class="member-row">
+               <div class="member-avatar is-offline">ML<span class="status-dot is-offline"></span></div>
+               <span class="member-name is-offline">Marcus L.</span>
+           </div>
+           <div class="member-row">
+               <div class="member-avatar is-offline">RN<span class="status-dot is-offline"></span></div>
+               <span class="member-name is-offline">Rosa N.</span>
+           </div>
+           <div class="member-row">
+               <div class="member-avatar is-offline">SB<span class="status-dot is-offline"></span></div>
+               <span class="member-name is-offline">Sam B.</span>
+           </div>
+       </div>
+   
+   </div>
+   
+   </body>
+   </html>
