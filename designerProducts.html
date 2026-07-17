@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONTROPP - Designer Product Manager</title>
+  <link rel="stylesheet" href="./css/CORE.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/pages/seller-products.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Designer Authentication Modal -->
+  <div class="seller-auth-overlay" id="seller-auth-overlay">
+    <div class="seller-auth-modal">
+      <div class="auth-modal-header">
+        <div class="auth-logo">ONTROPP.</div>
+      </div>
+      <form class="auth-modal-form" id="seller-auth-form">
+        <h2>Designer Dashboard</h2>
+        <p class="auth-subtitle">Sign in to manage your products</p>
+        
+        <div class="auth-form-group">
+          <label for="shop-name">Shop Name</label>
+          <input 
+            type="text" 
+            id="shop-name" 
+            name="shop-name" 
+            placeholder="Your shop name" 
+            required
+            autocomplete="off"
+          >
+        </div>
+        
+        <div class="auth-form-group">
+          <label for="seller-passkey">Seller Passkey</label>
+          <input 
+            type="password" 
+            id="seller-passkey" 
+            name="seller-passkey" 
+            placeholder="Enter your passkey (123456 for old designers)" 
+            autocomplete="off"
+          >
+          <p class="form-help" style="font-size:0.9rem; color:
+          var(--admin-muted); margin-top: 6px;">If your shop was created before
+          passkey setup, use "123456".</p>
+        </div>
+
+        <div class="auth-error" id="auth-error" style="display: none;"></div>
+        
+        <button type="submit" class="auth-submit-btn" id="auth-submit-btn">
+          Access Dashboard
+        </button>
+        
+        <div class="auth-action-row">
+          <p class="auth-footer-text">
+            Don't have a shop? <a href="sellerSignup.html">Register as seller</a>
+          </p>
+          <button type="button" class="auth-secondary-btn" id="set-passkey-btn">
+            Set passkey
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <header class="dashboard-header">
+    <div class="header-container">
+      <a href="dashboard.html" class="icon-btn" aria-label="Back to dashboard">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <div class="logo">ONTROPP.</div>
+      <div class="header-actions">
+        <button class="icon-btn" id="refresh-btn" aria-label="Refresh product list">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <a href="upload.html" class="add-product-btn">
+          <i class="fas fa-plus"></i>
+          Add Product
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="seller-admin-page">
+    <section class="seller-admin-hero">
+      <div>
+        <h1>Seller product manager</h1>
+        <p>Browse all your listings with performance metrics, quick actions, and pagination for easier catalog control.</p>
+      </div>
+      <div class="hero-actions">
+        <a href="upload.html" class="add-product-btn">
+          <i class="fas fa-plus"></i>
+          New product
+        </a>
+        <a href="dashboard.html" class="add-product-btn">
+          <i class="fas fa-arrow-left"></i>
+          Dashboard
+        </a>
+      </div>
+    </section>
+
+    <section class="seller-admin-summary">
+      <div class="admin-card">
+        <span class="card-label">Total products</span>
+        <strong id="total-products-count">0</strong>
+      </div>
+      <div class="admin-card">
+        <span class="card-label">Current page</span>
+        <strong id="current-page-number">1</strong>
+      </div>
+      <div class="admin-card">
+        <span class="card-label">Page views</span>
+        <strong id="total-views-count">0</strong>
+      </div>
+      <div class="admin-card">
+        <span class="card-label">Active listings</span>
+        <strong id="active-products-count">0</strong>
+      </div>
+    </section>
+
+    <section class="seller-admin-controls">
+      <div class="admin-search">
+        <i class="fas fa-search"></i>
+        <input id="search-input" type="search" placeholder="Search listings by title, category or SKU" autocomplete="off">
+      </div>
+    </section>
+
+    <section class="seller-products-list">
+      <div class="list-header">
+        <h2>Catalog</h2>
+        <span id="results-count">0 products</span>
+      </div>
+
+      <div id="seller-products-grid" class="seller-products-grid"></div>
+
+      <div class="empty-state" id="seller-products-empty" style="display: none;">
+        <i class="fas fa-box-open"></i>
+        <strong>No products found</strong>
+        <p>Upload a new product or change your search to see more listings.</p>
+      </div>
+
+      <div class="loading-state" id="seller-products-loading" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Loading your products...</p>
+      </div>
+
+      <div class="pagination-controls" id="pagination-controls"></div>
+    </section>
+  </main>
+
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 ONTROPP. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Terms</a>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/pages/seller-products.js"></script>
+</body>
+</html>

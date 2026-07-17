@@ -622,221 +622,207 @@
  621          *{ transition: none !important; animation: none !important; }
  622      }
  623  </style>
- 624  </head>
- 625  <body>
- 626  
- 627  <div class="shell">
- 628  
- 629      <!-- Community rail -->
- 630      <div class="rail">
+   </head>
+   <body>
+   
+    <div class="shell">
+   
+      <!-- Community rail -->
+      <div class="rail">
  631          <div class="rail-icon is-active">D.</div>
  632          <div class="rail-divider"></div>
  633          <div class="rail-icon is-muted">TW</div>
  634          <div class="rail-icon is-muted">PX</div>
  635          <div class="rail-add">+</div>
  636      </div>
- 637  
- 638      <!-- Channel sidebar -->
- 639      <div class="channels">
- 640          <div class="channels-head">
- 641              <strong>Fred's Studio</strong>
- 642              <span class="chev">▾</span>
- 643          </div>
- 644          <div class="channels-list">
- 645              <div class="cat-label">ANNOUNCEMENTS</div>
- 646              <div class="channel-item is-active"><span class="hash">#</span> updates</div>
- 647              <div class="channel-item"><span class="hash">#</span> qa-live <span class="unread">1</span></div>
- 648  
- 649              <div class="cat-label">COMMUNITY</div>
- 650              <div class="channel-item"><span class="hash">#</span> general <span class="unread">6</span></div>
- 651              <div class="channel-item"><span class="hash">#</span> showcase</div>
- 652              <div class="channel-item"><span class="hash">#</span> feedback <span class="unread">3</span></div>
- 653          </div>
- 654          <div class="self-bar">
- 655              <div class="self-avatar">FR<span class="status-dot"></span></div>
- 656              <div>
- 657                  <div class="self-name">Fred</div>
- 658                  <div class="self-role">Designer</div>
- 659              </div>
- 660              <span class="self-gear">⚙</span>
- 661          </div>
- 662      </div>
- 663  
- 664      <!-- Main feed -->
- 665      <div class="main">
- 666          <div class="channel-head">
- 667              <span class="hash">#</span>
- 668              <h1>updates</h1>
- 669              <span class="topic">Behind-the-scenes and polls for followers</span>
- 670              <div class="head-actions">
- 671                  <span>🔍</span>
- 672                  <span>👥</span>
- 673              </div>
- 674          </div>
- 675  
- 676          <div class="feed">
- 677              <div class="day-divider">Today</div>
- 678  
- 679              <div class="msg-group">
- 680                  <div class="msg-avatar is-you">FR</div>
- 681                  <div class="msg-body">
- 682                      <div class="msg-head">
- 683                          <span class="msg-name is-you">Fred</span>
- 684                          <span class="msg-badge">DESIGNER</span>
- 685                          <span class="msg-time">2:14 PM</span>
- 686                      </div>
- 687                      <p class="msg-line">Pick the grid for the new type specimen — two directions on the table.</p>
- 688                      <div class="embed">
- 689                          <div class="embed-title">Poll · Grid direction</div>
- 690                          <div class="embed-desc">An even 12-column grid vs. an asymmetric split that gives the headline more room.</div>
- 691                          <div class="embed-thumbs">
- 692                              <div class="embed-thumb"></div>
- 693                              <div class="embed-thumb"></div>
- 694                          </div>
- 695                          <div class="embed-bars" style="margin-top:12px;">
- 696                              <div class="embed-bar-row">
- 697                                  <span style="width:78px;">12-column</span>
- 698                                  <div class="embed-bar-track"><div class="embed-bar-fill" style="width:36%;"></div></div>
- 699                                  <span>36%</span>
- 700                              </div>
- 701                              <div class="embed-bar-row">
- 702                                  <span style="width:78px;">Asymmetric</span>
- 703                                  <div class="embed-bar-track"><div class="embed-bar-fill" style="width:64%;"></div></div>
- 704                                  <span>64%</span>
- 705                              </div>
- 706                          </div>
- 707                      </div>
- 708                      <div class="reactions">
- 709                          <span class="reaction is-mine">👍 24</span>
- 710                          <span class="reaction">🔥 9</span>
- 711                      </div>
- 712                  </div>
- 713                  <div class="msg-actions">
- 714                      <button>😀</button>
- 715                      <button>↩</button>
- 716                      <button>⋯</button>
- 717                  </div>
- 718              </div>
- 719  
- 720              <div class="msg-group">
-         721              <div class="msg-group">
- 722                  <div class="msg-avatar">PM</div>
- 723                  <div class="msg-body">
- 724                      <div class="msg-head">
- 725                          <span class="msg-name">Priya M.</span>
- 726                          <span class="msg-time">2:39 PM</span>
- 727                      </div>
- 728                      <p class="msg-line">The asymmetric one gives the headline so much more space to breathe. My vote.</p>
- 729                  </div>
- 730                  <div class="msg-actions">
- 731                      <button>😀</button>
- 732                      <button>↩</button>
- 733                      <button>⋯</button>
- 734                  </div>
- 735              </div>
- 736  
- 737              <div class="msg-group">
- 738                  <div class="msg-avatar">OT</div>
- 739                  <div class="msg-body">
- 740                      <div class="msg-head">
- 741                          <span class="msg-name">Owen T.</span>
- 742                          <span class="msg-time">2:58 PM</span>
- 743                      </div>
- 744                      <p class="msg-line">Curious how the 12-column holds up on smaller screens — could you post a mobile crop?</p>
- 745                  </div>
- 746                  <div class="msg-actions">
- 747                      <button>😀</button>
- 748                      <button>↩</button>
- 749                      <button>⋯</button>
- 750                  </div>
- 751              </div>
- 752  
- 753              <div class="msg-group">
- 754                  <div class="msg-avatar is-you">FR</div>
- 755                  <div class="msg-body">
- 756                      <div class="msg-head">
- 757                          <span class="msg-name is-you">Fred</span>
- 758                          <span class="msg-badge">DESIGNER</span>
- 759                          <span class="msg-time">3:16 PM</span>
- 760                      </div>
- 761                      <p class="msg-line">Good call — adding a mobile version to the poll tonight. 🙌</p>
- 762                      <div class="reactions">
- 763                          <span class="reaction">🙌 6</span>
- 764                      </div>
- 765                  </div>
- 766                  <div class="msg-actions">
- 767                      <button>😀</button>
- 768                      <button>↩</button>
- 769                      <button>⋯</button>
- 770                  </div>
- 771              </div>
- 772  
- 773              <div class="day-divider">Yesterday</div>
- 774  
- 775              <div class="msg-group">
- 776                  <div class="msg-avatar">MK</div>
- 777                  <div class="msg-body">
- 778                      <div class="msg-head">
- 779                          <span class="msg-name">Marcus L.</span>
- 780                          <span class="msg-time">11:02 AM</span>
- 781                      </div>
- 782                      <p class="msg-line">This framework for picking type pairings is exactly what I needed — always got stuck comparing moods first.</p>
- 783                  </div>
- 784                  <div class="msg-actions">
- 785                      <button>😀</button>
- 786                      <button>↩</button>
- 787                      <button>⋯</button>
- 788                  </div>
- 789              </div>
- 790  
- 791              <div class="msg-group">
- 792                  <div class="msg-avatar is-you">FR</div>
- 793                  <div class="msg-body">
- 794                      <div class="msg-head">
- 795                          <span class="msg-name is-you">Fred</span>
- 796                          <span class="msg-badge">DESIGNER</span>
- 797                          <span class="msg-time">11:30 AM</span>
- 798                      </div>
- 799                      <p class="msg-line">Packaging refresh — first physical proof came back today. The fold is holding better than the digital mockup suggested.</p>
- 800                      <div class="embed">
- 801                          <div class="embed-title">Die-line test · Round 1</div>
- 802                          <div class="embed-thumbs">
- 803                              <div class="embed-thumb"></div>
- 804                              <div class="embed-thumb"></div>
- 805                              <div class="embed-thumb"></div>
- 806                          </div>
- 807                      </div>
- 808                      <div class="reactions">
- 809                          <span class="reaction">😍 31</span>
- 810                          <span class="reaction">👏 14</span>
- 811                      </div>
- 812                  </div>
- 813                  <div class="msg-actions">
- 814                      <button>😀</button>
- 815                      <button>↩</button>
- 816                      <button>⋯</button>
- 817                  </div>
- 818              </div>
- 819          </div>
- 820  
- 821          <div class="composer-wrap">
- 822              <div class="composer">
- 823                  <div class="plus">+</div>
- 824                  <input type="text" placeholder="Message #updates" disabled>
- 825                  <span class="emoji">🙂</span>
- 826                  <span class="send">Send</span>
- 827              </div>
- 828          </div>
- 829      </div>
- 830  
- 831      <!-- Member list -->
- 832      <div class="members">
- 833          <div class="member-label">ONLINE — 4</div>
- 834          <div class="member-row">
- 835              <div class="member-avatar">FR<span class="status-dot"></span></div>
- 836              <span class="member-name">Fred</span>
- 837              <span class="member-role">YOU</span>
-           </div>
+<!-- Channel sidebar -->
+<div class="channels">
+<div class="channels-head">
+<strong>Fred's Studio</strong>
+<span class="chev">▾</span>
+</div>
+<div class="channels-list">
+<div class="cat-label">ANNOUNCEMENTS</div>
+<div class="channel-item is-active"><span class="hash">#</span> updates</div>
+<div class="channel-item"><span class="hash">#</span> qa-live <span class="unread">1</span></div>
+<div class="cat-label">COMMUNITY</div>
+<div class="channel-item"><span class="hash">#</span> general <span class="unread">6</span></div>
+<div class="channel-item"><span class="hash">#</span> showcase</div>
+<div class="channel-item"><span class="hash">#</span> feedback <span class="unread">3</span></div>
+</div>
+<div class="self-bar">
+<div class="self-avatar">FR<span class="status-dot"></span></div>
+<div>
+<div class="self-name">Fred</div>
+<div class="self-role">Designer</div>
+</div>
+<span class="self-gear">⚙</span>
+</div>
+</div>
+<!-- Main feed -->
+<div class="main">
+<div class="channel-head">
+<span class="hash">#</span>
+<h1>updates</h1>
+<span class="topic">Behind-the-scenes and polls for followers</span>
+<div class="head-actions">
+<span>🔍</span>
+<span>👥</span>
+</div>
+</div>
+<div class="feed">
+<div class="day-divider">Today</div>
+<div class="msg-group">
+<div class="msg-avatar is-you">FR</div>
+<div class="msg-body">
+<div class="msg-head">
+<span class="msg-name is-you">Fred</span>
+<span class="msg-badge">DESIGNER</span>
+<span class="msg-time">2:14 PM</span>
+</div>
+<p class="msg-line">Pick the grid for the new type specimen — two directions on the table.</p>
+<div class="embed">
+<div class="embed-title">Poll · Grid direction</div>
+<div class="embed-desc">An even 12-column grid vs. an asymmetric split that gives the headline more room.</div>
+<div class="embed-thumbs">
+<div class="embed-thumb"></div>
+<div class="embed-thumb"></div>
+</div>
+<div class="embed-bars" style="margin-top:12px;">
+<div class="embed-bar-row">
+<span style="width:78px;">12-column</span>
+<div class="embed-bar-track"><div class="embed-bar-fill" style="width:36%;"></div></div>
+<span>36%</span>
+</div>
+<div class="embed-bar-row">
+<span style="width:78px;">Asymmetric</span>
+<div class="embed-bar-track"><div class="embed-bar-fill" style="width:64%;"></div></div>
+<span>64%</span>
+</div>
+</div>
+</div>
+<div class="reactions">
+<span class="reaction is-mine">👍 24</span>
+<span class="reaction">🔥 9</span>
+</div>
+</div>
+<div class="msg-actions">
+<button>😀</button>
+<button>↩</button>
+<button>⋯</button>
+</div>
+</div>
+<div class="msg-group">
+<div class="msg-avatar">PM</div>
+<div class="msg-body">
+<div class="msg-head">
+<span class="msg-name">Priya M.</span>
+<span class="msg-time">2:39 PM</span>
+</div>
+<p class="msg-line">The asymmetric one gives the headline so much more space to breathe. My vote.</p>
+</div>
+<div class="msg-actions">
+<button>😀</button>
+<button>↩</button>
+<button>⋯</button>
+</div>
+</div>
+<div class="msg-group">
+<div class="msg-avatar">OT</div>
+<div class="msg-body">
+<div class="msg-head">
+<span class="msg-name">Owen T.</span>
+<span class="msg-time">2:58 PM</span>
+</div>
+<p class="msg-line">Curious how the 12-column holds up on smaller screens — could you post a mobile crop?</p>
+</div>
+<div class="msg-actions">
+<button>😀</button>
+<button>↩</button>
+<button>⋯</button>
+</div>
+</div>
+<div class="msg-group">
+<div class="msg-avatar is-you">FR</div>
+<div class="msg-body">
+<div class="msg-head">
+<span class="msg-name is-you">Fred</span>
+<span class="msg-badge">DESIGNER</span>
+<span class="msg-time">3:16 PM</span>
+</div>
+<p class="msg-line">Good call — adding a mobile version to the poll tonight. 🙌</p>
+<div class="reactions">
+<span class="reaction">🙌 6</span>
+</div>
+</div>
+<div class="msg-actions">
+<button>😀</button>
+<button>↩</button>
+<button>⋯</button>
+</div>
+</div>
+<div class="day-divider">Yesterday</div>
+<div class="msg-group">
+<div class="msg-avatar">MK</div>
+<div class="msg-body">
+<div class="msg-head">
+<span class="msg-name">Marcus L.</span>
+<span class="msg-time">11:02 AM</span>
+</div>
+<p class="msg-line">This framework for picking type pairings is exactly what I needed — always got stuck comparing moods first.</p>
+</div>
+<div class="msg-actions">
+<button>😀</button>
+<button>↩</button>
+<button>⋯</button>
+</div>
+</div>
+<div class="msg-group">
+<div class="msg-avatar is-you">FR</div>
+<div class="msg-body">
+<div class="msg-head">
+<span class="msg-name is-you">Fred</span>
+<span class="msg-badge">DESIGNER</span>
+<span class="msg-time">11:30 AM</span>
+</div>
+<p class="msg-line">Packaging refresh — first physical proof came back today. The fold is holding better than the digital mockup suggested.</p>
+<div class="embed">
+<div class="embed-title">Die-line test · Round 1</div>
+<div class="embed-thumbs">
+<div class="embed-thumb"></div>
+<div class="embed-thumb"></div>
+<div class="embed-thumb"></div>
+</div>
+</div>
+<div class="reactions">
+<span class="reaction">😍 31</span>
+<span class="reaction">👏 14</span>
+</div>
+</div>
+<div class="msg-actions">
+<button>😀</button>
+<button>↩</button>
+<button>⋯</button>
+</div>
+</div>
+</div>
+<div class="composer-wrap">
+<div class="composer">
+<div class="plus">+</div>
+<input type="text" placeholder="Message #updates" disabled>
+<span class="emoji">🙂</span>
+<span class="send">Send</span>
+</div>
+</div>
+</div>
+<!-- Member list -->
+<div class="members">
+<div class="member-label">ONLINE — 4</div>
+<div class="member-row">
+<div class="member-avatar">FR<span class="status-dot"></span></div>
+<span class="member-name">Fred</span>
+<span class="member-role">YOU</span>
+</div>
            <div class="member-row">
                <div class="member-avatar">PM<span class="status-dot"></span></div>
                <span class="member-name">Priya M.</span>
