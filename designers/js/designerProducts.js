@@ -101,14 +101,6 @@ function setupAuthForm() {
   });
 }
 
-/*function setupPasskeyButton() {
-  authElements.setPasskeyBtn?.addEventListener('click', () => {
-    const signupUrl = new URL('sellerSignup.html', window.location.origin);
-    signupUrl.searchParams.set('showPasskeyModal', '1');
-    window.location.href = signupUrl.toString();
-  });
-}*/
-
 function showAuthError(message) {
   authElements.errorMsg.textContent = message;
   authElements.errorMsg.style.display = 'block';
