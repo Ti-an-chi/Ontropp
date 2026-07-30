@@ -6,271 +6,272 @@
   <title>Designer Dashboard — ONTROPP</title>
   <link rel="stylesheet" href="./css/CORE.css">
   <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/pageLevel.css">
+  <link rel="stylesheet" href="./css/stateManager.css">
   <link rel="stylesheet" href="./designers/css/designer-dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<!-- TOP BAR — matches ONTROPP fingerprint -->
-  <header class="dashboard-header">
-    <div class="header-container">
-      <div class="logo">ONTROPP.</div>
-      <div class="header-actions">
-        <button class="icon-btn" id="messages-btn" aria-label="Messages">
-          <i class="fas fa-comment"></i>
-          <span class="badge" style="position:absolute;top:4px;right:4px;background:var(--error);color:white;border-radius:50%;width:16px;height:16px;font-size:10px;display:flex;align-items:center;justify-content:center;">2</span>
-        </button>
-        <a href="designerDashboard.html" class="add-product-btn">
-          <i class="fas fa-box"></i>
-          My Products
-        </a>
-      </div>
-    </div>
-  </header>
-
-
-  <!-- WELCOME -->
-  <div class="welcome-wrap animate-in">
-    <div class="welcome">
-      <div class="welcome-text">
-        <h1>Good morning, Frederick</h1>
-        <p>Here's how your brand is doing today</p>
-      </div>
-      <div class="status-pill">
-        <span class="status-dot"></span>
-        Store Active
-      </div>
+<!-- TOP BAR -->
+<header class="dashboard-header">
+  <div class="header-container">
+    <div class="logo">ONTROPP.</div>
+    <div class="header-actions">
+      <button class="icon-btn" id="messages-btn" aria-label="Messages">
+        <i class="fas fa-comment"></i>
+        <span class="badge" id="msg-badge">0</span>
+      </button>
+      <a href="designerDashboard.html" class="add-product-btn">
+        <i class="fas fa-box"></i>
+        <span>My Products</span>
+      </a>
     </div>
   </div>
+</header>
 
-  <!-- SECTION 1: BEST SELLER + STATUS -->
-  <section class="section animate-in delay-1">
-    <div class="hero-grid">
-      <!-- Best Seller (Top Left) -->
-      <div class="best-seller">
-        <div class="best-seller-header">
-          <h2>Best Performing This Week</h2>
-          <span class="trend-badge"><i class="fas fa-arrow-trend-up"></i> Trending</span>
-        </div>
-        <div class="best-seller-img">
-          <img src="./img/bestseller.jpg" alt="Abstract Geo Tee">
-        </div>
-        <div class="best-seller-meta">
-          <h3>Abstract Geo Tee</h3>
-          <div class="rating"><i class="fas fa-star"></i> 4.5</div>
-        </div>
-        <div class="best-seller-views">
-          <i class="fas fa-eye"></i>
-          <strong>1,247</strong> views this week
-        </div>
-      </div>
-
-      <!-- Status Cards (Right Side) -->
-      <div class="status-cards">
-        <div class="status-card accent">
-          <span class="label">Portfolio Views</span>
-          <span class="value">3,842</span>
-          <span class="hint up"><i class="fas fa-arrow-up"></i> 12% vs yesterday</span>
-        </div>
-        <div class="status-card">
-          <span class="label">Products Listed</span>
-          <span class="value">8</span>
-          <span class="hint">2 drafts pending</span>
-        </div>
-        <div class="status-card">
-          <span class="label">New Followers</span>
-          <span class="value">150</span>
-          <span class="hint up"><i class="fas fa-arrow-up"></i> 8% vs yesterday</span>
-        </div>
-        <div class="status-card">
-          <span class="label">Products Saved</span>
-          <span class="value">47</span>
-          <span class="hint">Across all listings</span>
-        </div>
-      </div>
+<!-- WELCOME -->
+<div class="welcome-wrap animate-in">
+  <div class="welcome" id="welcome-section">
+    <div class="welcome-text" id="welcome-text">
+      <div class="sk-welcome-title sk-shimmer"></div>
+      <div class="sk-welcome-sub sk-shimmer"></div>
     </div>
-  </section>
-
-  <!-- SECTION 2: TODAY'S ANALYTICS + INSIGHTS -->
-  <section class="section animate-in delay-2">
-    <div class="analytics-grid">
-      <!-- Weekly Bar Chart -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2>This Week's Activity</h2>
-          <span class="period">vs last week</span>
-        </div>
-        <div class="chart-area">
-          <div class="chart-bars">
-            <div class="chart-bar" style="height:35%" data-label="Mon" data-value="420"></div>
-            <div class="chart-bar" style="height:55%" data-label="Tue" data-value="680"></div>
-            <div class="chart-bar" style="height:45%" data-label="Wed" data-value="540"></div>
-            <div class="chart-bar" style="height:70%" data-label="Thu" data-value="890"></div>
-            <div class="chart-bar" style="height:60%" data-label="Fri" data-value="720"></div>
-            <div class="chart-bar" style="height:85%" data-label="Sat" data-value="1,050"></div>
-            <div class="chart-bar today" style="height:75%" data-label="Sun" data-value="940"></div>
-          </div>
-          <div class="chart-legend">
-            <div class="legend-item">
-              <span class="legend-dot" style="background:var(--primary)"></span>
-              Total listing views
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background:var(--primary2)"></span>
-              Unique visitors
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Quick Insights -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2>Quick Insights</h2>
-        </div>
-        <div class="insights-list">
-          <div class="insight-item">
-            <div class="insight-icon green"><i class="fas fa-arrow-trend-up"></i></div>
-            <div class="insight-body">
-              <h4>Top Mover</h4>
-              <p>"Abstract Geo Tee" views up 34% today</p>
-            </div>
-          </div>
-          <div class="insight-item">
-            <div class="insight-icon amber"><i class="fas fa-bolt"></i></div>
-            <div class="insight-body">
-              <h4>Fastest Growing</h4>
-              <p>"Minimalist Hoodie" gaining 12 saves/hour</p>
-            </div>
-          </div>
-          <div class="insight-item">
-            <div class="insight-icon blue"><i class="fas fa-lightbulb"></i></div>
-            <div class="insight-body">
-              <h4>Visibility Tip</h4>
-              <p>Add 2 more images to boost search ranking</p>
-            </div>
-          </div>
-          <div class="insight-item">
-            <div class="insight-icon rose"><i class="fas fa-envelope"></i></div>
-            <div class="insight-body">
-              <h4>Action Needed</h4>
-              <p>2 unread customer messages waiting</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 3: DISCOVERY -->
-  <section class="section animate-in delay-3">
-    <div class="discovery-grid">
-      <!-- Top Designers in Category (Bottom Left) -->
-      <div class="discovery-panel">
-        <div class="panel-header">
-          <h2>Top Designers in Fashion</h2>
-          <span class="see-more">See more →</span>
-        </div>
-        <div class="designer-cards">
-          <div class="designer-card">
-            <img src="./img/designer1.jpg" alt="Mara" class="designer-avatar">
-            <div class="designer-info">
-              <h4>@maradesigns</h4>
-              <p>12 products · 8.4k views</p>
-            </div>
-            <button class="follow-btn">Follow</button>
-          </div>
-          <div class="designer-card">
-            <img src="./img/designer2.jpg" alt="Leaf" class="designer-avatar">
-            <div class="designer-info">
-              <h4>@leafstudio</h4>
-              <p>8 products · 5.2k views</p>
-            </div>
-            <button class="follow-btn">Follow</button>
-          </div>
-          <div class="designer-card">
-            <img src="./img/designer3.jpg" alt="Volt" class="designer-avatar">
-            <div class="designer-info">
-              <h4>@voltapparel</h4>
-              <p>15 products · 11k views</p>
-            </div>
-            <button class="follow-btn">Follow</button>
-          </div>
-          <div class="designer-card">
-            <img src="./img/designer4.jpg" alt="Urban" class="designer-avatar">
-            <div class="designer-info">
-              <h4>@urbanthread</h4>
-              <p>6 products · 3.1k views</p>
-            </div>
-            <button class="follow-btn">Follow</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Trending in Your Category (Bottom Right) -->
-      <div class="discovery-panel">
-        <div class="panel-header">
-          <h2>Trending in Fashion</h2>
-          <span class="see-more">See more →</span>
-        </div>
-        <div class="product-thumbs">
-          <div class="product-thumb">
-            <div class="product-thumb-img">
-              <img src="./img/product1.jpg" alt="Ocean Breeze Set">
-            </div>
-            <div class="product-thumb-info">
-              <h4>Ocean Breeze Set</h4>
-              <p>12k views this week</p>
-            </div>
-          </div>
-          <div class="product-thumb">
-            <div class="product-thumb-img">
-              <img src="./img/product2.jpg" alt="Pink Horizon Bag">
-            </div>
-            <div class="product-thumb-info">
-              <h4>Pink Horizon Bag</h4>
-              <p>8.4k views this week</p>
-            </div>
-          </div>
-          <div class="product-thumb">
-            <div class="product-thumb-img">
-              <img src="./img/product3.jpg" alt="Lavender Dream Scarf">
-            </div>
-            <div class="product-thumb-info">
-              <h4>Lavender Dream Scarf</h4>
-              <p>6.1k views this week</p>
-            </div>
-          </div>
-          <div class="product-thumb">
-            <div class="product-thumb-img">
-              <img src="./img/product4.jpg" alt="Sunset Runner Shoes">
-            </div>
-            <div class="product-thumb-info">
-              <h4>Sunset Runner Shoes</h4>
-              <p>5.3k views this week</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="bottom-spacer"></div>
-
-  <!-- QUICK ACTIONS BAR -->
-  <div class="quick-bar">
-    <div class="quick-bar-inner">
-      <button class="quick-btn" onclick="location.href='upload.html'">
-        <i class="fas fa-plus"></i>
-        <span class="qa-text">Add Product</span>
-      </button>
-      <button class="quick-btn highlight" onclick="location.href='designerDashboard.html'">
-        <i class="fas fa-layer-group"></i>
-        <span class="qa-text">My Products</span>
-      </button>
+    <div class="status-pill sk-status" id="store-status">
+      <span class="status-dot sk-shimmer"></span>
+      <span class="sk-status-text sk-shimmer"></span>
     </div>
   </div>
-  
-  <script type="module" src="./designers/js/authCheck.js"></script>
+</div>
+
+<!-- SECTION 1: BEST SELLER + STATS -->
+<section class="section animate-in delay-1">
+  <div class="hero-grid">
+    
+    <!-- Best Seller — shape-matched skeleton -->
+    <div class="best-seller" id="best-seller-section">
+      <div class="best-seller-header">
+        <h2>Best Performing This Week</h2>
+        <span class="trend-badge sk-shimmer" id="trend-badge" style="display:none;">
+          <i class="fas fa-arrow-trend-up"></i> Trending
+        </span>
+      </div>
+      <div class="best-seller-img">
+        <div class="sk-bs-image sk-shimmer"></div>
+      </div>
+      <div class="best-seller-meta">
+        <div class="sk-bs-title sk-shimmer"></div>
+        <div class="sk-bs-rating sk-shimmer"></div>
+      </div>
+      <div class="best-seller-views">
+        <div class="sk-bs-views sk-shimmer"></div>
+      </div>
+    </div>
+
+    <!-- Status Cards — shape-matched skeletons -->
+    <div class="status-cards" id="status-cards">
+      <div class="status-card sk-card">
+        <div class="sk-card-label sk-shimmer"></div>
+        <div class="sk-card-value sk-shimmer"></div>
+        <div class="sk-card-hint sk-shimmer"></div>
+      </div>
+      <div class="status-card sk-card">
+        <div class="sk-card-label sk-shimmer"></div>
+        <div class="sk-card-value sk-shimmer"></div>
+        <div class="sk-card-hint sk-shimmer"></div>
+      </div>
+      <div class="status-card sk-card">
+        <div class="sk-card-label sk-shimmer"></div>
+        <div class="sk-card-value sk-shimmer"></div>
+        <div class="sk-card-hint sk-shimmer"></div>
+      </div>
+      <div class="status-card sk-card">
+        <div class="sk-card-label sk-shimmer"></div>
+        <div class="sk-card-value sk-shimmer"></div>
+        <div class="sk-card-hint sk-shimmer"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 2: ANALYTICS + INSIGHTS -->
+<section class="section animate-in delay-2">
+  <div class="analytics-grid">
+    
+    <!-- Weekly Chart -->
+    <div class="panel" id="chart-panel">
+      <div class="panel-header">
+        <h2>This Week's Activity</h2>
+        <span class="period">vs last week</span>
+      </div>
+      <div class="chart-area" id="chart-area">
+        <div class="chart-bars" id="chart-bars">
+          <div class="chart-bar sk-bar sk-shimmer"></div>
+          <div class="chart-bar sk-bar sk-shimmer"></div>
+          <div class="chart-bar sk-bar sk-shimmer"></div>
+          <div class="chart-bar sk-bar sk-shimmer"></div>
+          <div class="chart-bar sk-bar sk-shimmer"></div>
+          <div class="chart-bar sk-bar sk-shimmer"></div>
+          <div class="chart-bar sk-bar sk-shimmer"></div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item">
+            <span class="legend-dot primary"></span>
+            Total listing views
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot secondary"></span>
+            Unique visitors
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Insights -->
+    <div class="panel" id="insights-panel">
+      <div class="panel-header">
+        <h2>Quick Insights</h2>
+      </div>
+      <div class="insights-list" id="insights-list">
+        <div class="insight-item sk-insight">
+          <div class="insight-icon sk-insight-icon sk-shimmer"></div>
+          <div class="insight-body">
+            <div class="sk-insight-title sk-shimmer"></div>
+            <div class="sk-insight-desc sk-shimmer"></div>
+          </div>
+        </div>
+        <div class="insight-item sk-insight">
+          <div class="insight-icon sk-insight-icon sk-shimmer"></div>
+          <div class="insight-body">
+            <div class="sk-insight-title sk-shimmer"></div>
+            <div class="sk-insight-desc sk-shimmer"></div>
+          </div>
+        </div>
+        <div class="insight-item sk-insight">
+          <div class="insight-icon sk-insight-icon sk-shimmer"></div>
+          <div class="insight-body">
+            <div class="sk-insight-title sk-shimmer"></div>
+            <div class="sk-insight-desc sk-shimmer"></div>
+          </div>
+        </div>
+        <div class="insight-item sk-insight">
+          <div class="insight-icon sk-insight-icon sk-shimmer"></div>
+          <div class="insight-body">
+            <div class="sk-insight-title sk-shimmer"></div>
+            <div class="sk-insight-desc sk-shimmer"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 3: DISCOVERY -->
+<section class="section animate-in delay-3">
+  <div class="discovery-grid">
+    
+    <!-- Top Designers -->
+    <div class="discovery-panel" id="designers-panel">
+      <div class="panel-header">
+        <h2>Top Designers in <span id="category-name">...</span></h2>
+        <span class="see-more">See more →</span>
+      </div>
+      <div class="designer-cards" id="designer-cards">
+        <div class="designer-card sk-designer">
+          <div class="sk-designer-avatar sk-shimmer"></div>
+          <div class="designer-info sk-designer-info">
+            <div class="sk-designer-handle sk-shimmer"></div>
+            <div class="sk-designer-stats sk-shimmer"></div>
+          </div>
+          <div class="sk-designer-btn sk-shimmer"></div>
+        </div>
+        <div class="designer-card sk-designer">
+          <div class="sk-designer-avatar sk-shimmer"></div>
+          <div class="designer-info sk-designer-info">
+            <div class="sk-designer-handle sk-shimmer"></div>
+            <div class="sk-designer-stats sk-shimmer"></div>
+          </div>
+          <div class="sk-designer-btn sk-shimmer"></div>
+        </div>
+        <div class="designer-card sk-designer">
+          <div class="sk-designer-avatar sk-shimmer"></div>
+          <div class="designer-info sk-designer-info">
+            <div class="sk-designer-handle sk-shimmer"></div>
+            <div class="sk-designer-stats sk-shimmer"></div>
+          </div>
+          <div class="sk-designer-btn sk-shimmer"></div>
+        </div>
+        <div class="designer-card sk-designer">
+          <div class="sk-designer-avatar sk-shimmer"></div>
+          <div class="designer-info sk-designer-info">
+            <div class="sk-designer-handle sk-shimmer"></div>
+            <div class="sk-designer-stats sk-shimmer"></div>
+          </div>
+          <div class="sk-designer-btn sk-shimmer"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trending Products -->
+    <div class="discovery-panel" id="trending-panel">
+      <div class="panel-header">
+        <h2>Trending in <span id="trending-category">...</span></h2>
+        <span class="see-more">See more →</span>
+      </div>
+      <div class="product-thumbs" id="trending-products">
+        <div class="product-thumb sk-product">
+          <div class="product-thumb-img sk-product-img sk-shimmer"></div>
+          <div class="product-thumb-info sk-product-info">
+            <div class="sk-product-name sk-shimmer"></div>
+            <div class="sk-product-views sk-shimmer"></div>
+          </div>
+        </div>
+        <div class="product-thumb sk-product">
+          <div class="product-thumb-img sk-product-img sk-shimmer"></div>
+          <div class="product-thumb-info sk-product-info">
+            <div class="sk-product-name sk-shimmer"></div>
+            <div class="sk-product-views sk-shimmer"></div>
+          </div>
+        </div>
+        <div class="product-thumb sk-product">
+          <div class="product-thumb-img sk-product-img sk-shimmer"></div>
+          <div class="product-thumb-info sk-product-info">
+            <div class="sk-product-name sk-shimmer"></div>
+            <div class="sk-product-views sk-shimmer"></div>
+          </div>
+        </div>
+        <div class="product-thumb sk-product">
+          <div class="product-thumb-img sk-product-img sk-shimmer"></div>
+          <div class="product-thumb-info sk-product-info">
+            <div class="sk-product-name sk-shimmer"></div>
+            <div class="sk-product-views sk-shimmer"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="bottom-spacer"></div>
+
+<!-- QUICK ACTIONS -->
+<div class="quick-bar">
+  <div class="quick-bar-inner">
+    <button class="quick-btn" onclick="location.href='upload.html'">
+      <i class="fas fa-plus"></i>
+      <span class="qa-text">Add Product</span>
+    </button>
+    <button class="quick-btn highlight" onclick="location.href='designerDashboard.html'">
+      <i class="fas fa-layer-group"></i>
+      <span class="qa-text">My Products</span>
+    </button>
+  </div>
+</div>
+
+<script type="module" src="./designers/js/authCheck.js"></script>
+<script type="module" src="./designers/js/designerDashboard.js"></script>
 </body>
 </html>

@@ -13,7 +13,7 @@ const StoreApi = {
   
   async _fetch(path, options) {
     try {
-      return await API._fetch(`/brand/${path}`, options, false, 'designer');
+      return await API._fetch(`${path}`, options, false, 'designer');
     } catch (err) {
       if (err.code === 'SESSION_EXPIRED') {
         this.clearShopTokens();
@@ -45,7 +45,7 @@ const StoreApi = {
       throw new Error('Shop name and passkey are required');
     }
     
-    const response = await this._fetch('auth', {
+    const response = await this._fetch('/brand/auth', {
       method: 'POST',
       body: JSON.stringify({shopName, passkey})
     });
@@ -59,13 +59,37 @@ const StoreApi = {
   },
   
   async tokenPing() {
-    return await this._fetch('tokencheck');
+    return await this._fetch('/brand/tokencheck');
+  },
+  
+  /* =============== dashboard Data =============== */
+  async getDesignerProfile() {
+    const resp = await this._fetch('/brand/profile');
+    if (!resp.success) {
+      throw new Error('failed to lod your data, please try again');
+    }
+    return resp.seller;
+  },
+  
+  async getBestSellingProduct(count = 1) {
+    const resp = await this._fetch(
+      `/brand/stats/bestselling?count=${count}`
+    );
+    console.log(resp);
+    if (!resp.success) {
+      throw new Error(`failed to get best selling: ${resp.message}`);
+    }
+    return resp.data[0];
+  },
+  
+  async getDesignerDashboard() {
+    return await this._fetch('/brand/dashboard');
   },
   
   /* =============== products Data =============== */
   async getMyProducts(page, limit, search = '') {
     const params = new URLSearchParams({page, limit, search});
-    const response = await this._fetch(`products?${params}`);
+    const response = await this._fetch(`/brand/products?${params}`);
     
     console.log(response);
     return response;

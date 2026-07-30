@@ -1,4 +1,4 @@
-import { showNotification, updateElement, normalizePhoneNumber, FollowButtonManager } from '../utility/reconfig.js';
+import { showNotification, updateElement, normalizePhoneNumber } from '../utility/reconfig.js';
 import {formatPrice,formatNumber} from '../utility/shared.js';
 import API from '../../api.js';
 
@@ -51,9 +51,6 @@ export const DataService = {
     }
   }
 };
-
-// ============ FOLLOW HANDLER ============
-// Use FollowButtonManager from reconfig.js - it handles all follow/unfollow logic
 
 // ============ FAVORITE HANDLER ============
 export const FavoriteHandler = {

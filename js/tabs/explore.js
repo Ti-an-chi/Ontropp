@@ -11,9 +11,8 @@ export async function initExploreTab() {
   try {
     // Initialize pagination
     container = new StateManager('explore-product-grid');
-    container._injectDefaultStylesheet();
-
     pagination = new ProductPagination('explore-product-grid');
+    
     pagination.setPageChangeHandler(loadPaginatedProducts);
     loadPaginatedProducts();
     
@@ -21,12 +20,12 @@ export async function initExploreTab() {
     
   } catch (error) {
     console.error('Failed to load explore content:', error);
-    showErrorMessage('Failed to load products.');
+    showNotification('Failed to load products.', 'error');
   }
 }
 
 async function loadPaginatedProducts() {
-  container.loadingState('spinner');
+  container.loading('spinner');
   const reqData = await pagination.initFromURL();
   
   try {
@@ -41,11 +40,10 @@ async function loadPaginatedProducts() {
     pagination.paginationData = data.pagination;
 
     if (!data.products || data.products.length === 0) {
-        container.emptyState('No products found', 'try adjusting your search');
+        container.empty('No products found', 'try adjusting your search');
         pagination.updatePaginationUI();
     } else {
-      container.clearState();
-      container.dataState();
+      container.data();
       renderItems(data.products);
       updateTotalProducts(data.pagination.totalProducts);
       pagination.updatePaginationUI();
@@ -54,6 +52,7 @@ async function loadPaginatedProducts() {
   } catch (err) {
     console.error('failed to load products:', err);
     showNotification('Failed to load products', 'error'); 
+    container.error('error loading products', () => location.reload());
   }
 }
 
@@ -90,7 +89,7 @@ function setupExploreInteractions() {
     let timeout;
     searchInput.addEventListener('input', function () {
       clearTimeout(timeout);
-      container.loadingState('spinner');
+      container.loading('spinner');
       timeout = setTimeout(() => {
         pagination.search(this.value.trim());
         loadPaginatedProducts();

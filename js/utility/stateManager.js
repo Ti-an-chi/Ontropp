@@ -1,3 +1,4 @@
+// stateManager.js
 export class StateManager {
   constructor(containerId, options = {}) {
     this.container = document.getElementById(containerId);
@@ -5,20 +6,19 @@ export class StateManager {
       throw new Error(`Container with id "${containerId}" not found`);
     }
     this.currentState = null;
-    this.skeletonElements = [];
-    this.options = options;
+    this.options = {
+      autoInjectStyles: true,
+      stylesheetPath: '/css/stateManager.css',
+      ...options
+    };
 
-    if (options.autoInjectStyles) {
-      if (options.stylesheetPath) {
-        this._injectStylesheet(options.stylesheetPath);
-      } else {
-        this._injectDefaultStylesheet();
-      }
+    if (this.options.autoInjectStyles) {
+      StateManager.injectStylesheet(this.options.stylesheetPath);
     }
   }
 
   static injectStylesheet(href) {
-    if (!document || !document.head) return;
+    if (!document?.head) return;
     if (document.querySelector(`link[rel="stylesheet"][href="${href}"]`)) return;
 
     const link = document.createElement('link');
@@ -27,161 +27,100 @@ export class StateManager {
     document.head.appendChild(link);
   }
 
-  _injectDefaultStylesheet() {
-    const href = new URL('../../css/stateManager.css', import.meta.url).href;
-    this._injectStylesheet(href);
-  }
+  // ─── LOADING STATES ────────────────────────────────────
 
-  _injectStylesheet(href) {
-    if (!document || !document.head) return;
-    if (document.querySelector(`link[rel="stylesheet"][href="${href}"]`)) return;
-
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    document.head.appendChild(link);
-  }
-
-  loadingState(type = 'spinner', target = 'container') {
-    this.clearState();
+  loading(type = 'spinner') {
+    this.clear();
     
-    if (type === 'spinner') {
-      this._createSpinnerState();
-    } else if (type === 'skeleton') {
-      this._createSkeletonState(target);
-    } else if (type === 'wave') {
-      this._createWaveState(target);
+    switch (type) {
+      case 'spinner':
+        this._spinner();
+        break;
+      case 'skeleton':
+        this._skeleton();
+        break;
+      case 'wave':
+        this._wave();
+        break;
+      default:
+        this._spinner();
     }
     
     this.currentState = 'loading';
   }
 
-  _createSpinnerState() {
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'state-loading';
-    
-    const spinner = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    spinner.setAttribute('class', 'spinner');
-    spinner.setAttribute('viewBox', '0 0 50 50');
-    spinner.setAttribute('width', '50px');
-    spinner.setAttribute('height', '50px');
-    
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', '25');
-    circle.setAttribute('cy', '25');
-    circle.setAttribute('r', '20');
-    circle.setAttribute('fill', 'none');
-    circle.setAttribute('stroke', 'var(--primary)');
-    circle.setAttribute('stroke-width', '4');
-    circle.setAttribute('stroke-dasharray', '31.4 94.2');
-    
-    spinner.appendChild(circle);
-    loadingDiv.appendChild(spinner);
-    this.container.appendChild(loadingDiv);
+  _spinner() {
+    this.container.innerHTML = `
+      <div class="state-loading">
+        <svg class="spinner" viewBox="0 0 50 50" width="50" height="50">
+          <circle cx="25" cy="25" r="20" fill="none" stroke="var(--primary)" stroke-width="4" 
+                  stroke-dasharray="31.4 94.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    `;
   }
 
-  _createSkeletonState(target = 'container') {
-    if (target === 'container') {
-      this._createSkeletonPlaceholder(this.container);
-    } else if (target === 'children') {
-      const children = Array.from(this.container.children);
-      children.forEach(child => {
-        this._createSkeletonPlaceholder(child);
-      });
-    }
+  _skeleton() {
+    // Generates 3 skeleton lines — works for any container size
+    this.container.innerHTML = `
+      <div class="state-skeleton">
+        <div class="sk-line"></div>
+        <div class="sk-line" style="width:90%"></div>
+        <div class="sk-line" style="width:65%"></div>
+      </div>
+    `;
   }
 
-  _createSkeletonPlaceholder(element) {
-    const skeletonDiv = document.createElement('div');
-    skeletonDiv.className = 'skeleton-placeholder';
-    
-    // Create multiple skeleton lines for text content
-    const skeletonLines = document.createElement('div');
-    skeletonLines.className = 'skeleton-lines';
-    
-    for (let i = 0; i < 3; i++) {
-      const line = document.createElement('div');
-      line.className = 'skeleton-line';r
-      if (i === 2) line.style.width = '60%'; // ine shLast lorte
-      skeletonLines.appendChild(line);
-    }
-    
-    skeletonDiv.appendChild(skeletonLines);
-    element.appendChild(skeletonDiv);
-    this.skeletonElements.push(skeletonDiv);
+  _wave() {
+    this.container.innerHTML = `
+      <div class="state-wave">
+        <div class="wave-line"></div>
+      </div>
+    `;
   }
 
-  _createWaveState(target = 'container') {
-    if (target === 'container') {
-      this._createWaveLine(this.container);
-    } else if (target === 'children') {
-      const children = Array.from(this.container.children);
-      children.forEach(child => {
-        this._createWaveLine(child);
-      });
-    }
-  }
+  // ─── EMPTY / ERROR ─────────────────────────────────────
 
-  _createWaveLine(element) {
-    const waveDiv = document.createElement('div');
-    waveDiv.className = 'wave-loading';
-    
-    const waveLine = document.createElement('div');
-    waveLine.className = 'wave-line';
-    
-    waveDiv.appendChild(waveLine);
-    element.appendChild(waveDiv);
-    this.skeletonElements.push(waveDiv);
-  }
-
-  emptyState(title, subtitle) {
-    this.clearState();
-    const emptyDiv = document.createElement('div');
-    emptyDiv.className = 'state-empty';
-    emptyDiv.innerHTML = `
-      <div class="empty-state-content">
-        <i class="fas fa-inbox"></i>
+  empty(title, subtitle, icon = 'inbox') {
+    this.clear();
+    this.container.innerHTML = `
+      <div class="state-empty">
+        <i class="fas fa-${icon}"></i>
         <h3>${title}</h3>
         <p>${subtitle}</p>
       </div>
     `;
-    this.container.appendChild(emptyDiv);
     this.currentState = 'empty';
   }
 
-  errorState(message) {
-    this.clearState();
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'state-error';
-    errorDiv.innerHTML = `
-      <div class="error-state-content">
+  error(message, retryCallback = null) {
+    this.clear();
+    this.container.innerHTML = `
+      <div class="state-error">
         <i class="fas fa-exclamation-circle"></i>
         <p>${message}</p>
+        ${retryCallback ? `<button class="retry-btn">Try Again</button>` : ''}
       </div>
     `;
-    this.container.appendChild(errorDiv);
+    
+    if (retryCallback) {
+      this.container.querySelector('.retry-btn')?.addEventListener('click', retryCallback);
+    }
+    
     this.currentState = 'error';
   }
 
-  dataState() {
-    this.clearState();
+  // ─── DATA STATE ────────────────────────────────────────
+
+  data() {
+    this.clear();
     this.currentState = 'data';
   }
 
-  clearState() {
-    // Remove skeleton classes from elements
-    this.skeletonElements.forEach(el => {
-      el.classList.remove('skeleton-loading');
-    });
-    this.skeletonElements = [];
-    
-    // Remove container skeleton class if applied
-    this.container.classList.remove('skeleton-loading');
-    
-    // Clear children
-    while (this.container.firstChild) {
-      this.container.removeChild(this.container.firstChild);
-    }
+  // ─── CLEANUP ─────────────────────────────────────────
+
+  clear() {
+    this.container.innerHTML = '';
     this.currentState = null;
   }
 

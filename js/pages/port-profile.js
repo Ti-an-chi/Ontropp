@@ -2,7 +2,7 @@ import {
   CONFIG, state, DataService, OrderHandler, FavoriteHandler, 
   StarRating, ShareController, Router 
 } from './portfolio.js';
-import { showNotification, updateElement, normalizePhoneNumber, FollowButtonManager } from '../utility/reconfig.js';
+import { showNotification, updateElement, normalizePhoneNumber, DesignerFollowButton } from '../utility/reconfig.js';
 import { formatPrice, formatNumber } from '../utility/shared.js';
 
 // ============ PRODUCT RENDERER ============
@@ -244,7 +244,7 @@ const PortfolioMode = {
     updateElement('shopName', seller.shop_name);
     updateElement('shopTagline', seller.bio);
     updateElement('categoryTag', seller.category);
-    updateElement('locationTag', `Located in: ${seller.location || 'OAUC'}`);
+    updateElement('locationTag', `Located in: ${seller.location || 'OAUIFE'}`);
     
     document.getElementById('followerCount').textContent = formatNumber(seller.followers?.[0]?.count ?? 0);
     document.getElementById('productCount').textContent = formatNumber(seller.products?.[0]?.count ?? 0);
@@ -264,13 +264,14 @@ const PortfolioMode = {
     // Initialize follow button with API integration
     const followBtn = document.getElementById('followBtn');
     if (followBtn) {
-      const followTarget = { id: state.sellerId, isFollowing: seller.isFollowing };
-      const newBtn = FollowButtonManager.createFollowButton(followTarget, (isFollowing) => {
-        if (!state.sellerData) state.sellerData = {};
-        state.sellerData.isFollowing = !!isFollowing;
-      }, 'action-btn follow');
-      if (newBtn && followBtn.parentNode) followBtn.replaceWith(newBtn);
+      new DesignerFollowButton(followBtn, state.sellerId, seller.isFollowing, {
+        onChange: (isFollowing) => {
+          if (!state.sellerData) state.sellerData = {};
+          state.sellerData.isFollowing = isFollowing;
+        }
+      });
     }
+
   },
 
   setupEventListeners() {

@@ -1,8 +1,8 @@
-// sellerAuth.js
-import { showNotification } from '/js/utility/reconfig.js';
-import StoreApi from '/js/storeApi.js';
+// authCheck.js — blocks page until seller is authenticated
+import { showNotification } from '../../js/utility/reconfig.js';
+import StoreApi from '../../js/storeApi.js';
 
-// ===== AUTH HTML TEMPLATE =====
+// ===== AUTH OVERLAY HTML =====
 const AUTH_HTML = `
   <div class="seller-auth-overlay authenticated" id="seller-auth-overlay">
     <div class="seller-auth-modal">
@@ -15,43 +15,22 @@ const AUTH_HTML = `
         
         <div class="auth-form-group">
           <label for="shop-name">Shop Name</label>
-          <input 
-            type="text" 
-            id="shop-name" 
-            name="shop-name" 
-            placeholder="Your shop name" 
-            required
-            autocomplete="off"
-          >
+          <input type="text" id="shop-name" name="shop-name" placeholder="Your shop name" required autocomplete="off">
         </div>
         
         <div class="auth-form-group">
           <label for="seller-passkey">Seller Passkey</label>
-          <input 
-            type="password" 
-            id="seller-passkey" 
-            name="seller-passkey" 
-            placeholder="Enter your passkey (123456 for old designers)" 
-            autocomplete="off"
-          >
-          <p class="form-help" style="font-size:0.9rem; color: var(--admin-muted); margin-top: 6px;">
-            If your shop was created before passkey setup, use "123456".
-          </p>
+          <input type="password" id="seller-passkey" name="seller-passkey" placeholder="Enter your passkey" autocomplete="off">
+          <p class="form-help">If your shop was created before passkey setup, use "123456".</p>
         </div>
 
-        <div class="auth-error" id="auth-error" style="display: none;"></div>
+        <div class="auth-error" id="auth-error"></div>
         
-        <button type="submit" class="auth-submit-btn" id="auth-submit-btn">
-          Access Dashboard
-        </button>
+        <button type="submit" class="auth-submit-btn" id="auth-submit-btn">Access Dashboard</button>
         
         <div class="auth-action-row">
-          <p class="auth-footer-text">
-            Don't have a shop? <a href="sellerSignup.html">Register as seller</a>
-          </p>
-          <button type="button" class="auth-secondary-btn" id="set-passkey-btn">
-            Set passkey
-          </button>
+          <p class="auth-footer-text">Don't have a shop? <a href="sellerSignup.html">Register as seller</a></p>
+          <button type="button" class="auth-secondary-btn" id="set-passkey-btn">Set passkey</button>
         </div>
       </form>
     </div>
@@ -59,36 +38,6 @@ const AUTH_HTML = `
 `;
 
 let authElements = null;
-
-function injectAuthOverlay() {
-  // Check if already injected
-  if (document.getElementById('seller-auth-overlay')) {
-    return;
-  }
-  
-  document.body.insertAdjacentHTML('beforeend', AUTH_HTML);
-  const linkElement = document.createElement('link');
-  linkElement.id = 'auth-overlay-styles';
-  linkElement.rel = 'stylesheet';
-  linkElement.href = '/designers/css/authOverlay.css';
-  document.head.appendChild(linkElement);
-  
-  getAuthElements();
-}
-
-function getAuthElements() {
-  authElements = {
-  overlay: document.getElementById('seller-auth-overlay'),
-  form: document.getElementById('seller-auth-form'),
-  shopNameInput: document.getElementById('shop-name'),
-  passkeyInput: document.getElementById('seller-passkey'),
-  submitBtn: document.getElementById('auth-submit-btn'),
-  errorMsg: document.getElementById('auth-error'),
-  setPasskeyBtn: document.getElementById('set-passkey-btn'),
-  };
-}
-
-// ===== AUTH STATE =====
 let authResolve = null;
 let authPromise = null;
 
@@ -101,110 +50,119 @@ function getAuthPromise() {
   return authPromise;
 }
 
-// ===== INITIALIZATION =====
-async function initSellerAuth() {
-  injectAuthOverlay();
-  const authenticated = await checkSellerSession();
-
-  if (!authenticated) {
-    setupAuthForm();
-    authElements.overlay?.classList.remove('authenticated');
-    
-    // Don't resolve yet — wait for form submission
-    return getAuthPromise();
-  }
-
-  // Already authenticated — resolve immediately
-  authElements.overlay?.classList.add('authenticated');
-  if (authResolve) authResolve(true);
-  return true;
+function injectAuthOverlay() {
+  if (document.getElementById('seller-auth-overlay')) return;
+  
+  document.body.insertAdjacentHTML('beforeend', AUTH_HTML);
+  
+  const link = document.createElement('link');
+  link.id = 'auth-overlay-styles';
+  link.rel = 'stylesheet';
+  link.href = '/designers/css/authOverlay.css';
+  document.head.appendChild(link);
+  
+  cacheAuthElements();
 }
 
-// ===== AUTH FORM SETUP =====
+function cacheAuthElements() {
+  authElements = {
+    overlay: document.getElementById('seller-auth-overlay'),
+    form: document.getElementById('seller-auth-form'),
+    shopName: document.getElementById('shop-name'),
+    passkey: document.getElementById('seller-passkey'),
+    submitBtn: document.getElementById('auth-submit-btn'),
+    errorMsg: document.getElementById('auth-error'),
+    setPasskeyBtn: document.getElementById('set-passkey-btn'),
+  };
+}
 
+function showAuthError(msg) {
+  authElements.errorMsg.textContent = msg;
+  authElements.errorMsg.classList.add('visible');
+  setTimeout(() => authElements.errorMsg.classList.remove('visible'), 4000);
+}
+
+function setAuthLoading(loading) {
+  authElements.submitBtn.disabled = loading;
+  authElements.submitBtn.classList.toggle('loading', loading);
+  authElements.submitBtn.textContent = loading ? 'Verifying...' : 'Access Dashboard';
+}
 
 // ===== SESSION CHECK =====
-async function checkSellerSession() {
-  const refreshToken = await localStorage.getItem('shop_refresh');
+async function checkSession() {
+  const refreshToken = localStorage.getItem('shop_refresh');
   if (!refreshToken) return false;
-  console.log(refreshToken);
-  
-  const response = await StoreApi.tokenPing();
-  if (!response.success) return false;
 
-  authElements.overlay.classList.add('authenticated');
-  authElements.overlay.dataset.authenticated = 'true';
-  showNotification('Resume session');
-  console.log(`✓ Designer authenticated`);
-
-  return true;
+  try {
+    const response = await StoreApi.tokenPing();
+    if (!response?.success) return false;
+    
+    showNotification('Session resumed');
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-// ===== AUTH FORM SETUP =====
-function setupAuthForm() {
-  authElements.form?.addEventListener('submit', async (e) => {
+// ===== FORM HANDLER =====
+function bindAuthForm() {
+  authElements.form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const shopName = authElements.shopNameInput.value.trim();
-    const passkey = authElements.passkeyInput.value.trim();
+    
+    const shopName = authElements.shopName.value.trim();
+    const passkey = authElements.passkey.value.trim();
 
-    if (!shopName) {
-      showAuthError('Please enter your shop name');
-      return;
-    }
-
-    if (shopName.length < 3) {
+    if (!shopName || shopName.length < 3) {
       showAuthError('Shop name must be at least 3 characters');
       return;
     }
 
     try {
       setAuthLoading(true);
-      
       const response = await StoreApi.designerAuth(shopName, passkey);
+      
       if (!response?.success) {
-        showNotification(response.message, 'error');
+        showAuthError(response?.message || 'Authentication failed');
         setAuthLoading(false);
-        return; // Stay on form, user can try again
+        return;
       }
 
-      // SUCCESS — hide overlay and resolve the promise
+      // Success — hide overlay and resolve
       authElements.overlay.classList.add('authenticated');
-      authElements.overlay.dataset.authenticated = 'true';
+      localStorage.setItem('shop_name', shopName);
       
       if (authResolve) {
         authResolve(true);
-        authResolve = null; // prevent double-resolve
+        authResolve = null;
       }
       
       showNotification('Welcome back, designer');
       
-    } catch (error) {
-      console.error('Auth error:', error);
-      showNotification(error, 'error');
+    } catch (err) {
+      showAuthError('Network error. Please try again.');
+      console.error('Auth error:', err);
     } finally {
       setAuthLoading(false);
     }
   });
 }
 
-// ===== AUTH UI HELPERS =====
-function showAuthError(message) {
-  authElements.errorMsg.textContent = message;
-  authElements.errorMsg.style.display = 'block';
-  setTimeout(() => {
-    authElements.errorMsg.style.display = 'none';
-  }, 3000);
+// ===== PUBLIC API =====
+export async function ensureAuth() {
+  injectAuthOverlay();
+  cacheAuthElements();
+  
+  const isAuthed = await checkSession();
+  
+  if (!isAuthed) {
+    authElements.overlay.classList.remove('authenticated');
+    bindAuthForm();
+    return getAuthPromise();
+  }
+  
+  if (authResolve) authResolve(true);
+  return true;
 }
 
-function setAuthLoading(loading) {
-  authElements.submitBtn.disabled = loading;
-  authElements.submitBtn.textContent = loading ? 'Verifying...' : 'Access Dashboard';
-}
-
-// ===== INITIALIZATION =====
-window.addEventListener('DOMContentLoaded', initSellerAuth );
-
-// Dummy function - replace with actual implementation
-function initPage() {
-  console.log('Initializing seller products page...');
-}
+// Auto-init on DOM ready for pages that import this module
+// Dashboard pages should call: import { ensureAuth } from './authCheck.js'; await ensureAuth();

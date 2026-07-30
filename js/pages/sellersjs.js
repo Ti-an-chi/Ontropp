@@ -1,5 +1,5 @@
 import API from '../../api.js';
-import { viewSellerProfile, FollowButtonManager } from '../utility/reconfig.js';
+import { viewSellerProfile, DesignerFollowButton } from '../utility/reconfig.js';
 
 // Get category from URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -126,10 +126,9 @@ function renderSellers(sellers) {
     
     // Create and append follow button using manager
     const followWrapper = sellerCard.querySelector('.follow-btn-wrapper');
-    const followButton = FollowButtonManager.createFollowButton(seller);
-    followWrapper.appendChild(followButton);
+    const followBtn = DesignerFollowButton.create(seller.id, true );
+    followWrapper.appendChild(followBtn);
   });
-  
   setupSellerCardListeners();
 }
 

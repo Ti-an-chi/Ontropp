@@ -208,6 +208,104 @@ export const FollowButtonManager = {
   }
 };
 
+// ============ DESIGNER FOLLOW BUTTON (OOP) ============
+export class DesignerFollowButton {
+  constructor(button, shopId, isFollowing, options = {}) {
+    this.button = button;
+    this.shopId = shopId;
+    this.isFollowing = isFollowing;
+    this.isPending = false;
+
+    this.options = {
+      followingClass: 'following',
+      onChange: null,           // (isFollowing, response) => {}
+      onFollow: this.defaultFollow.bind(this),
+      onUnfollow: this.defaultUnfollow.bind(this),
+      ...options
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.updateUI();
+    this.button.addEventListener('click', (e) => this.handleClick(e));
+  }
+
+  updateUI() {
+    const cls = this.options.followingClass;
+    this.button.classList.toggle(cls, this.isFollowing);
+
+    if (this.isFollowing) {
+      this.button.innerHTML = '<i class="fas fa-check"></i> Following';
+    } else {
+      this.button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+    }
+  }
+
+  async handleClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (this.isPending) return;
+
+    const user = window.UserSession?.getCurrentUser();
+    if (!user) {
+      showNotification('Please sign in to follow designers', 'error', '/signup.html');
+      return;
+    }
+
+    this.isPending = true;
+    const willFollow = !this.isFollowing;
+
+    // Optimistic update
+    this.isFollowing = willFollow;
+    this.updateUI();
+
+    try {
+      const response = willFollow
+        ? await this.options.onFollow(this.shopId)
+        : await this.options.onUnfollow(this.shopId);
+
+      if (!response || !response.success) {
+        // Revert
+        this.isFollowing = !willFollow;
+        this.updateUI();
+        showNotification(response?.message || 'Failed to update follow status', 'error');
+      } else {
+        const msg = willFollow ? 'You are now following this designer' : 'Unfollowed';
+        showNotification(msg, 'success');
+      }
+
+      if (typeof this.options.onChange === 'function') {
+        this.options.onChange(this.isFollowing, response);
+      }
+
+    } catch (err) {
+      this.isFollowing = !willFollow;
+      this.updateUI();
+      showNotification(err?.message || 'Something went wrong', 'error');
+    } finally {
+      this.isPending = false;
+    }
+  }
+
+  async defaultFollow(shopId) {
+    return window.API.followSeller(shopId);
+  }
+
+  async defaultUnfollow(shopId) {
+    return window.API.unfollowSeller(shopId);
+  }
+  
+  static create(shopId, isFollowing, options = {}) {
+    const btn = document.createElement('button');
+    btn.className = 'follow-btn';
+    new DesignerFollowButton(btn, shopId, isFollowing, options);
+    return btn;
+  }
+}
+
 export function normalizePhoneNumber(phone) {
   if (!phone) return '';
   

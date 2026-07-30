@@ -1,7 +1,7 @@
 // favourites.js - Favourites tab functionality
 import API from '../../api.js';
 import { formatPrice } from '../utility/shared.js';
-import { changeDisplay, viewSellerProfile, orderHandler, FollowButtonManager } from '../utility/reconfig.js';
+import { changeDisplay, viewSellerProfile, orderHandler, DesignerFollowButton } from '../utility/reconfig.js';
 
 export async function initFavouritesTab() {
   await loadFavouritesContent();
@@ -175,11 +175,12 @@ function renderFollowedSellers(sellers) {
     
     // Create follow button with state inverted (isFollowing = true since they're in followed list)
     const followWrapper = sellerCard.querySelector('.follow-btn-wrapper');
-    const followBtn = FollowButtonManager.createFollowButton(
-      { id: seller.id, isFollowing: true },
-      async (newState) => {
-        if (!newState) {
-          // User unfollowed, remove card from UI
+    const followBtn = document.createElement('button');
+    followBtn.className = 'follow-btn'; // add your base classes here
+    
+    new DesignerFollowButton(followBtn, seller.id, true, {
+      onChange: (isFollowing) => {
+        if (!isFollowing) {
           sellerCard.remove();
           const remaining = sellersList.querySelectorAll('.seller-card').length;
           if (remaining === 0) {
@@ -190,7 +191,8 @@ function renderFollowedSellers(sellers) {
           }
         }
       }
-    );
+    });
+    
     followWrapper.appendChild(followBtn);
     
     sellersList.appendChild(sellerCard);

@@ -60,7 +60,7 @@ function renderProduct() {
   
   // Stats
   document.getElementById('productViews').textContent = formatNumber(productData.views);
-  document.getElementById('productLikes').textContent = formatNumber(productData.favouritesCount[0].count);
+  document.getElementById('productLikes').textContent = formatNumber(productData.favouritesCount);
   
   // Date
   const date = new Date(productData.created_at);
@@ -150,6 +150,7 @@ function changeImage(index) {
 
 function prevImage() {
   const images = productData.images || [];
+  console.log(images);
   if (images.length === 0) return;
   currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
   changeImage(currentImageIndex);

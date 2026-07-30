@@ -1,74 +1,51 @@
-/* StateManager CSS - standalone reusable styles */
+/* stateManager.css — standalone, reusable everywhere */
 
+/* ── Spinner ── */
 .state-loading {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 130px;
+  min-height: 120px;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.92);
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .state-loading .spinner {
-  width: 50px;
-  height: 50px;
-  animation: state-manager-spin 1s linear infinite;
+  width: 40px;
+  height: 40px;
+  animation: sk-spin 1s linear infinite;
 }
 
-.state-loading .spinner circle {
-  stroke: var(--primary, #3483E0);
-  stroke-linecap: round;
+@keyframes sk-spin {
+  to { transform: rotate(360deg); }
 }
 
-.skeleton-placeholder {
+/* ── Skeleton lines ── */
+.state-skeleton {
   width: 100%;
-  padding: 18px 16px;
-  margin-bottom: 16px;
-  border-radius: 16px;
-  background-color: rgba(243, 244, 246, 0.96);
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
-}
-
-.skeleton-lines {
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.skeleton-line {
+.sk-line {
   width: 100%;
   height: 12px;
   border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    rgba(226, 232, 240, 1) 25%,
-    rgba(241, 245, 249, 1) 50%,
-    rgba(226, 232, 240, 1) 75%
-  );
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
   background-size: 200% 100%;
-  animation: state-manager-shimmer 1.6s linear infinite;
+  animation: sk-shimmer 3s linear infinite;
 }
 
-.skeleton-line:nth-child(2) {
-  width: 90%;
-}
-
-.skeleton-line:nth-child(3) {
-  width: 65%;
-}
-
-.wave-loading {
+/* ── Wave ── */
+.state-wave {
   position: relative;
   width: 100%;
   height: 18px;
   border-radius: 999px;
-  background-color: rgba(226, 232, 240, 1);
+  background: #e2e8f0;
   overflow: hidden;
-  margin: 16px 0;
 }
 
 .wave-line {
@@ -77,48 +54,159 @@
   left: -40%;
   width: 40%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
-  animation: state-manager-wave 1.2s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+  animation: sk-wave 1.2s ease-in-out infinite;
 }
 
+/* ── Empty / Error ── */
 .state-empty,
 .state-error {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
   min-height: 150px;
-  padding: 28px 22px;
-  border-radius: 16px;
-  background-color: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
-  color: rgba(55, 65, 81, 1);
+  padding: 28px;
   text-align: center;
+  gap: 12px;
 }
 
 .state-empty i,
 .state-error i {
-  display: block;
   font-size: 2rem;
-  margin-bottom: 14px;
-  color: rgba(148, 163, 184, 1);
+  color: #94a3b8;
 }
 
-.state-empty h3,
-.state-error p {
+.state-empty h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
   margin: 0;
 }
 
-@keyframes state-manager-spin {
-  to { transform: rotate(360deg); }
+.state-empty p,
+.state-error p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
 }
 
-@keyframes state-manager-shimmer {
+.state-error .retry-btn {
+  margin-top: 8px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--primary, #3483E0);
+  background: transparent;
+  color: var(--primary, #3483E0);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.state-error .retry-btn:hover {
+  background: var(--primary, #3483E0);
+  color: white;
+}
+
+/* ── Animations ── */
+@keyframes sk-shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
 
-@keyframes state-manager-wave {
+@keyframes sk-wave {
   0% { left: -40%; }
   100% { left: 100%; }
+}
+
+/* stateManager.css — reusable loading animations only */
+
+/* Shimmer animation — used by any skeleton element */
+.sk-shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: sk-shimmer 3s linear infinite;
+  border-radius: 4px;
+}
+
+@keyframes sk-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Spinner */
+.state-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 120px;
+  padding: 20px;
+}
+
+.state-loading .spinner {
+  width: 40px;
+  height: 40px;
+  animation: sk-spin 1s linear infinite;
+}
+
+.state-loading .spinner circle {
+  stroke: var(--primary, #3483E0);
+  stroke-linecap: round;
+}
+
+@keyframes sk-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Empty / Error states */
+.state-empty,
+.state-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 150px;
+  padding: 28px;
+  text-align: center;
+  gap: 12px;
+}
+
+.state-empty i,
+.state-error i {
+  font-size: 2rem;
+  color: #94a3b8;
+}
+
+.state-empty h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.state-empty p,
+.state-error p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.state-error .retry-btn {
+  margin-top: 8px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--primary, #3483E0);
+  background: transparent;
+  color: var(--primary, #3483E0);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.state-error .retry-btn:hover {
+  background: var(--primary, #3483E0);
+  color: white;
 }

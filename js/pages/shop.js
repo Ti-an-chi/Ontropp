@@ -1,7 +1,7 @@
 import { 
   CONFIG, state, DataService, OrderHandler, FavoriteHandler, ShareController, Router 
 } from './portfolio.js';
-import { showNotification, updateElement, normalizePhoneNumber } from '../utility/reconfig.js';
+import { showNotification, updateElement, normalizePhoneNumber, DesignerFollowButton } from '../utility/reconfig.js';
 import { formatPrice, formatNumber } from '../utility/shared.js';
 
 // ============ PRODUCT RENDERER (Shop) ============
@@ -223,7 +223,7 @@ const ShopMode = {
     // Initialize follow button
     const followBtn = document.getElementById('shopFollowBtn');
     if (followBtn) {
-      FollowHandler.initButton(followBtn, state.sellerId, seller.isFollowing);
+      new DesignerFollowButton(followBtn, state.sellerId, seller.isFollowing);
     }
   },
 

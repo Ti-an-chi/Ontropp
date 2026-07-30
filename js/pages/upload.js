@@ -159,7 +159,7 @@ async function uploadProductImage(file) {
     id: tempId,
     url: 'https://i.gifer.com/ZZ5H.gif',
     status: 'uploading'
-  });
+  }); 
   updateImagePreview();
   
   try {

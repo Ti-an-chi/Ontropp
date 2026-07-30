@@ -4,11 +4,9 @@ import { showNotification} from './js/utility/reconfig.js';
 const API = {
   requestCount: 0,
   
-  basURL: 'http://localhost:8787',
-
+  baseURL: 'http://localhost:8787',
   basedURL: 'https://ontropp-backend.onrender.com/api',
-
-  baseURL: 'https://ontrop-api.dsub.workers.dev',   
+  basURL: 'https://ontrop-api.dsub.workers.dev',   
   
   // Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {
@@ -151,7 +149,6 @@ const API = {
   },
   
   /*---------------------- AUTH ---------------------*/
-  
   async signUpSeller({ email, password, username }) {
     return this.requestOtp(email, password, username);
   },
