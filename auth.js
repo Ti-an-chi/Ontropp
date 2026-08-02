@@ -325,7 +325,7 @@ window.UserSession = {
     localStorage.setItem('ontrop_user', JSON.stringify(user));
   },
   getCurrentUser() {
-    const user = localStorage.getItem('ontrop_user');
+    const user = localStorage.getItem('ontrop_token');
     return user ? JSON.parse(user) : null;
   },
   clear() {

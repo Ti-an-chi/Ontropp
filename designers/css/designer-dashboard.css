@@ -463,12 +463,12 @@
 
 .chart-bar:hover::before { opacity: 1; }
 
-.chart-bar.today {
+.chart-bar.thisweek {
   background: linear-gradient(to top, var(--primary2), #6EE7B7);
 }
 
-.chart-bar.today::after {
-  content: "Today";
+.chart-bar.thisweek::after {
+  content: "This Week";
   top: -28px;
   background: var(--primary2);
   color: var(--white);
@@ -784,6 +784,23 @@
 .sk-product-views {
   width: 80px;
   height: 12px;
+}
+
+/* ── EMPTY / ERROR STATES ── */
+.best-seller .state-empty,
+.best-seller .state-error,
+.panel .state-empty,
+.panel .state-error,
+.discovery-panel .state-empty,
+.discovery-panel .state-error,
+.status-cards .state-empty,
+.status-cards .state-error,
+.chart-area .state-empty,
+.chart-area .state-error {
+  min-height: 140px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--line-subtle), var(--surface));
 }
 
 /* ── QUICK BAR ── */

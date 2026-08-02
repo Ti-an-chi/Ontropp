@@ -220,8 +220,12 @@ const PortfolioMode = {
   async loadData() {
     try {
       const sellerResponse = await API.getSellerData(state.sellerId);
+      console.log('port resp:', sellerResponse);
+      if (!sellerResponse.success) {
+        showNotification('Failed to load seller data', 'error');
+        return;
+      }
       state.sellerData = sellerResponse.seller;
-      console.log('Seller Data:', state.sellerData.location);
       
       this.updateHeroSection(state.sellerData);
       
