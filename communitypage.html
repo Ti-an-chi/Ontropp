@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community — Designer's Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+    :root{
+        --white:      #FFFFFF;
+        --panel:      #F7F9FC;
+        --blue:       #3483E0;
+        --blue-deep:  #1D5FAE;
+        --blue-pale:  #EDF4FD;
+        --ink:        #14161B;
+        --ink-soft:   #6B6E76;
+        --ink-faint:  #9CA0A8;
+        --line:       #EBEEF2;
+
+        --font-display: "Fraunces", Georgia, serif;
+        --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+        margin: 0;
+        background: var(--white);
+        color: var(--ink);
+        font-family: var(--font-body);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+    }
+    a{ color: var(--blue); text-decoration: none; }
+    a:hover{ color: var(--blue-deep); }
+
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 0 32px; }
+
+    /* Header */
+    header{ border-bottom: 1px solid var(--line); }
+    header .wrap{
+        height: 76px;
+        display: flex;
+        align-items: center;
+        gap: 32px;
+    }
+    .mark{
+        width: 32px; height: 32px;
+        border-radius: 9px;
+        background: var(--blue);
+        color: var(--white);
+        font-family: var(--font-display);
+        font-weight: 600;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    header h1{
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 18px;
+        margin: 0;
+        margin-right: auto;
+    }
+    .tabs{ display: flex; gap: 28px; }
+    .tab{
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink-faint);
+        padding-bottom: 4px;
+        border-bottom: 2px solid transparent;
+    }
+    .tab.is-active{ color: var(--ink); border-color: var(--blue); }
+    .avatar{
+        width: 34px; height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(160deg, var(--blue), var(--blue-deep));
+        color: var(--white);
+        font-size: 12px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Layout */
+    main.wrap{
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 64px;
+        padding-top: 40px;
+        padding-bottom: 80px;
+    }
+
+    /* Feed */
+    .feed h2{
+        font-family: var(--font-display);
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 28px;
+    }
+    .post{
+        padding: 26px 0;
+        border-top: 1px solid var(--line);
+        display: flex;
+        gap: 14px;
+    }
+    .post:first-of-type{ border-top: none; }
+    .post-avatar{
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        background: var(--blue-pale);
+        color: var(--blue-deep);
+        font-size: 13px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .post-avatar.is-you{
+        background: linear-gradient(160deg, var(--blue), var(--blue-deep));
+        color: var(--white);
+    }
+    .post-head{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+        font-size: 14px;
+    }
+    .post-head strong{ font-weight: 700; }
+    .post-head .badge{
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        font-weight: 700;
+        color: var(--blue);
+        background: var(--blue-pale);
+        padding: 2px 7px;
+        border-radius: 5px;
+    }
+    .post-head .time{ color: var(--ink-faint); font-size: 12.5px; }
+    .post p{
+        margin: 0 0 10px;
+        font-size: 14.5px;
+        color: var(--ink);
+        max-width: 56ch;
+    }
+    .post-thumb{
+        width: 100%;
+        max-width: 420px;
+        height: 150px;
+        border-radius: 12px;
+        background: linear-gradient(150deg, var(--blue-pale), #E3EEFC);
+        border: 1px solid var(--line);
+        margin-bottom: 10px;
+    }
+    .post-meta{
+        font-size: 13px;
+        color: var(--ink-faint);
+    }
+    .post-meta a{ color: var(--ink-faint); font-weight: 600; }
+    .post-meta a:hover{ color: var(--blue); }
+
+    /* Sidebar */
+    .panel{ margin-bottom: 40px; }
+    .panel h3{
+        font-family: var(--font-display);
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 16px;
+    }
+    .queue-item{
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+    }
+    .queue-item:first-of-type{ border-top: none; padding-top: 0; }
+    .queue-item strong{ font-size: 13.5px; display: block; margin-bottom: 3px; }
+    .queue-item p{ margin: 0 0 6px; font-size: 13.5px; color: var(--ink-soft); }
+    .queue-item a{ font-size: 12.5px; font-weight: 600; }
+
+    .member-row{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+    }
+    .member-avatar{
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        background: var(--blue-pale);
+        color: var(--blue-deep);
+        font-size: 10.5px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        position: relative;
+        flex-shrink: 0;
+    }
+    .member-avatar::after{
+        content: "";
+        position: absolute;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: var(--blue);
+        border: 2px solid var(--white);
+        bottom: -1px; right: -1px;
+    }
+    .member-name{ font-size: 13.5px; }
+
+    @media (max-width: 760px){
+        .wrap{ padding: 0 20px; }
+        main.wrap{ grid-template-columns: 1fr; gap: 48px; }
+        .tabs{ display: none; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="wrap">
+        <span class="mark">D.</span>
+        <h1>Community</h1>
+        <nav class="tabs">
+            <a href="#" class="tab is-active">Updates</a>
+            <a href="#" class="tab">Q&amp;A</a>
+            <a href="#" class="tab">General</a>
+            <a href="#" class="tab">Feedback</a>
+        </nav>
+        <span class="avatar">FR</span>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="feed">
+        <h2>Updates</h2>
+
+        <article class="post">
+            <div class="post-avatar is-you">FR</div>
+            <div>
+                <div class="post-head">
+                    <strong>Fred</strong>
+                    <span class="badge">DESIGNER</span>
+                    <span class="time">2:14 PM</span>
+                </div>
+                <p>Pick the grid for the new type specimen — an even 12-column grid, or an asymmetric split that gives the headline more room.</p>
+                <div class="post-thumb"></div>
+                <div class="post-meta">👍 24 &nbsp;·&nbsp; <a href="#">6 replies</a></div>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-avatar">PM</div>
+            <div>
+                <div class="post-head">
+                    <strong>Priya M.</strong>
+                    <span class="time">2:39 PM</span>
+                </div>
+                <p>The asymmetric one gives the headline so much more space to breathe. My take.</p>
+                <div class="post-meta"><a href="#">Reply</a></div>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-avatar is-you">FR</div>
+            <div>
+                <div class="post-head">
+                    <strong>Fred</strong>
+                    <span class="badge">DESIGNER</span>
+                    <span class="time">Yesterday</span>
+                </div>
+                <p>Packaging refresh — first physical proof came back today. The fold is holding better than the digital mockup suggested.</p>
+                <div class="post-thumb"></div>
+                <div class="post-meta">👍 31 &nbsp;·&nbsp; <a href="#">14 replies</a></div>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-avatar">MK</div>
+            <div>
+                <div class="post-head">
+                    <strong>Marcus L.</strong>
+                    <span class="time">Yesterday</span>
+                </div>
+                <p>This framework for picking type pairings is exactly what I needed — always got stuck comparing moods first.</p>
+                <div class="post-meta"><a href="#">Reply</a></div>
+            </div>
+        </article>
+    </section>
+
+    <aside>
+        <div class="panel">
+            <h3>Needs a reply</h3>
+            <div class="queue-item">
+                <strong>Jules T.</strong>
+                <p>Do you sell the specimen poster from last week's post?</p>
+                <a href="#">Reply</a>
+            </div>
+            <div class="queue-item">
+                <strong>Rosa N.</strong>
+                <p>What paper stock did you use for the die-line proof?</p>
+                <a href="#">Reply</a>
+            </div>
+            <div class="queue-item">
+                <strong>Sam B.</strong>
+                <p>Any chance of a tutorial on the grid system you use?</p>
+                <a href="#">Reply</a>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>Online now</h3>
+            <div class="member-row">
+                <div class="member-avatar">PM</div>
+                <span class="member-name">Priya M.</span>
+            </div>
+            <div class="member-row">
+                <div class="member-avatar">OT</div>
+                <span class="member-name">Owen T.</span>
+            </div>
+            <div class="member-row">
+                <div class="member-avatar">HK</div>
+                <span class="member-name">Hana K.</span>
+            </div>
+        </div>
+    </aside>
+</main>
+
+</body>
+</html>
