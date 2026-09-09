@@ -1,8 +1,9 @@
 import API from '../../api.js';
-import { ProductPagination } from '../utility/pagination.js';
-import { showNotification } from '../utility/reconfig.js';
-import { renderSellerAdminProducts, bindSellerAdminActions } from '../utility/seller-product-admin.js';
-import StoreApi from '../storeApi.js';
+import { ensureAuth } from './authCheck.js';
+import { ProductPagination } from '../../js/utility/pagination.js';
+import { showNotification } from '../../js/utility/reconfig.js';
+import { renderSellerAdminProducts, bindSellerAdminActions } from '../../js/utility/seller-product-admin.js';
+import StoreApi from '../../js/storeApi.js';
 
 const PRODUCT_LIMIT = 12;
 const pagination = new ProductPagination('seller-products-grid');
@@ -31,87 +32,12 @@ const authElements = {
   setPasskeyBtn: document.getElementById('set-passkey-btn'),
 };
 
-window.addEventListener('DOMContentLoaded', initSellerAuth);
+document.addEventListener('DOMContentLoaded', initSellerAuth);
 
 async function initSellerAuth() {
-  const authenticated = await checkSellerSession();
-  setupAuthForm();
-  // setupPasskeyButton();
-
-  if (!authenticated) {
-    authElements.overlay?.classList.remove('authenticated');
-    return;
-  }
+  console.log('initializing page...')
+  await ensureAuth()
   initSellerProductsPage();
-}
-
-async function checkSellerSession() {
-  const refreshToken = await localStorage.getItem('shop_refresh');
-  console.log(refreshToken);
-  if (!refreshToken) return false;
-  
-  const response = await StoreApi.tokenPing();
-  if (!response.success) return false;
-
-  authElements.overlay.classList.add('authenticated');
-  authElements.overlay.dataset.authenticated = 'true';
-  showNotification('Resume session')
-  console.log(`✓ Designer authenticated`);
-
-  return true;
-}
-
-function setupAuthForm() {
-  authElements.form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const shopName = authElements.shopNameInput.value.trim();
-    const passkey = authElements.passkeyInput.value.trim();
-  
-    if (!shopName) {
-      showAuthError('Please enter your shop name');
-      return;
-    }
-  
-    if (shopName.length < 3) {
-      showAuthError('Shop name must be at least 3 characters');
-      return;
-    }
-    try {
-      setAuthLoading(true);
-      let authenticated = false;
-      
-      const response = await StoreApi.designerAuth(shopName, passkey);
-      if ( !response?.success ) { 
-        showNotification( response.message, 'error')
-        return;
-      }
-      
-      authenticated = true;
-      authElements.overlay.classList.add('authenticated');
-      initSellerProductsPage();
-      
-    } catch (error) {
-      console.error('Auth error:', error);
-      showNotification(error, 'error');
-      // showAuthError('Authentication failed. Please try again.');
-    } finally {
-      authElements.overlay.dataset.authenticated = authenticated;
-      setAuthLoading(false);
-    }
-  });
-}
-
-function showAuthError(message) {
-  authElements.errorMsg.textContent = message;
-  authElements.errorMsg.style.display = 'block';
-  setTimeout(() => {
-    authElements.errorMsg.style.display = 'none';
-  }, 3000)
-}
-
-function setAuthLoading(loading) {
-  authElements.submitBtn.disabled = loading;
-  authElements.submitBtn.textContent = loading ? 'Verifying...' : 'Access Dashboard';
 }
 
 async function initSellerProductsPage() {
@@ -285,3 +211,4 @@ async function confirmDeletion(productId) {
     showNotification('Product deletion failed. Try again.', 'error');
   }
 }
+
