@@ -20,23 +20,12 @@ const elements = {
   searchInput: document.getElementById('search-input'),
   refreshBtn: document.getElementById('refresh-btn'),
 };
-
-// ===== SELLER AUTHENTICATION =====
-const authElements = {
-  overlay: document.getElementById('seller-auth-overlay'),
-  form: document.getElementById('seller-auth-form'),
-  shopNameInput: document.getElementById('shop-name'),
-  passkeyInput: document.getElementById('seller-passkey'),
-  submitBtn: document.getElementById('auth-submit-btn'),
-  errorMsg: document.getElementById('auth-error'),
-  setPasskeyBtn: document.getElementById('set-passkey-btn'),
-};
-
+  
 document.addEventListener('DOMContentLoaded', initSellerAuth);
 
 async function initSellerAuth() {
   console.log('initializing page...')
-  await ensureAuth()
+  await ensureAuth();
   initSellerProductsPage();
 }
 
