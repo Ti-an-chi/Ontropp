@@ -2,6 +2,7 @@ import API from '../../api.js';
 import { ensureAuth } from './authCheck.js';
 import { ProductPagination } from '../../js/utility/pagination.js';
 import { showNotification } from '../../js/utility/reconfig.js';
+import { viewProductDetails } from '../../js/utility/shared.js';
 import { renderSellerAdminProducts, bindSellerAdminActions } from '../../js/utility/seller-product-admin.js';
 import StoreApi from '../../js/storeApi.js';
 
@@ -36,7 +37,7 @@ async function initSellerProductsPage() {
   bindSellerAdminActions('seller-products-grid', {
     onEdit: (id) => navigateToEdit(id),
     onDelete: (id) => confirmDeletion(id),
-    onView: () => {},
+    onView: (id) => viewProductDetails(id),
   });
 
   await loadSellerProducts();
