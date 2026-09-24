@@ -656,6 +656,10 @@
     align-items: start;
   }
   
+  .gallery-main {
+    aspect-ratio: 1;
+  }
+  
   .product-gallery {
     margin: 0;
     position: sticky;
