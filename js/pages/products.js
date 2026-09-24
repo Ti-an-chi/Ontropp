@@ -13,7 +13,7 @@ let isFavourite = false;
 document.addEventListener('DOMContentLoaded', async function() {
   // Get product ID from URL
   const urlParams = new URLSearchParams(window.location.search);
-  productId = urlParams.get('id') || 'b4bfb29d-e1e5-412d-b2c6-213e0d736a26';
+  productId = urlParams.get('id') ?? '1296d713-1474-4758-b714-00e4f125802c';
   
   /*if (!productId) {
     showError('No product specified');
@@ -39,8 +39,8 @@ async function loadProductData() {
 
 function renderProduct() {
   // Hide loading, show content
-    changeDisplay('loadingState', 'none');
-  changeDisplay('productContent', 'block')
+  changeDisplay('loadingState', 'none');
+  changeDisplay('productContent', 'grid')
   
   // Basic info
   document.getElementById('productName').textContent = productData.name;
