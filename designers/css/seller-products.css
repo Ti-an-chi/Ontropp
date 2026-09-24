@@ -341,12 +341,13 @@
   gap: 16px;
 }
 
+/* --- UPDATED CARD STYLES --- */
 .seller-admin-card {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) 1fr;
-  gap: 18px;
-  align-items: center;
-  padding: 18px 18px 16px;
+  gap: 24px; /* Increased gap for better breathing room */
+  align-items: flex-start; /* Changed from center to prevent squishing on long names */
+  padding: 20px;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -366,6 +367,7 @@
   background: var(--background);
   display: grid;
   place-items: center;
+  flex-shrink: 0; /* Prevents image from shrinking */
 }
 
 .seller-admin-card .product-thumb img {
@@ -417,10 +419,12 @@
   color: var(--secondary);
 }
 
+/* --- UPDATED STATS (Now 2 columns) --- */
 .seller-admin-card .product-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* Changed from 3 to 2 */
   gap: 12px;
+  margin-bottom: 16px; /* Space between stats and actions */
 }
 
 .stat-pill {
@@ -463,6 +467,7 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  text-decoration: none; /* Added to ensure <a> tags don't have underlines */
 }
 
 .seller-admin-card .product-actions button:hover,
@@ -502,6 +507,7 @@
   margin: 0;
 }
 
+/* --- RESPONSIVE --- */
 @media (max-width: 980px) {
   .seller-admin-summary {
     grid-template-columns: repeat(2, minmax(160px, 1fr));
@@ -528,10 +534,11 @@
 
   .seller-admin-card {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .seller-admin-card .product-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr); /* Keeps 2 columns on mobile for better space usage */
   }
 
   .seller-admin-card .product-actions {
