@@ -657,7 +657,7 @@
   }
   
   .gallery-main {
-    aspect-ratio: 1;
+    aspect-ratio: 4/3;
   }
   
   .product-gallery {
