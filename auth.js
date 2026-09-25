@@ -46,7 +46,10 @@ function init() {
   // Mount password components
   passwordField.mount('#passwordMount');
   confirmField.mount('#confirmPasswordMount');
-  confirmField.strength(false); // start hidden; renderUI will sync
+
+  // Hide strength meters until renderUI decides based on mode
+  passwordField.strength(false);
+  confirmField.strength(false);
 
   // Seed toggle text so #togBtn exists before renderUI binds to it
   document.getElementById('toggleText').innerHTML =
@@ -72,30 +75,33 @@ function toggleMode() {
 
 /* ----------  VIEW FUNCTION  ---------- */
 function renderUI() {
+  const isSignup = mode === 'signup';
+
   document.querySelector('.form-title').textContent =
-    mode === 'signup' ? 'Create Account' : 'Log In';
+    isSignup ? 'Create Account' : 'Log In';
 
   document.querySelector('.form-subtitle').textContent =
-    mode === 'signup'
+    isSignup
       ? 'Join ONTROPP and start showcasing'
       : 'Welcome back — sign in to continue';
 
-  authBtn.value =
-    mode === 'signup' ? 'Create Account' : 'Log In';
+  authBtn.value = isSignup ? 'Create Account' : 'Log In';
 
+  // Show/hide signup-only field groups
   ['uname', 'confPass'].forEach(id => {
-    const group = document.getElementById(id);
-    const show = mode === 'signup';
-    group.style.display = show ? 'block' : 'none';
+    document.getElementById(id).style.display = isSignup ? 'block' : 'none';
   });
 
-  $('username').required = mode === 'signup';
+  // Sync native `required` on every signup-only input
+  $('username').required            = isSignup;
+  confirmField.input.required       = isSignup;
 
-  // Toggle strength meter only in signup mode
-  passwordField.strength(mode === 'signup');
+  // Strength meters: only meaningful while creating a new password
+  passwordField.strength(isSignup);
+  confirmField.strength(isSignup);
 
   document.getElementById('toggleText').innerHTML =
-    mode === 'signup'
+    isSignup
       ? `<p>Already have an account? <a href="#" id="togBtn">Log in</a></p>`
       : `<p>Don't have an account? <a href="#" id="togBtn">Sign up</a></p>`;
 
