@@ -116,7 +116,7 @@ export class DesignerFollowButton {
 
     if (this.isPending) return;
 
-    const user = window.UserSession?.getCurrentUser() || localStorage.getItem('ontrop_token');;
+    const user = window.UserSession?.getUserSession() || localStorage.getItem('ontrop_token');;
     if (!user) {
       showNotification('Please sign in to follow designers', 'error', '/signup.html');
       return;

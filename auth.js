@@ -18,6 +18,22 @@ const confirmField = new PasswordInput({
   showStrength: true
 })
 
+
+/* ---------  Session Check on Load  --------- */
+(async () => {
+  try {
+      const token = localStorage.getItem('ontrop_token');
+      if (token) {
+        const data = await window.API.tokenPing();
+        if (data?.success) {
+          location.href = 'dashboard.html';
+        }
+      }
+  } catch {
+    window.API.clearTokens();
+  }
+})();
+
 const $ = id => document.getElementById(id);
 
 /* ----------  DOM & State  ---------- */
@@ -43,15 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function init() {
-  // Mount password components
   passwordField.mount('#passwordMount');
   confirmField.mount('#confirmPasswordMount');
 
-  // Hide strength meters until renderUI decides based on mode
   passwordField.strength(false);
   confirmField.strength(false);
 
-  // Seed toggle text so #togBtn exists before renderUI binds to it
   document.getElementById('toggleText').innerHTML =
     `<p>Don't have an account? <a href="#" id="togBtn">Sign up</a></p>`;
 
@@ -313,31 +326,18 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
     setMode('signin');
 });
 
-/* ----------  Session Check on Load  ---------- */
-(async () => {
-    try {
-        const token = localStorage.getItem('ontrop_token');
-        if (token) {
-          const data = await window.API.tokenPing();
-          if (data?.success) {
-            location.href = 'dashboard.html';
-          } else {
-            console.log("suppose to login straight")
-          }
-        }
-    } catch {
-        window.API.clearTokens();
-    }
-})();
-
 /*========= Session Helper =========*/
 window.UserSession = {
   setCurrentUser(user) {
     localStorage.setItem('ontrop_user', JSON.stringify(user));
   },
   getCurrentUser() {
-    const user = localStorage.getItem('ontrop_token');
+    const user = localStorage.getItem('ontrop_user');
     return user ? JSON.parse(user) : null;
+  },
+  getUserSession() {
+    const session = localStorage.getItem(ontrop-token);
+    return session ? JSON.parse(session) : null;
   },
   clear() {
     localStorage.removeItem('ontrop_user');

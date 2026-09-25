@@ -292,15 +292,14 @@ const API = {
     const response = await this._fetch(`/products/recommended?${params}`);
     return response;
   },
-  
+
   async getFavourites(page = 1, limit = 20, search = '') {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), search });
-    const resp = window.fav || await this._fetch(`/user/favorites?${params}`);
-    
-    window.fav = resp.data;
+    const resp = await this._fetch(`/user/favorites?${params}`);
+
     return resp.data;
   },
-  
+
   // 2. CATEGORIES
   async getCategories() {
     const response = await this._fetch('/categories');
