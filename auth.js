@@ -1,3 +1,22 @@
+import PasswordInput from './js/uiTools/passwordInput.js';
+
+const passwordField = new PasswordInput({
+  id: 'password',
+  name: 'password',
+  placeholder: 'Enter your password',
+  required: true,
+  autocomplete: 'current-password',
+  showStrength: true
+})
+
+const confirmField = new PasswordInput({
+  id: 'confirmPassword',
+  name: 'confirmPassword',
+  placeholder: 'Confirm password',
+  autocomplete: 'new-password',
+  required: true,
+})
+
 const $ = id => document.getElementById(id);
 
 /* ----------  DOM & State  ---------- */
@@ -11,7 +30,6 @@ const resendBtn       = $('resendBtn');
 const verifyBtn       = $('verifyBtn');
 const emailText       = $('emailText');
 const emailMasked     = $('emailMasked');
-const passwordInput   = $('password');
 const passwordStrengthEl = $('passwordStrength');
 
 let mode = 'signin';
@@ -19,6 +37,8 @@ let pendingEmail = null;
 document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   mode = urlParams.get('mode') || getSavedMode();
+  passwordField.mount('#passwordMount');
+  confirmField.mount('#confirmPassword');
   renderUI();
 });
 
@@ -53,7 +73,9 @@ function renderUI() {
     const show = mode === 'signup';
     group.style.display = show ? 'block' : 'none';
     input.required = show;
+    passwordField.strength(show)
   });
+
   
   document.getElementById('toggleText').innerHTML =
     mode === 'signup' ?
@@ -106,18 +128,6 @@ function setVerifyLoading(on) {
     verifyBtn.textContent = on ? 'Verifying...' : 'Verify';
 }
 
-/* ----------  Password Strength Meter  ---------- */
-passwordInput.addEventListener('input', () => {
-    const pass = passwordInput.value;
-    const checks = [/[a-z]/, /[A-Z]/, /[0-9]/, /[^A-Za-z0-9]/];
-    const score = checks.reduce((a, r) => a + r.test(pass), 0) + (pass.length >= 8 ? 1 : 0);
-    const levels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
-    const colors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#16a34a'];
-    
-    passwordStrengthEl.textContent = `Password Strength: ${levels[score]}`;
-    passwordStrengthEl.style.color = colors[score];
-});
-
 /* ----------  Mode Toggle (Sign Up ⇄ Log In)  ---------- */
 document.getElementById('togBtn').addEventListener('click', () => {
   changeMode();
@@ -131,7 +141,7 @@ function changeMode() {
 /* ----------  Form Validation  ---------- */
 function validateForm() {
     const email = $('email').value.trim();
-    const pass = $('password').value;
+    const pass = passwordField.value;
     
     if (!email.includes('@')) {
         showMessage('Valid email required');
@@ -146,7 +156,7 @@ function validateForm() {
             showMessage('Username required');
             return false;
         }
-        if (pass !== $('confirmPassword').value) {
+        if (pass !== confirmField.value) {
             showMessage('Passwords don’t match');
             return false;
         }
@@ -186,7 +196,7 @@ signupForm.addEventListener('submit', async e => {
   if (!validateForm()) return;
   
   const email = $('email').value.trim();
-  const pass = $('password').value;
+  const pass = passwordField.value;
   
   setLoadingState(true);
   hideMessage();
