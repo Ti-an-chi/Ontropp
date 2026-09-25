@@ -1,5 +1,6 @@
 // authCheck.js — blocks page until seller is authenticated
 import { showNotification } from '../../js/utility/reconfig.js';
+import PasswordInput from '../../js/uiTools/passwordInput.js';
 import StoreApi from '../../js/storeApi.js';
 
 // ===== AUTH OVERLAY HTML =====
@@ -20,7 +21,7 @@ const AUTH_HTML = `
         
         <div class="auth-form-group">
           <label for="seller-passkey">Seller Passkey</label>
-          <input type="password" id="seller-passkey" name="seller-passkey" placeholder="Enter your passkey" autocomplete="off">
+          <div id="seller-passkey-mount"></div>
           <p class="form-help">If your shop was created before passkey setup, use "123456".</p>
         </div>
 
@@ -40,6 +41,7 @@ const AUTH_HTML = `
 let authElements = null;
 let authResolve = null;
 let authPromise = null;
+let passkeyInput = null;
 
 function getAuthPromise() {
   if (!authPromise) {
@@ -69,11 +71,28 @@ function cacheAuthElements() {
     overlay: document.getElementById('seller-auth-overlay'),
     form: document.getElementById('seller-auth-form'),
     shopName: document.getElementById('shop-name'),
-    passkey: document.getElementById('seller-passkey'),
     submitBtn: document.getElementById('auth-submit-btn'),
     errorMsg: document.getElementById('auth-error'),
     setPasskeyBtn: document.getElementById('set-passkey-btn'),
   };
+}
+
+// ===== PASSKEY INPUT (mounted once) =====
+function initPasskeyInput() {
+  if (passkeyInput) return passkeyInput;
+
+  const mount = document.getElementById('seller-passkey-mount');
+  if (!mount) return null;
+
+  passkeyInput = new PasswordInput({
+    id: 'seller-passkey',
+    name: 'seller-passkey',
+    placeholder: 'Enter your passkey',
+    autocomplete: 'current-password',
+    showStrength: false,
+  }).mount(mount);
+
+  return passkeyInput;
 }
 
 function showAuthError(msg) {
@@ -105,12 +124,17 @@ async function checkSession() {
 }
 
 // ===== FORM HANDLER =====
+let formBound = false;
+
 function bindAuthForm() {
+  if (formBound) return;
+  formBound = true;
+
   authElements.form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const shopName = authElements.shopName.value.trim();
-    const passkey = authElements.passkey.value.trim();
+    const passkey = passkeyInput ? passkeyInput.value.trim() : '';
 
     if (!shopName || shopName.length < 3) {
       showAuthError('Shop name must be at least 3 characters');
@@ -123,13 +147,13 @@ function bindAuthForm() {
       
       if (!response?.success) {
         showAuthError(response?.message || 'Authentication failed');
-        setAuthLoading(false);
         return;
       }
 
       // Success — hide overlay and resolve
       authElements.overlay.classList.add('authenticated');
       localStorage.setItem('shop_name', shopName);
+      if (passkeyInput) passkeyInput.value = '';
       
       if (authResolve) {
         authResolve(true);
@@ -151,6 +175,7 @@ function bindAuthForm() {
 export async function ensureAuth() {
   injectAuthOverlay();
   cacheAuthElements();
+  initPasskeyInput();
   
   const isAuthed = await checkSession();
   
