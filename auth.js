@@ -15,6 +15,7 @@ const confirmField = new PasswordInput({
   placeholder: 'Confirm password',
   autocomplete: 'new-password',
   required: true,
+  showStrength: true
 })
 
 const $ = id => document.getElementById(id);
@@ -30,19 +31,31 @@ const resendBtn       = $('resendBtn');
 const verifyBtn       = $('verifyBtn');
 const emailText       = $('emailText');
 const emailMasked     = $('emailMasked');
-const passwordStrengthEl = $('passwordStrength');
 
 let mode = 'signin';
 let pendingEmail = null;
+
+/* ----------  One-time init  ---------- */
 document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   mode = urlParams.get('mode') || getSavedMode();
-  passwordField.mount('#passwordMount');
-  confirmField.mount('#confirmPassword');
-  renderUI();
+  init();
 });
 
-// 1️⃣ STATE FUNCTIONS
+function init() {
+  // Mount password components
+  passwordField.mount('#passwordMount');
+  confirmField.mount('#confirmPasswordMount');
+  confirmField.strength(false); // start hidden; renderUI will sync
+
+  // Seed toggle text so #togBtn exists before renderUI binds to it
+  document.getElementById('toggleText').innerHTML =
+    `<p>Don't have an account? <a href="#" id="togBtn">Sign up</a></p>`;
+
+  renderUI();
+}
+
+/* ----------  STATE FUNCTIONS  ---------- */
 function getSavedMode() {
   return localStorage.getItem('mod') || 'signin';
 }
@@ -54,35 +67,39 @@ function setMode(newMode) {
 }
 
 function toggleMode() {
-  const newMode = mode === 'signin' ? 'signup' : 'signin';
-  setMode(newMode);
+  setMode(mode === 'signin' ? 'signup' : 'signin');
 }
 
-// 2️⃣ VIEW FUNCTION
+/* ----------  VIEW FUNCTION  ---------- */
 function renderUI() {
   document.querySelector('.form-title').textContent =
     mode === 'signup' ? 'Create Account' : 'Log In';
-  
+
+  document.querySelector('.form-subtitle').textContent =
+    mode === 'signup'
+      ? 'Join ONTROPP and start showcasing'
+      : 'Welcome back — sign in to continue';
+
   authBtn.value =
     mode === 'signup' ? 'Create Account' : 'Log In';
-  
+
   ['uname', 'confPass'].forEach(id => {
     const group = document.getElementById(id);
-    const input = group.querySelector('input');
-    
     const show = mode === 'signup';
     group.style.display = show ? 'block' : 'none';
-    input.required = show;
-    passwordField.strength(show)
   });
 
-  
+  $('username').required = mode === 'signup';
+
+  // Toggle strength meter only in signup mode
+  passwordField.strength(mode === 'signup');
+
   document.getElementById('toggleText').innerHTML =
-    mode === 'signup' ?
-    `<p>Already have an account? <a href="#" id="togBtn">Log in</a></p>` :
-    `<p>Don't have an account? <a href="#" id="togBtn">Sign up</a></p>`;
-  
-  attachToggleListener(); // reattach after innerHTML change
+    mode === 'signup'
+      ? `<p>Already have an account? <a href="#" id="togBtn">Log in</a></p>`
+      : `<p>Don't have an account? <a href="#" id="togBtn">Sign up</a></p>`;
+
+  attachToggleListener();
   hideMessage();
 }
 
@@ -128,16 +145,6 @@ function setVerifyLoading(on) {
     verifyBtn.textContent = on ? 'Verifying...' : 'Verify';
 }
 
-/* ----------  Mode Toggle (Sign Up ⇄ Log In)  ---------- */
-document.getElementById('togBtn').addEventListener('click', () => {
-  changeMode();
-  toggleMode();
-});
-
-function changeMode() {
-  mode = mode === 'signin' ? 'signup' : 'signin';
-}
-
 /* ----------  Form Validation  ---------- */
 function validateForm() {
     const email = $('email').value.trim();
@@ -169,20 +176,16 @@ const otpInputs = document.querySelectorAll('.otp input');
 
 otpInputs.forEach((input, i) => {
     input.addEventListener('input', (e) => {
-        // Only allow numbers
         e.target.value = e.target.value.replace(/\D/g, '');
         
-        // Auto-advance
         if (e.target.value && i < otpInputs.length - 1) {
             otpInputs[i + 1].focus();
         }
         
-        // Check completion
         const complete = [...otpInputs].every(inp => inp.value.length === 1);
         verifyBtn.disabled = !complete;
     });
     
-    // Handle backspace
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Backspace' && !e.target.value && i > 0) {
             otpInputs[i - 1].focus();
@@ -203,15 +206,12 @@ signupForm.addEventListener('submit', async e => {
 
   try {
     if (mode === 'signup') {
-      // Step 1: Request OTP
       const response = await window.API.createTestAccount(
         email,
         pass,
         $('username').value.trim(),
       )
       
-      //pendingEmail = email;
-      //localStorage.setItem('pendingSignupEmail', email);
       showMessage('Account created successfully! redirecting...');
       const loginResponse = await window.API.login(email, pass);
       sessionStorage.setItem(
@@ -221,7 +221,6 @@ signupForm.addEventListener('submit', async e => {
       location.href = 'dashboard.html';
     
     } else if (mode === 'signin') {
-      // Direct login
       const response = await window.API.dashLogin(email, pass);
       if (!response.success) throw new Error(response.message || 'Login failed');
       
@@ -261,7 +260,6 @@ verifyBtn.addEventListener('click', async () => {
         const response = await window.API.verifyOtp(pendingEmail, code);
         if (!response.success) throw new Error(response.message || 'Invalid code');
         
-        // Redirect
         window.API.setTokens(response);
         UserSession.setCurrentUser(response.user);
         localStorage.removeItem('pendingSignupEmail');
@@ -296,7 +294,7 @@ resendBtn.addEventListener('click', async () => {
         setTimeout(() => {
             resendBtn.disabled = false;
             resendBtn.textContent = 'Resend Code';
-        }, 30000); // 30s cooldown
+        }, 30000);
     }
 });
 
@@ -306,8 +304,7 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
     verifySection.style.display = 'none';
     signupSection.style.display = 'block';
     otpInputs.forEach(inp => inp.value = '');
-    mode = 'signin';
-    toggleMode();
+    setMode('signin');
 });
 
 /* ----------  Session Check on Load  ---------- */
@@ -315,7 +312,6 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
     try {
         const token = localStorage.getItem('ontrop_token');
         if (token) {
-          // Verify token is still valid
           const data = await window.API.tokenPing();
           if (data?.success) {
             location.href = 'dashboard.html';
@@ -324,7 +320,6 @@ document.getElementById('toLogin2').addEventListener('click', (e) => {
           }
         }
     } catch {
-        // Token invalid, clear it
         window.API.clearTokens();
     }
 })();
