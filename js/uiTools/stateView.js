@@ -38,6 +38,7 @@ class StateView {
 
   #container;
   #states;
+	#displays;
   #currentState = null;
   #animatingState = null;
   #transitionId = 0;
@@ -48,15 +49,18 @@ class StateView {
    * @param {Object} [options] - Optional configuration.
    * @param {Object} [options.selectors] - Explicit CSS selectors for each state.
    */
-  constructor(container, options = {}) {
-    if (!(container instanceof HTMLElement)) {
-      throw new Error('StateView: First argument must be a valid HTMLElement.');
-    }
-
-    this.#container = container;
-    this.#reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this.#states = this.#resolveStates(options);
-  }
+  
+	constructor(container, options = {}) {
+		if (!(container instanceof HTMLElement)) {
+		  throw new Error('StateView: First argument must be a valid HTMLElement.');
+		}
+	
+		this.#container = container;
+		this.#reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		this.#states = this.#resolveStates(options);
+	
+		this.#displays = options.displays || {};
+	}
 
   /**
    * Displays the specified state with optional configuration.
@@ -184,7 +188,10 @@ class StateView {
     const el = this.#states[state];
     if (!el) return;
 
-    const displayValue = options.display || 'block';
+		const displayValue = options.display
+			|| this.#displays?.[state]
+			|| 'block';
+		
     const animConfig = options.animation 
       ? this.#getCustomAnimation(options.animation) 
       : StateView.#ANIMATIONS[state];

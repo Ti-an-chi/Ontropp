@@ -97,14 +97,20 @@ function setupAvatarStateView() {
   const container = document.getElementById('avatar-state-container');
   if (!container) return;
 
-  avatarState = new StateView(container, {
-    selectors: {
-      loading: '[data-state="loading"]',
-      data:    '[data-state="data"]',
-      empty:   '[data-state="empty"]',
-      error:   '[data-state="error"]',
-    },
-  });
+	avatarState = new StateView(container, {
+  selectors: {
+    loading: '[data-state="loading"]',
+    data:    '[data-state="data"]',
+    empty:   '[data-state="empty"]',
+    error:   '[data-state="error"]',
+  },
+  displays: {
+    loading: 'flex',
+    data:    'flex',
+    empty:   'flex',
+    error:   'flex',
+  },
+});
 
   // Broken image URL handler — this decides 'error' when we're NOT mid-upload.
   const img = document.getElementById('profile-avatar-img');
