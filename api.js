@@ -26,7 +26,7 @@ const API = {
   
   tokenStorage: {
     user: {
-        access: 'ontrop_access',
+        access: 'ontrop_token',
         refresh: 'ontrop_refresh'
     },
     designer: {

@@ -1,96 +1,140 @@
-/* ===== PROFILE TAB ===== */
+/* ===== tabs/profile.css ===== */
+/* Scoped to #tab-profile so nothing leaks to other tabs */
 
-/* Smooth base for all profile sections */
-.profile-header-section,
-.profile-designer-block,
-.profile-saved-preview,
-.profile-recently-viewed {
-  animation: profileFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+#tab-profile {
+  padding-bottom: 24px;
+}
+
+/* ---------- Header card ---------- */
+.profile-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-top: 16px;
+  animation: profileFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes profileFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- Header ---------- */
-.profile-header-section {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 24px 16px 20px;
-}
-
-.profile-header-content {
+.profile-card-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
 }
 
-/* Avatar */
+/* ---------- Avatar (StateView-managed) ---------- */
 .profile-avatar-large {
   position: relative;
-  width: 88px;
-  height: 88px;
+  width: 72px;
+  height: 72px;
   flex-shrink: 0;
 }
 
-.profile-avatar-large img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--white);
-  box-shadow: var(--shadow-md);
-  transition: transform 0.3s ease;
+/* Every state element is absolutely positioned over the circle,
+   so only one is ever visible and layout never shifts. */
+.avatar-state {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--border);
+	border-radius: 50%;
+  overflow: hidden;
+  display: none;
 }
 
+/* --- data: the actual image --- */
+.avatar-state-data img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  background: var(--background);
+}
+
+/* --- empty: default user icon --- */
+.avatar-state-empty {
+  background: var(--background);
+  color: var(--hash);
+	justify-self: center;
+	align-self: center;
+}
+.avatar-state-empty i {
+  font-size: 28px;
+}
+
+/* --- loading: spinner on a muted circle --- */
+.avatar-state-loading {
+  background: var(--background);
+}
+
+.avatar-upload-spinner {
+  width: 22px;
+  height: 22px;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* --- error: warning + retry --- */
+.avatar-state-error {
+  background: rgba(239, 68, 68, 0.08);
+  border: 2px solid var(--error);
+  color: var(--error);
+  flex-direction: column;
+  gap: 4px;
+}
+.avatar-state-error > i {
+  font-size: 20px;
+}
+
+.avatar-retry-btn {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--error);
+  background: var(--white);
+  color: var(--error);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.4;
+}
+.avatar-retry-btn:hover {
+  background: var(--error);
+  color: var(--white);
+}
+.avatar-retry-btn i {
+  font-size: 9px;
+}
+
+/* --- edit button (always on top, never a state) --- */
 .edit-avatar-btn {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 30px;
-  height: 30px;
+  bottom: -2px;
+  right: -2px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: var(--secondary);
+  background: var(--primary);
   color: var(--white);
   border: 2px solid var(--white);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
+  padding: 0;
+  z-index: 2;
   transition: transform 0.2s ease, background 0.2s ease;
 }
-
 .edit-avatar-btn:hover {
-  transform: scale(1.1);
-  background: var(--accent);
-}
-
-/* Upload overlay */
-.avatar-upload-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(2px);
-  animation: profileFadeIn 0.2s ease;
-}
-
-.avatar-upload-spinner {
-  width: 26px;
-  height: 26px;
-  border: 3px solid rgba(255, 255, 255, 0.25);
-  border-top-color: var(--white);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  transform: scale(1.08);
+  background: var(--secondary);
 }
 
 /* Identity */
@@ -100,17 +144,17 @@
 }
 
 .profile-display-name {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .profile-email {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--hash);
   margin-bottom: 8px;
   overflow: hidden;
@@ -135,15 +179,32 @@
   color: var(--secondary);
 }
 
-/* Edit button */
+.profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(52, 131, 224, 0.08);
+  margin-top: 8px;
+  transition: background 0.2s ease;
+}
+
+.profile-btn:hover {
+  background: rgba(52, 131, 224, 0.15);
+}
+
 .edit-profile-btn {
-  padding: 8px 14px;
+  align-self: flex-start;
+  padding: 6px 10px;
   border-radius: var(--radius-md);
   background: var(--background);
   border: 1px solid var(--border);
   color: var(--text);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -158,20 +219,19 @@
   border-color: var(--primary);
 }
 
-/* ---------- Stats Row (header) ---------- */
+/* Stats row — bottom of header card */
 .profile-stats-row {
   display: flex;
-  gap: 12px;
-  max-width: 1200px;
-  margin: 20px auto 0;
-  padding-top: 20px;
+  gap: 8px;
+  padding-top: 16px;
+  margin-top: 16px;
   border-top: 1px solid var(--border);
 }
 
 .profile-stat-item {
   flex: 1;
   text-align: center;
-  padding: 8px 4px;
+  padding: 6px 4px;
   border-radius: var(--radius-md);
   transition: background 0.2s ease;
 }
@@ -182,7 +242,7 @@
 
 .profile-stat-value {
   display: block;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text);
   line-height: 1.2;
@@ -195,25 +255,57 @@
   margin-top: 2px;
 }
 
-/* ---------- Designer Block ---------- */
-.profile-designer-block {
+/* ---------- Section shells ---------- */
+.profile-section {
   background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 20px 16px;
-  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-top: 12px;
+  animation: profileFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.profile-designer-block .section-header,
-.profile-saved-preview .section-header,
-.profile-recently-viewed .section-header {
+.profile-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto 16px;
   gap: 12px;
+  margin-bottom: 16px;
 }
 
+.profile-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-section-title i {
+  color: var(--secondary);
+  font-size: 14px;
+}
+
+.see-all {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.2s ease;
+}
+
+.see-all:hover {
+  gap: 8px;
+}
+
+.see-all i {
+  font-size: 11px;
+}
+
+/* ---------- Designer stats ---------- */
 .designer-actions-group {
   display: flex;
   gap: 8px;
@@ -223,152 +315,73 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  max-width: 1200px;
-  margin: 0 auto 20px;
 }
 
-.designer-stat-card {
-  background: var(--background);
-  border-radius: var(--radius-lg);
-  padding: 14px 10px;
+/* Reuse .stat-card from components.css but stack it here */
+.designer-stats-row .stat-card {
+  flex-direction: column;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.designer-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-.designer-stat-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: rgba(46, 204, 113, 0.12);
-  color: var(--secondary);
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  margin-bottom: 8px;
+  gap: 8px;
+  padding: 14px 10px;
+  border-left-width: 3px;
 }
 
-.designer-stat-value {
-  display: block;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
+.designer-stats-row .stat-icon {
+  width: 36px;
+  height: 36px;
+  font-size: 15px;
+  border-radius: 10px;
+}
+
+.designer-stats-row .stat-details {
+  width: 100%;
+}
+
+.designer-stats-row .stat-title {
+  font-size: 11px;
+  margin-bottom: 2px;
   line-height: 1.2;
 }
 
-.designer-stat-value.muted {
+.designer-stats-row .stat-value {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.designer-stats-row .stat-value.muted {
   color: var(--hash);
   font-weight: 500;
 }
 
-.designer-stat-label {
-  display: block;
-  font-size: 11px;
+/* ---------- Saved preview — uses .products-grid + .product-card ---------- */
+
+/* Empty state inside saved preview */
+.empty-saved-preview {
+  text-align: center;
+  padding: 24px 16px;
   color: var(--hash);
-  margin-top: 2px;
 }
 
-/* ---------- Saved Preview Grid ---------- */
-.profile-saved-preview {
-  padding: 20px 16px;
-  margin-top: 8px;
-}
-
-.profile-fav-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.profile-fav-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.25s ease,
-              border-color 0.25s ease;
-  animation: profileFadeIn 0.4s ease backwards;
-}
-
-.profile-fav-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--secondary);
-}
-
-.profile-fav-image {
-  height: 130px;
-  background: var(--background);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
-
-.profile-fav-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.profile-fav-card:hover .profile-fav-image img {
-  transform: scale(1.05);
-}
-
-.profile-fav-image i {
+.empty-saved-preview .empty-icon {
   font-size: 36px;
-  color: var(--primary);
+  color: var(--border);
+  margin-bottom: 8px;
 }
 
-.profile-fav-details {
-  padding: 10px 12px 12px;
+.empty-saved-preview p {
+  font-size: 14px;
+  margin-bottom: 12px;
 }
 
-.profile-fav-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 4px;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: 34px;
-}
-
-.profile-fav-price {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--secondary);
-}
-
-/* ---------- Recently Viewed ---------- */
-.profile-recently-viewed {
-  padding: 20px 16px;
-  margin-top: 8px;
-}
-
+/* ---------- Recently viewed ---------- */
 .recently-viewed-scroll {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 140px;
   gap: 12px;
   overflow-x: auto;
-  padding-bottom: 8px;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding-bottom: 4px;
   scrollbar-width: none;
   scroll-snap-type: x mandatory;
 }
@@ -382,20 +395,24 @@
   border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .recently-viewed-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
+  border-color: var(--primary);
 }
 
 .recently-viewed-image {
-  height: 90px;
+  height: 100px;
   background: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .recently-viewed-image img {
@@ -405,7 +422,7 @@
 }
 
 .recently-viewed-image i {
-  font-size: 24px;
+  font-size: 28px;
   color: var(--primary);
 }
 
@@ -429,44 +446,16 @@
   color: var(--secondary);
 }
 
-/* ---------- Empty states ---------- */
-.empty-saved-preview {
-  text-align: center;
-  padding: 32px 20px;
-  color: var(--hash);
-  max-width: 1200px;
-  margin: 0 auto;
-  animation: profileFadeIn 0.3s ease;
-}
-
-.empty-saved-preview .empty-icon {
-  font-size: 40px;
-  color: var(--border);
-  margin-bottom: 12px;
-}
-
-.empty-saved-preview p {
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-
 /* ---------- Responsive ---------- */
 @media (min-width: 768px) {
-  .profile-header-section { padding: 32px 24px 24px; }
-  .profile-avatar-large { width: 104px; height: 104px; }
-  .profile-display-name { font-size: 24px; }
-  .profile-fav-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .designer-stats-row { gap: 16px; }
+  .profile-avatar-large { width: 88px; height: 88px; }
+  .profile-display-name { font-size: 22px; }
+  .profile-card { padding: 24px; }
   .recently-viewed-scroll { grid-auto-columns: 160px; }
 }
 
-@media (min-width: 1024px) {
-  .profile-fav-grid { grid-template-columns: repeat(4, 1fr); }
-}
-
 @media (max-width: 400px) {
-  .designer-stats-row { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .designer-stat-value { font-size: 17px; }
-  .profile-stats-row { gap: 4px; }
-  .profile-stat-value { font-size: 19px; }
+  .designer-stats-row { gap: 6px; }
+  .designer-stats-row .stat-value { font-size: 16px; }
+  .profile-stat-value { font-size: 18px; }
 }

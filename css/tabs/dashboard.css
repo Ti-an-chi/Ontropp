@@ -360,6 +360,32 @@
   color: var(--hash);
 }
 
+/* Danger variant — logout and destructive actions */
+.dropdown-item.logout-item {
+  color: var(--error);
+}
+
+.dropdown-item.logout-item i {
+  color: var(--error);
+}
+
+.dropdown-item.logout-item:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* Promoted variant — Start Selling / upgrade CTAs */
+.dropdown-item.become-seller-item {
+  color: var(--primary);
+}
+
+.dropdown-item.become-seller-item i {
+  color: var(--primary);
+}
+
+.dropdown-item.become-seller-item:hover {
+  background: rgba(52, 131, 224, 0.08);
+}
+
 /* Responsive layout: stack header on narrow screens */
 @media (max-width: 767px) {
   .seller-board-header {
