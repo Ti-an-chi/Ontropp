@@ -37,18 +37,18 @@ let pendingEmail = null;
 
 /* ----------  One-time init  ---------- */
 document.addEventListener('DOMContentLoaded', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  mode = urlParams.get('mode') || getSavedMode();
-  init();
-});
-
-function init() {
   passwordField.mount('#passwordMount');
   confirmField.mount('#confirmPasswordMount');
 
   passwordField.strength(false);
   confirmField.strength(false);
 
+  const urlParams = new URLSearchParams(window.location.search);
+  mode = urlParams.get('mode') || getSavedMode();
+  init();
+});
+
+function init() {
   document.getElementById('toggleText').innerHTML =
     `<p>Don't have an account? <a href="#" id="togBtn">Sign up</a></p>`;
 
