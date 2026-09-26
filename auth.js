@@ -18,22 +18,6 @@ const confirmField = new PasswordInput({
   showStrength: true
 })
 
-
-/* ---------  Session Check on Load  --------- */
-(async () => {
-  try {
-      const token = localStorage.getItem('ontrop_token');
-      if (token) {
-        const data = await window.API.tokenPing();
-        if (data?.success) {
-          location.href = 'dashboard.html';
-        }
-      }
-  } catch {
-    window.API.clearTokens();
-  }
-})();
-
 const $ = id => document.getElementById(id);
 
 /* ----------  DOM & State  ---------- */
@@ -316,6 +300,21 @@ resendBtn.addEventListener('click', async () => {
         }, 30000);
     }
 });
+
+/* ---------  Session Check on Load  --------- */
+(async () => {
+  try {
+      const token = localStorage.getItem('ontrop_token');
+      if (token) {
+        const data = await window.API.tokenPing();
+        if (data?.success) {
+          location.href = 'dashboard.html';
+        }
+      }
+  } catch {
+    window.API.clearTokens();
+  }
+})();
 
 /* ----------  Redirect Handlers  ---------- */
 document.getElementById('toLogin2').addEventListener('click', (e) => {
