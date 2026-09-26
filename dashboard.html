@@ -109,7 +109,7 @@
           <!--
           <button class="icon-btn inbox-btn" aria-label="Messages and communities">
             <i class="fas fa-comments"></i>
-            <span class="badge" id="inbox-badge">3</span> <!-- unread count -->
+            <span class="badge" id="inbox-badge">3</span> <!-- unread count
           </button>
           -->
           <div class="kebab-menu-container">
@@ -488,135 +488,114 @@
 
     <!-- Profile Tab Content -->
     <main class="tab-content" id="tab-profile">
-      <!-- Profile Header -->
+    
+      <!-- ===== Profile Header ===== -->
       <section class="profile-header-section">
         <div class="profile-header-content">
+    
+          <!-- Avatar with camera trigger -->
           <div class="profile-avatar-large">
-            <img src="" alt="Profile" id="profile-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=User&amp;background=3483E0&amp;color=fff'">
-            <button class="edit-avatar-btn" id="edit-avatar-btn">
+            <img src="" alt="Profile" id="profile-avatar-img"
+                 onerror="this.src='https://ui-avatars.com/api/?name=User&background=3483E0&color=fff'">
+            <button class="edit-avatar-btn" id="edit-avatar-btn" aria-label="Change profile photo">
               <i class="fas fa-camera"></i>
-            <input type="file" class="edit-avatar-input" id="edit-avatar-input" accept="image/*">
             </button>
-          </div>
-      
-          <div class="profile-info">
-            <div class="profile-name-section">
-              <h2 id="profile-display-name">username</h2>
-              <button class="edit-profile-btn" id="edit-profile-btn">
-                <i class="fas fa-edit"></i> Edit
-              </button>
+            <input type="file" id="edit-avatar-input" accept="image/*" hidden>
+            <div class="avatar-upload-overlay" id="avatar-upload-overlay" hidden>
+              <div class="avatar-upload-spinner"></div>
             </div>
-        
-            <p class="profile-email" id="profile-display-email">email@example.com</p>
-            <p class="profile-role" id="profile-role">buyer</p>
-            
-            <!-- Seller Profile Link -->
-            <div class="seller-profile-link" id="seller-profile-link" style="display: none;">
-              <a id="profile-link-btn" class="profile-btn">
-                <i class="fas fa-user"></i>
-                View your profile
+          </div>
+    
+          <!-- Identity -->
+          <div class="profile-info">
+            <h2 class="profile-display-name" id="profile-display-name">Loading…</h2>
+            <p class="profile-email" id="profile-display-email">…</p>
+            <span class="profile-role-pill" id="profile-role">user</span>
+    
+            <!-- Seller public profile link (designers only) -->
+            <div class="seller-profile-link" id="seller-profile-link" hidden>
+              <a id="profile-link-btn" class="profile-btn" href="#" target="_blank" rel="noopener">
+                <i class="fas fa-external-link-alt"></i>
+                View public profile
               </a>
             </div>
-
-            <!-- Buyer Stats -->
-            <div class="buyer-stats" id="buyer-stats">
-              <div class="stat-item">
-                <span class="stat-value" id="orders-count">0</span>
-                <span class="stat-label">Orders</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value" id="following-count">0</span>
-                <span class="stat-label">following</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value" id="favorites-count">0</span>
-                <span class="stat-label">Favorites</span>
-              </div>
-            </div>
           </div>
+    
+          <!-- Edit profile (avatar only) -->
+          <button class="edit-profile-btn" id="edit-profile-btn" aria-label="Edit profile photo">
+            <i class="fas fa-camera"></i>
+            <span>Edit</span>
+          </button>
+        </div>
+    
+        <!-- Stats row — adapts by role -->
+        <div class="profile-stats-row" id="profile-stats-row">
+          <!-- Rendered by JS -->
         </div>
       </section>
-
-      <!-- Seller Dashboard -->
-      <section class="profile-seller-dashboard" id="profile-seller-dashboard" style="display: none;">
+    
+      <!-- ===== Designer / Seller Block (designers only) ===== -->
+      <section class="profile-designer-block" id="profile-designer-block" hidden>
         <div class="section-header">
-          <h2 class="section-title">Seller Dashboard</h2>
-          <div class="seller-actions-group">
+          <h3 class="section-title">
+            <i class="fas fa-palette"></i> Designer Dashboard
+          </h3>
+          <div class="designer-actions-group">
             <button class="add-product-btn" id="profile-add-product-btn">
               <i class="fas fa-plus"></i> Add Product
             </button>
             <button class="add-product-btn" id="manage-products-profile-btn">
-              <i class="fas fa-list"></i> Manage Products
+              <i class="fas fa-list"></i> Manage
             </button>
           </div>
         </div>
     
-        <div class="seller-quick-stats">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-eye"></i>
-            </div>
-            <div class="stat-details">
-              <h3 class="stat-title">Profile Views</h3>
-              <p class="stat-value" id="seller-profile-views">0</p>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-shopping-bag"></i>
-            </div>
-            <div class="stat-details">
-              <h3 class="stat-title">Total Orders</h3>
-              <p class="stat-value" id="seller-total-orders">0</p>
-            </div>
-          </div>
-           
+        <div class="designer-stats-row" id="designer-stats-row">
+          <!-- Rendered by JS -->
         </div>
-        
-        <!-- Seller's Products -->
-        <div class="profile-products-section">
+    
+        <!-- Your Products — only renders if data is injected -->
+        <div class="designer-products-section" id="designer-products-section" hidden>
           <div class="section-header">
-            <h3 class="section-subtitle">Your Products</h3>
-            <a href="seller-products.html" class="see-all">View All</a>
+            <h4 class="section-subtitle">Your Products</h4>
+            <a href="designerDashboard.html" class="see-all">View all <i class="fas fa-arrow-right"></i></a>
           </div>
-          <div class="products-grid" id="profile-seller-products">
-          </div>
+          <div class="products-grid" id="profile-seller-products"></div>
         </div>
       </section>
-      
-      <!-- Buyer Section -->
-      <section class="profile-buyer-section" id="profile-buyer-section">
-        <div class="profile-section">
-          <div class="section-header">
-            <h3 class="section-subtitle">Recent Orders</h3>
-            <a href="#" class="see-all">View All</a>
-          </div>
-          <div class="orders-list" id="recent-orders">
-            <div class="empty-state">
-              <i class="fas fa-shopping-bag"></i>
-              <p>No orders yet</p>
-              <a href="#tab-explore" class="btn-secondary">Start Shopping</a>
-            </div>
-          </div>
+    
+      <!-- ===== Saved Items Preview (both roles) ===== -->
+      <section class="profile-saved-preview" id="profile-saved-preview">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-heart"></i> Saved Items
+          </h3>
+          <a href="#tab-fav" class="see-all" data-switch-tab="tab-fav">
+            View all <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
-        
-        <!-- Favourites Preview -->
-        <section class="profile-favourites-preview">
-          <div class="section-header">
-            <h3 class="section-subtitle">Your Favourites</h3>
-            <a href="#tab-fav" class="see-all">View All</a>
-          </div>
-            
-          <div class="favourites-preview-grid" id="profile-favourites-grid">
-              <!-- Favourite products will be loaded here -->
-          </div>
-          
-          <div class="empty-favourites-preview" id="empty-favourites-preview">
-            <p>No favourites yet. <a href="#tab-explore">Explore products</a></p>
-          </div>
-        </section>
+    
+        <div class="profile-fav-grid" id="profile-favourites-grid"></div>
+    
+        <div class="empty-saved-preview" id="empty-favourites-preview" hidden>
+          <div class="empty-icon"><i class="fas fa-heart"></i></div>
+          <p>Nothing saved yet</p>
+          <a href="#tab-explore" class="btn-secondary" data-switch-tab="tab-explore">
+            <i class="fas fa-compass"></i> Explore
+          </a>
+        </div>
       </section>
+    
+      <!-- ===== Recently Viewed (hidden if empty) ===== -->
+      <section class="profile-recently-viewed" id="profile-recently-viewed" hidden>
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-history"></i> Recently Viewed
+          </h3>
+        </div>
+        <div class="recently-viewed-scroll" id="recently-viewed-scroll"></div>
+      </section>
+    
     </main>
 
     <!-- Footer -->
