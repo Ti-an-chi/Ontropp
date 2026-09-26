@@ -1,6 +1,6 @@
 // profile.js — Profile tab
 import API from '../../api.js';
-import { updateElement } from '../utility/reconfig.js';
+import { updateElement, changeDisplay } from '../utility/reconfig.js';
 import { formatNumber, formatPrice } from '../utility/shared.js';
 import StateView from '../uiTools/stateView.js';
 
@@ -36,6 +36,7 @@ export async function initProfileTab() {
 
     renderHeader();
     renderStats();
+		console.log('user or designer');
     renderDesignerBlock();
 
     await Promise.allSettled([
@@ -284,13 +285,16 @@ function renderStats() {
    DESIGNER BLOCK
    ============================================================ */
 function renderDesignerBlock() {
-  if (userData.role !== 'seller') return;
+	if (userData.role !== 'seller') {
+		changeDisplay('profile-link-btn', 'none')
+		return;
+	};
 
-  const block = document.getElementById('profile-designer-block');
-  if (!block) return;
-  block.hidden = false;
+	const block = document.getElementById('profile-designer-block');
+	if (!block) return;
+	block.hidden = false;
 
-  renderDesignerStats();
+	renderDesignerStats();
 }
 
 function renderDesignerStats() {
