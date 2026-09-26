@@ -380,6 +380,25 @@
   margin-bottom: 12px;
 }
 
+.empty-saved-preview .empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 24px;
+  background: transparent;
+  color: var(--secondary);
+  border: 1.5px solid var(--secondary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.empty-saved-preview .empty-cta:hover {
+  background: var(--secondary);
+  color: var(--white);
+}
+
 /* ---------- Recently viewed ---------- */
 .recently-viewed-scroll {
   display: grid;
