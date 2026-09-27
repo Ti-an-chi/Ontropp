@@ -302,9 +302,36 @@ const API = {
 
   // 2. CATEGORIES
   async getCategories() {
-    const response = await this._fetch('/categories');
-    return response.data;
-  },
+	  const cacheKey = 'ontropp_categories';
+	  const cached = sessionStorage.getItem(cacheKey);
+	
+		if (cached) {
+		  try {
+		    const parsed = JSON.parse(cached);
+		
+		    if (Date.now() < parsed.expires_at) {
+		      return parsed.data;
+		    }
+		
+		    sessionStorage.removeItem(cacheKey);
+		  } catch {
+		    sessionStorage.removeItem(cacheKey);
+		  }
+		}
+	
+	  const response = await this._fetch('/categories');
+	  const data = response.data;
+	
+	  sessionStorage.setItem(
+	    cacheKey,
+	    JSON.stringify({
+	      data,
+	      expires_at: Date.now() + 15 * 60 * 1000
+	    })
+	  );
+	
+	  return data;
+	},
 
   async getProductsByCategory(category, page = 1, limit = 20) {
     // Using search param to filter by category
