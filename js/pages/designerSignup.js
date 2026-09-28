@@ -1,4 +1,4 @@
-import API from '../../api.js';
+import API from '../../fakeAPI.js';
 import { Combobox } from '../uiTools/combobox.js';
 import { setupPasswordToggle } from '../utility/uiUtils.js';
 import { showNotification } from '../utility/reconfig.js';   // <- adjust path if needed
