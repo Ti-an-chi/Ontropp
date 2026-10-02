@@ -1,14 +1,17 @@
-import API from '../../fakeAPI.js';
+import StoreApi from '../storeApi.js';
+import API from '../../api.js';
+import { ensureAuth } from "../../designers/js/authCheck.js";
+
 import { Combobox } from '../uiTools/combobox.js';
 import { setupPasswordToggle } from '../utility/uiUtils.js';
-import { showNotification } from '../utility/reconfig.js';   // <- adjust path if needed
+import { showNotification } from '../utility/reconfig.js';
 
 /* ============================================================
    STATE
    ============================================================ */
 const state = {
   mode: 'create',              // 'create' | 'complete' | 'edit'
-  designer: null,              // existing profile from API (or null)
+  designer: null,              // existing profile from StoreApi (or null)
   logoUrl: null,
   locationEditsRemaining: null,
   isSubmitting: false,
@@ -20,7 +23,7 @@ let cityCb = null;
 /* ============================================================
    BOOT
    ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async() => {
   boot();
 });
 
@@ -49,8 +52,10 @@ async function boot() {
    ============================================================ */
 async function pingProfile() {
   try {
-    const data = await API.getDesignerProfile(); // returns null/404 if none
-    if (!data || !data.shopName) {
+    const data = await StoreApi.getDesignerInfo();
+
+    if (!data || !data.shop_name) {
+			await API.tokenPing();
       state.mode = 'create';
       state.designer = null;
       return;
@@ -117,8 +122,8 @@ function applyMode() {
    ============================================================ */
 function prefillStep1(d) {
   if (!d) return;
-  setVal('shopName', d.shopName);
-  setVal('shopBio', d.shopBio);
+  setVal('shop_name', d.shop_name);
+  setVal('bio', d.bio);
   setVal('whatsappNumber', d.whatsapp_number);
   setVal('selectedCategory', d.category);
   if (d.logoUrl) {
@@ -137,8 +142,8 @@ function prefillStep2(d) {
     pendingStateId = d.state_id;
     pendingCityId = d.city_id || null;
   }
-  setVal('areaInput', d.area || '');
-  setVal('operatingDescription', d.operatingDescription || '');
+  setVal('areaInput', d.location || '');
+  // setVal('operatingDescription', d.operatingDescription || '');
 }
 
 let pendingStateId = null;
@@ -264,13 +269,13 @@ function goToStep(n, { silent = false } = {}) {
 function validateStep1() {
   clearFormError('PassKey-error');
 
-  const shopName = getVal('shopName');
-  const shopBio = getVal('shopBio');
+  const shop_name = getVal('shop_name');
+  const bio = getVal('bio');
   const whatsapp = getVal('whatsappNumber');
   const category = getVal('selectedCategory');
 
-  if (!shopName) return fail('Please enter your brand name.');
-  if (!shopBio) return fail('Please add a short brand bio.');
+  if (!shop_name) return fail('Please enter your brand name.');
+  if (!bio) return fail('Please add a short brand bio.');
   if (!/^[0-9]{11}$/.test(whatsapp)) return fail('Enter a valid 11-digit WhatsApp number.');
   if (!category) return fail('Please pick a category.');
 
@@ -298,8 +303,8 @@ async function createDesignerAccount({ advance }) {
   const passKey = getVal('passKey') || '123456'; // [BUSINESS] default
 
   const payload = {
-    shopName: getVal('shopName'),
-    shopBio: getVal('shopBio'),
+    shop_name: getVal('shop_name'),
+    bio: getVal('bio'),
     whatsapp_number: getVal('whatsappNumber'),
     category: getVal('selectedCategory'),
     logoUrl: state.logoUrl || '',
@@ -311,11 +316,11 @@ async function createDesignerAccount({ advance }) {
   try {
     let res;
     if (state.mode === 'create') {
-      res = await API.openStore(payload);            // POST /api/designer
+      res = await StoreApi.openStore(payload);            // POST /api/designer
       state.mode = 'complete';
       state.designer = res?.data || res?.designer || null;
     } else {
-      res = await API.updateDesignerProfile(payload); // PATCH /api/designer
+      res = await StoreApi.updateDesignerProfile(payload); // PATCH /api/designer
     }
 
     if (res?.success === false) throw new Error(res.message || 'Save failed.');
@@ -501,15 +506,15 @@ function setupFormSubmission() {
     const payload = {
       state_id: getVal('selectedState'),
       city_id: getVal('selectedCity'),
-      area: getVal('areaInput').trim(),
-      operatingDescription: getVal('operatingDescription').trim(),
+      location: getVal('areaInput').trim(),
+      // operatingDescription: getVal('operatingDescription').trim(),
     };
 
     const originalText = submitBtn.innerHTML;
     setSubmitting(true, 'submitBtn');
 
     try {
-      const res = await API.updateDesignerLocation(payload); // PATCH /api/designer/location
+      const res = await StoreApi.updateDesignerProfile(payload); // PATCH /api/designer/location
 
       if (res?.success === false) throw new Error(res.message || 'Save failed.');
 

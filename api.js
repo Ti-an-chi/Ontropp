@@ -7,9 +7,9 @@ const LocationsTTLMS =  7 * 24 * 60 * 60 * 1000;
 const API = {
   requestCount: 0,
   
-  basURL: 'http://localhost:8787',
+  baseURL: 'http://localhost:8787',
   basedURL: 'https://ontropp-backend.onrender.com/api',
-  baseURL: 'https://ontrop-api.dsub.workers.dev',
+  basURL: 'https://ontrop-api.dsub.workers.dev',
   
 	// Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {
@@ -513,7 +513,7 @@ const API = {
 	  if (cache?.cities?.[stateId]) return cache.cities[stateId];
 	
 	  // Fetch from your Cloudflare Worker backend
-	  const response = await this._fetch(`/locations/cities?stateId=${encodeURIComponent(stateId)}`);
+	  const response = await this._fetch(`/locations/cities/${stateId}`);
 	  const data = response.data || response;
 	
 	  const cities = { ...(cache?.cities || {}), [stateId]: data };

@@ -148,7 +148,7 @@ Returns the current designer profile, or `null`/404 if none.
 }
 ```
 
-### `POST /api/designer`
+### `POST /brand/launch`
 Creates a new designer. Called from step 1 in `create` mode.
 ```json
 {
@@ -161,11 +161,11 @@ Creates a new designer. Called from step 1 in `create` mode.
 }
 ```
 
-### `PATCH /api/designer`
+### `PATCH /brand/update`
 Updates brand fields. Called from step 1 in `complete`/`edit` mode.
 Same payload as POST minus `passKey`.
 
-### `PATCH /api/designer/location`
+### `PATCH /brand/location/update`
 Updates location. Called from step 2 in all modes.
 ```json
 {
