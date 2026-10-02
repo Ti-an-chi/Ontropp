@@ -65,7 +65,7 @@ async function pingProfile() {
     state.logoUrl = data.logoUrl || null;
 
     // [BUSINESS] complete = has brand but no location set
-    const hasLocation = !!(data.state_id && data.city_id);
+    const hasLocation = !!(data.state_id || data.city_id || data.location);
     state.mode = hasLocation ? 'edit' : 'complete';
 
     // [BUSINESS] backend returns locationEditsRemaining
