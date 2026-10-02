@@ -121,6 +121,8 @@ function applyMode() {
    PREFILL
    ============================================================ */
 function prefillStep1(d) {
+	document.getElementById('passkey-section').remove();
+	
   if (!d) return;
   setVal('shop_name', d.shop_name);
   setVal('bio', d.bio);
