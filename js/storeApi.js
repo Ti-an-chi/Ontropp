@@ -39,7 +39,7 @@ const StoreApi = {
     
     return response;
   },
-  
+
   async designerAuth(shopName, passkey) {
     if (!shopName || !passkey ) {
       throw new Error('Shop name and passkey are required');
@@ -153,7 +153,47 @@ const StoreApi = {
     console.log(response);
     return response;
   },
-  
+
+	/* ========== Profile Update ========== */
+  async getDesignerInfo() {
+		try {
+			const response = await API._fetch(
+				'/brand/info', { 
+					method: 'GET' 
+				}, true , 
+				'designer'
+			);
+
+			if (!response.success) {
+				console.log(`info not found: ${response.message}`);
+				throw new Error('designer profile not found');
+			}
+			console.log('pinged')
+			return response.data;
+			
+		} catch (err) {
+			if (err.code ==='SESSION_EXPIRED') {
+				this.clearShopTokens();
+				return null;
+			}
+			console.error(err);
+		}
+
+	},
+
+	async updateDesignerProfile(updates) {
+		const response = await this._fetch('/brand/update', {
+			method: 'POST',
+			body: JSON.stringify(updates)
+		})
+
+		console.log(response)
+		if (!response.success) {
+			console.log(`failed to update profile: ${response.message}`)
+			throw new Error('failed to update, please try again')
+		}
+		return await response.data
+	},
 };
 
 export default StoreApi;

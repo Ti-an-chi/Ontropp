@@ -1,20 +1,24 @@
 import { showNotification} from './js/utility/reconfig.js';
 
+const LocationsCacheKey = 'ontropp:locations:v1';
+const LocationsTTLMS =  7 * 24 * 60 * 60 * 1000;
+
 /*========= API GATEWAY – api.js =========*/
 const API = {
   requestCount: 0,
   
   basURL: 'http://localhost:8787',
   basedURL: 'https://ontropp-backend.onrender.com/api',
-  baseURL: 'https://ontrop-api.dsub.workers.dev',   
+  baseURL: 'https://ontrop-api.dsub.workers.dev',
   
-  // Store tokens & userId after login
+	// Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {
     localStorage.setItem('ontrop_token', accessToken);
     localStorage.setItem('ontrop_refresh', refreshToken);
     localStorage.setItem('ontrop_userid', userId);
   },
-  
+
+	
   // Clear everything on logout
   clearTokens() {
     localStorage.removeItem('ontrop_token');
@@ -26,7 +30,7 @@ const API = {
   
   tokenStorage: {
     user: {
-        access: 'ontrop_access',
+        access: 'ontrop_token',
         refresh: 'ontrop_refresh'
     },
     designer: {
@@ -292,20 +296,46 @@ const API = {
     const response = await this._fetch(`/products/recommended?${params}`);
     return response;
   },
-  
+
   async getFavourites(page = 1, limit = 20, search = '') {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), search });
-    const resp = window.fav || await this._fetch(`/user/favorites?${params}`);
-    
-    window.fav = resp.data;
+    const resp = await this._fetch(`/user/favorites?${params}`);
+
     return resp.data;
   },
-  
+
   // 2. CATEGORIES
   async getCategories() {
-    const response = await this._fetch('/categories');
-    return response.data;
-  },
+	  const cacheKey = 'ontropp_categories';
+	  const cached = sessionStorage.getItem(cacheKey);
+	
+		if (cached) {
+		  try {
+		    const parsed = JSON.parse(cached);
+		
+		    if (Date.now() < parsed.expires_at) {
+		      return parsed.data;
+		    }
+		
+		    sessionStorage.removeItem(cacheKey);
+		  } catch {
+		    sessionStorage.removeItem(cacheKey);
+		  }
+		}
+	
+	  const response = await this._fetch('/categories');
+	  const data = response.data;
+	
+	  sessionStorage.setItem(
+	    cacheKey,
+	    JSON.stringify({
+	      data,
+	      expires_at: Date.now() + 15 * 60 * 1000
+	    })
+	  );
+	
+	  return data;
+	},
 
   async getProductsByCategory(category, page = 1, limit = 20) {
     // Using search param to filter by category
@@ -435,7 +465,62 @@ const API = {
   _saveSellerStore(store) {
     if (typeof localStorage === 'undefined') return;
     localStorage.setItem('ontrop_seller_accounts', JSON.stringify(store));
-  },  
+  },
+
+	/* ============== Location logic ============== */
+	// Add these inside the `const API = { ... }` object:
+
+	_readLocationsCache() {
+		try {
+			const raw = localStorage.getItem(LocationsCacheKey);
+			if (!raw) return null;
+			const parsed = JSON.parse(raw);
+			if (Date.now() - parsed.ts > LocationsTTLMS) {
+				localStorage.removeItem(LocationsCacheKey);
+				return null;
+			}
+			return parsed;
+		} catch {
+			return null;
+		}
+	},
+
+	_writeLocationsCache(payload) {
+	  try {
+	    localStorage.setItem(
+	      LocationsCacheKey,
+	      JSON.stringify({ ...payload, ts: Date.now() })
+	    );
+	  } catch (e) {
+	    console.warn('Locations cache write failed', e);
+	  }
+	},
+
+	async getStates() {
+	  const cache = this._readLocationsCache();
+	  if (cache?.states) return cache.states;
+	
+	  // Fetch from your Cloudflare Worker backend
+	  const response = await this._fetch('/locations/states');
+	  const data = response.data || response; // Fallback depending on worker response shape
+	
+	  this._writeLocationsCache({ ...cache, states: data });
+	  return data; // [{ id: 'NG001', name: 'Abia' }, ...]
+	},
+
+	async getCities(stateId) {
+	  const cache = this._readLocationsCache();
+	  if (cache?.cities?.[stateId]) return cache.cities[stateId];
+	
+	  // Fetch from your Cloudflare Worker backend
+	  const response = await this._fetch(`/locations/cities/${stateId}`);
+	  const data = response.data || response;
+	
+	  const cities = { ...(cache?.cities || {}), [stateId]: data };
+	  this._writeLocationsCache({ ...cache, cities });
+	  return data; // [{ id: 'NG001001', name: 'Aba North' }, ...]
+	},
+
   /*=============== Store Logic ===============*/
  /* async designerAuth(shopName, passkey) {
     if (!shopName || !passkey ) {

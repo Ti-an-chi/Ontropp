@@ -1,0 +1,429 @@
+/* ==================================== */
+/* 9. STEP INDICATOR (reusable) */
+/* ==================================== */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.45;
+  transition: opacity 0.3s ease;
+}
+
+.step-item.active,
+.step-item.completed {
+  opacity: 1;
+}
+
+.step-item .step-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--hash);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.step-item.active .step-number {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.step-item.completed .step-number {
+  background: var(--secondary);
+  color: var(--white);
+}
+
+.step-item .step-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hash);
+}
+
+.step-item.active .step-label,
+.step-item.completed .step-label {
+  color: var(--primary);
+}
+
+.step-connector {
+  width: 60px;
+  height: 2px;
+  background: var(--border);
+  margin: 0 12px;
+  position: relative;
+  top: -10px;
+}
+
+.step-connector.completed {
+  background: var(--secondary);
+}
+
+/* ==================================== */
+/* 10. FORM SECTION (grouping) */
+/* ==================================== */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.form-section:first-of-type {
+  padding-top: 0;
+}
+
+.form-section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-section-title i {
+  color: var(--primary);
+  font-size: 15px;
+}
+
+.form-section-subtitle {
+  font-size: 13px;
+  color: var(--hash);
+  line-height: 1.5;
+}
+
+/* ==================================== */
+/* 11. VALIDATED INPUT (combobox feedback) */
+/* ==================================== */
+.input-with-status {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-status .form-control {
+  padding-right: 44px;
+  width: 100%;
+}
+
+.input-status-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.input-status-icon.visible {
+  opacity: 1;
+}
+
+.input-status-icon.valid {
+  color: var(--secondary);
+}
+
+.input-status-icon.invalid {
+  color: var(--error);
+}
+
+.input-status-icon.checking {
+  color: var(--hash);
+}
+
+.form-control.is-valid {
+  border-color: var(--secondary);
+  background: rgba(46, 204, 113, 0.04);
+}
+
+.form-control.is-invalid {
+  border-color: var(--error);
+  background: rgba(239, 68, 68, 0.04);
+}
+
+/* ==================================== */
+/* 12. COMBOBOX (searchable dropdown) */
+/* ==================================== */
+.combobox {
+  position: relative;
+  width: 100%;
+}
+
+.combobox-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 50;
+  display: none;
+  padding: 6px;
+}
+
+.combobox-menu.open {
+  display: block;
+  animation: fadeIn 0.15s ease;
+}
+
+.combobox-item {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.combobox-item:hover,
+.combobox-item.highlighted {
+  background: var(--background);
+}
+
+.combobox-item.selected {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+.combobox-empty {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--hash);
+  text-align: center;
+}
+
+.combobox-item mark {
+  background: rgba(52, 131, 224, 0.2);
+  color: var(--primary);
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+/* ==================================== */
+/* 13. SKELETON LOADER */
+/* ==================================== */
+.skeleton-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 0;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--border) 25%,
+    rgba(0, 0, 0, 0.04) 50%,
+    var(--border) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-line {
+  height: 14px;
+  width: 100%;
+}
+
+.skeleton-line.short { width: 40%; }
+.skeleton-line.medium { width: 65%; }
+.skeleton-input { height: 48px; }
+.skeleton-block { height: 120px; }
+.skeleton-title { height: 22px; width: 30%; }
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ==================================== */
+/* 14. INLINE INFO NOTE (edit counter, hints) */
+/* ==================================== */
+.inline-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--hash);
+  padding: 10px 12px;
+  background: var(--background);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--primary);
+  line-height: 1.5;
+}
+
+.inline-info i {
+  color: var(--primary);
+  font-size: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.inline-info.warning {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.inline-info.warning i {
+  color: #f59e0b;
+}
+
+.inline-info.danger {
+  border-left-color: var(--error);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.inline-info.danger i {
+  color: var(--error);
+}
+
+/* ==================================== */
+/* 15. PAGE LOADER (full-screen overlay) */
+/* ==================================== */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+}
+
+.page-loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.page-loader-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.page-loader-text {
+  font-size: 14px;
+  color: var(--hash);
+  font-weight: 500;
+}
+
+/* ==================================== */
+/* 16. TOAST NOTIFICATION */
+/* ==================================== */
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.toast {
+  min-width: 260px;
+  max-width: 360px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,0.12));
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text);
+  pointer-events: auto;
+  animation: toastIn 0.25s ease;
+  border-left: 4px solid var(--primary);
+}
+
+.toast.success { border-left-color: var(--secondary); }
+.toast.warning { border-left-color: #f59e0b; }
+.toast.error   { border-left-color: var(--error); }
+
+.toast i {
+  font-size: 16px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.toast.success i { color: var(--secondary); }
+.toast.warning i { color: #f59e0b; }
+.toast.error   i { color: var(--error); }
+.toast.info    i { color: var(--primary); }
+
+.toast-content { flex: 1; line-height: 1.4; }
+
+.toast.leaving {
+  animation: toastOut 0.2s ease forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(24px); }
+}
+
+/* ==================================== */
+/* 17. RESPONSIVE */
+/* ==================================== */
+@media (max-width: 640px) {
+  .step-connector { width: 30px; }
+  .step-item .step-label { font-size: 12px; }
+
+  .toast-container {
+    left: 16px;
+    right: 16px;
+    top: 70px;
+  }
+
+  .toast { min-width: unset; max-width: unset; }
+}

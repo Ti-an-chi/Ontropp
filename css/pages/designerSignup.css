@@ -1,15 +1,20 @@
-/* ===== pages/designer-signup.css ===== */
-/* Designer Signup Page Specific Styles */
+/* ==================================== */
+/* pages/designerSignup.css */
+/* Page-specific layout only. */
+/* Reusable primitives live in components*.css */
+/* ==================================== */
 
+/* ---------- Page Container ---------- */
 .designer-signup-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 16px 48px;
 }
 
+/* ---------- Page Header ---------- */
 .designer-signup-header {
   text-align: center;
-  margin: 32px 0;
+  margin: 32px 0 28px;
 }
 
 .designer-signup-header h1 {
@@ -17,126 +22,116 @@
   font-weight: 700;
   color: var(--text);
   margin-bottom: 8px;
+  line-height: 1.25;
 }
 
 .designer-signup-header p {
   color: var(--hash);
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-/* Progress Steps */
-.signup-progress {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  margin-bottom: 32px;
-}
-
-.progress-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  opacity: 0.5;
-  transition: opacity 0.3s ease;
-}
-
-.progress-step.active {
-  opacity: 1;
-}
-
-.step-number {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--border);
-  color: var(--hash);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.progress-step.active .step-number {
-  background: var(--primary);
-  color: var(--white);
-}
-
-.step-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--hash);
-}
-
-.progress-step.active .step-label {
-  color: var(--primary);
-}
-
-.progress-line {
-  width: 60px;
-  height: 2px;
-  background: var(--border);
-  margin: 0 12px;
-  position: relative;
-  top: -10px;
-}
-
-/* Card & Form */
+/* ---------- Card ---------- */
 .designer-signup-card {
   background-color: var(--white);
   border-radius: 16px;
   padding: 32px;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   border: 1px solid var(--border);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-.form-step.hidden {
+/* ---------- Form Step ---------- */
+.form-step {
   display: none;
 }
 
-/* Designer Key Section */
+.form-step.active {
+  display: block;
+  animation: stepFadeIn 0.28s ease;
+}
+
+@keyframes stepFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Form Actions (footer of each step) ---------- */
+.designer-signup-form .form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.designer-signup-form .form-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+/* Text-style link button (e.g. "Skip for now") */
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--hash);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 4px;
+  transition: color 0.2s;
+}
+
+.link-btn:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* ---------- PassKey Intro Block (Step 1, sub-section) ---------- */
 .key-intro {
   text-align: center;
-  margin-bottom: 28px;
-  padding: 24px;
-  background: linear-gradient(135deg, rgba(52, 131, 224, 0.08), rgba(139, 92, 246, 0.08));
-  border-radius: 16px;
-  border: 1px solid rgba(52, 131, 224, 0.15);
+  margin-bottom: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(52, 131, 224, 0.06), rgba(139, 92, 246, 0.06));
+  border-radius: 14px;
+  border: 1px solid rgba(52, 131, 224, 0.14);
 }
 
 .key-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   background: var(--primary);
   color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  margin: 0 auto 16px;
+  font-size: 22px;
+  margin: 0 auto 14px;
 }
 
 .key-intro h3 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .key-intro p {
   color: var(--hash);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
-  max-width: 480px;
+  max-width: 460px;
   margin: 0 auto;
 }
 
+/* ---------- Password Toggle (input wrapper) ---------- */
 .password-input-wrap {
   position: relative;
   display: flex;
@@ -145,6 +140,7 @@
 
 .password-input-wrap .form-control {
   padding-right: 48px;
+  width: 100%;
 }
 
 .toggle-password {
@@ -167,9 +163,10 @@
   color: var(--primary);
 }
 
+/* ---------- Key Warning (amber) ---------- */
 .key-warning {
   background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.28);
   border-radius: 12px;
   padding: 14px 16px;
   display: flex;
@@ -177,32 +174,93 @@
   gap: 10px;
   font-size: 14px;
   color: var(--text);
-  margin-top: 8px;
+  line-height: 1.5;
+  margin-top: 4px;
 }
 
 .key-warning i {
   color: #f59e0b;
-  font-size: 18px;
+  font-size: 17px;
   margin-top: 1px;
   flex-shrink: 0;
 }
 
-#PassKey-error {
+/* ---------- Inline Form Error (passKey mismatch etc.) ---------- */
+.form-error {
   padding: 12px 14px;
   background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 12px;
   color: #b91c1c;
+  font-size: 14px;
   margin-top: 12px;
+  display: none;
 }
 
-/* Benefits Section */
+.form-error.visible {
+  display: block;
+}
+
+/* ---------- WhatsApp / Location Notes (legacy, kept) ---------- */
+.whatsapp-note {
+  background-color: rgba(46, 204, 113, 0.08);
+  border: 1px solid rgba(46, 204, 113, 0.4);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.whatsapp-note i {
+  color: var(--secondary);
+  font-size: 16px;
+}
+
+.location-note {
+  background-color: rgba(46, 113, 204, 0.08);
+  border: 1px solid rgba(46, 113, 204, 0.4);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.location-note i {
+  color: var(--primary);
+  font-size: 16px;
+}
+
+/* ---------- Location Section (Step 2) ---------- */
+.location-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.location-fields .form-group {
+  gap: 6px;
+}
+
+/* When the location section is locked (edit limit reached) */
+.location-fields.locked {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ---------- Benefits Section ---------- */
 .designer-benefits {
   background-color: var(--background);
   border-radius: 16px;
   padding: 32px;
-  margin-top: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 .designer-benefits h3 {
@@ -250,45 +308,9 @@
   line-height: 1.5;
 }
 
-/* WhatsApp & Location Notes */
-.whatsapp-note {
-  background-color: rgba(46, 204, 113, 0.1);
-  border: 1px solid var(--secondary);
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-top: 8px;
-  font-size: 14px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.whatsapp-note i {
-  color: var(--secondary);
-  font-size: 16px;
-}
-
-.location-note {
-  background-color: rgba(46, 113, 204, 0.1);
-  border: 1px solid var(--primary);
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-top: 8px;
-  font-size: 14px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.location-note i {
-  color: var(--primary);
-  font-size: 16px;
-}
-
+/* ---------- Button Variants Used on This Page ---------- */
 .btn-success {
-  background-color: var(--success);
+  background-color: var(--success, var(--secondary));
   color: var(--white);
 }
 
@@ -296,40 +318,53 @@
   opacity: 0.9;
 }
 
-.btn-primary {
-  background-color: var(--primary);
-  color: var(--white);
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
-/* Responsive */
+/* ---------- Responsive ---------- */
 @media (max-width: 640px) {
+  .designer-signup-container {
+    padding: 0 12px 32px;
+  }
+
+  .designer-signup-header {
+    margin: 20px 0 20px;
+  }
+
+  .designer-signup-header h1 {
+    font-size: 22px;
+  }
+
+  .designer-signup-header p {
+    font-size: 14px;
+  }
+
   .designer-signup-card {
-    padding: 24px 16px;
+    padding: 20px 16px;
+    border-radius: 14px;
+  }
+
+  .designer-signup-form .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .designer-signup-form .form-actions .btn,
+  .designer-signup-form .form-actions .link-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .designer-signup-form .form-actions-right {
+    flex-direction: column-reverse;
+    width: 100%;
+    gap: 8px;
   }
 
   .benefits-grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
 
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .signup-progress {
-    padding: 0 16px;
-  }
-
-  .progress-line {
-    width: 30px;
-  }
-
-  .step-label {
-    font-size: 12px;
+  .designer-benefits {
+    padding: 24px 16px;
   }
 }
 

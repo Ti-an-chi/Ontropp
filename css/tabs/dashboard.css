@@ -48,7 +48,7 @@
 
 /* Banner Section */
 .banner-section {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: linear-gradient(135deg, var(--secondary), var(--primary2));
   border-radius: 12px;
   margin: 16px 0 24px;
   padding: 24px 20px;
@@ -241,6 +241,22 @@
   margin-top: 16px;
 }
 
+.skeleton-text {
+  display: inline-block;
+  width: 72px;
+  height: 12px;
+  border-radius: 4px;
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    var(--border) 25%,
+    rgba(255,255,255,0.55) 50%,
+    var(--border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
 /* Seller Board (home tab seller section) */
 .seller-board {
   background-color: var(--white);
@@ -358,6 +374,32 @@
 .pagination span {
   font-weight: 600;
   color: var(--hash);
+}
+
+/* Danger variant — logout and destructive actions */
+.dropdown-item.logout-item {
+  color: var(--error);
+}
+
+.dropdown-item.logout-item i {
+  color: var(--error);
+}
+
+.dropdown-item.logout-item:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* Promoted variant — Start Selling / upgrade CTAs */
+.dropdown-item.become-seller-item {
+  color: var(--primary);
+}
+
+.dropdown-item.become-seller-item i {
+  color: var(--primary);
+}
+
+.dropdown-item.become-seller-item:hover {
+  background: rgba(52, 131, 224, 0.08);
 }
 
 /* Responsive layout: stack header on narrow screens */
