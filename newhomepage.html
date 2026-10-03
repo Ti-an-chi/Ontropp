@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ONTROPP</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .phone {
+      width: 375px;
+      background: #fff;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      padding: 16px;
+      position: relative;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .header-icons {
+      display: flex;
+      gap: 12px;
+      font-size: 18px;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f0f0f0;
+      border-radius: 24px;
+      padding: 10px 16px;
+      margin-bottom: 20px;
+      gap: 8px;
+    }
+    .search-bar input {
+      border: none;
+      background: transparent;
+      flex: 1;
+      outline: none;
+      font-size: 14px;
+    }
+    .search-icons {
+      display: flex;
+      gap: 10px;
+      color: #555;
+      font-size: 16px;
+    }
+    .hero {
+      height: 160px;
+      background: #e8e8e8;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+    }
+    .dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+    .dot.active { background: #333; }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .section-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .see-all {
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+    }
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .cat-card {
+      background: #f0f0f0;
+      border-radius: 10px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .cat-card.merged {
+      grid-row: span 2;
+      height: auto;
+      min-height: 152px; /* 70 + 12 + 70 */
+    }
+    
+    .recommended {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .rec-card {
+      background: #f0f0f0;
+      border-radius: 10px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    
+    <div class="header">
+      <div class="logo">ONTROPP</div>
+      <div class="header-icons">
+        <span>🔔</span>
+        <span>•••</span>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" placeholder="Search">
+      <div class="search-icons">
+        <span>👗</span>
+      </div>
+    </div>
+    <div class="hero">Trending Designs</div>
+    <div class="dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <div class="section-header">
+      <h3>Browse Categories</h3>
+      <a href="#" class="see-all">see all</a>
+    </div>
+    <div class="categories">
+      <div class="cat-card merged">Men's Fashion</div>
+      <div class="cat-card">Women's Fashion</div>
+      <div class="cat-card">Accessories</div>
+      <div class="cat-card">Footwear</div>
+      <div class="cat-card">Beauty</div>
+    </div>
+    <div class="dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="section-header">
+      <h3>Recommended for you</h3>
+      <a href="#" class="see-all">see all →</a>
+    </div>
+    <div class="recommended">
+      <div class="rec-card">Item 1</div>
+      <div class="rec-card">Item 2</div>
+      <div class="rec-card">Item 3</div>
+    </div>
+    <div class="dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</body>
+</html>
