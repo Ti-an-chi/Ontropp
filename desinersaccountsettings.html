@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings</title>
+
+    <style>
+         { margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fc;
+            color: #20385f;
+        }
+        .container {
+            display: flex;
+            gap: 25px;
+            padding: 30px;
+            max-width: 1500px;
+            margin: auto;
+        }
+        .dashboard {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            background: #ffffff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(50, 80, 120, 0.08);
+            min-height: 850px;
+        }
+        .sidebar {
+            width: 155px;
+            background: #f8faff;
+            padding: 25px 12px;
+            border-right: 1px solid #edf1f7;
+        }
+        .logo {
+            font-size: 19px;
+            font-weight: bold;
+            color: #172e52;
+            margin-bottom: 40px;
+            padding-left: 12px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            margin-bottom: 6px;
+            border-radius: 9px;
+            color: #6c83a5;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .nav-item:hover {
+            background: #edf4ff;
+        }
+        .nav-item.active {
+            background: #e7f0ff;
+            color: #1765d1;
+            font-weight: 600;
+        }
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow: hidden;
+        }
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 35px;
+        }
+        .search {
+            width: 70%;
+            background: #f1f5fb;
+            border: none;
+            border-radius: 20px;
+            padding: 11px 17px;
+            outline: none;
+            color: #526a8c;
+            font-size: 12px;
+        }
+        .top-icons {
+            display: flex;
+            gap: 15px;
+            color: #647c9f;
+            font-size: 18px;
+        }
+        .heading h1 {
+            font-size: 25px;
+            margin-bottom: 7px;
+            color: #172f54;
+        }
+        .heading p {
+            color: #8092ad;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+        .profile-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid #edf1f7;
+            border-radius: 12px;
+            padding: 17px;
+            margin-bottom: 20px;
+        }
+        .profile-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #dce8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+        .profile-info h3 {
+            color: #20385f;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .profile-info p {
+            color: #8395ad;
+            font-size: 11px;
+        }
+        .arrow {
+            color: #6d89af;
+            font-size: 20px;
+        }
+      
+        .settings {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .setting {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #edf1f7;
+            border-radius: 10px;
+            padding: 15px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .setting:hover {
+            background: #f8fbff;
+            border-color: #dce8f7;
+        }
+        .setting-left {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+        .setting-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #f0f5fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #315987;
+        }
+        .setting-text h3 {
+            font-size: 12px;
+            color: #253e64;
+            margin-bottom: 4px;
+        }
+        .setting-text p {
+            font-size: 10px;
+            color: #8798af;
+        }
+        .danger h3 {
+            color: #b34d4d;
+        }
+        @media (max-width: 1000px) {
+            .container {
+                flex-direction: column;
+            }
+            .dashboard {
+                width: 100%;
+            }
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .dashboard {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                padding: 12px;
+                overflow-x: auto;
+            }
+            .logo {
+                margin: 0 20px 0 5px;
+            }
+            .nav-item {
+                white-space: nowrap;
+                margin: 0 3px;
+            }
+            .content {
+                padding: 20px;
+            }
+            .topbar {
+                margin-bottom: 25px;
+            }
+            .search {
+                width: 65%;
+            }
+        }
+    </style>
+</head>
+<body>
+        <main class="content">
+            <div class="heading">
+                <h1>Account Settings</h1>
+                <p>Manage your designer account</p>
+            </div>
+            <div class="profile-card">
+                <div class="profile-left">
+                    <div class="avatar">
+                        😊
+                    </div>
+                    <div class="profile-info">
+                        <h3>Frederick Tokede</h3>
+                        <p>Fredericktokede@gmail.com</p>
+                    </div>
+                </div>
+                <span class="arrow"></span>
+            </div>
+            <div class="settings">
+                <div class="setting">
+                    <div class="setting-left">
+                        <div class="setting-icon">🧑</div>
+                        <div class="setting-text">
+                            <h3>Profile</h3>
+                            <p>Update your personal information and profile picture.</p>
+                        </div>
+                    </div>
+                    <span class="arrow"></span>
+                </div>
+                <div class="setting">
+                    <div class="setting-left">
+                        <div class="setting-icon">👔</div>
+                        <div class="setting-text">
+                            <h3>Designer Profile</h3>
+                            <p>Manage your brand, portfolio and social links.</p>
+                        </div>
+                    </div>
+                    <span class="arrow"></span>
+                </div>
+                <div class="setting">
+                    <div class="setting-left">
+                        <div class="setting-icon">🔒</div>
+                        <div class="setting-text">
+                            <h3>Account & Security</h3>
+                            <p>Change your password, enable 2FA and manage sessions.</p>
+                        </div>
+                    </div>
+                    <span class="arrow"></span>
+                </div>
+                    <span class="arrow"></span>
+                </div>
+                    <span class="arrow"></span>
+                </div>
+                <div class="setting">
+                    <div class="setting-left">
+                        <div class="setting-icon">🎨</div>
+                        <div class="setting-text">
+                            <h3>Designs</h3>
+                            <p>Manage your designs, visibility and drafts.</p>
+                        </div>
+                    </div>
+                    <span class="arrow"></span>
+                </div>
+                <div class="setting">
+                    <div class="setting-left">
+                        <div class="setting-icon">🔔</div>
+                        <div class="setting-text">
+                            <h3>Notifications</h3>
+                            <p>Control order, customer and payment notifications.</p>
+                        </div>
+                    </div>
+                    <span class="arrow"></span>
+                </div>
+                    <span class="arrow"></span>
+                </div>
+                <div class="setting">
+                    <div class="setting-left">
+                        <div class="setting-icon">⚙️</div>
+                        <div class="setting-text">
+                            <h3>Preferences</h3>
+                            <p>Set your language, currency and theme.</p>
+                        </div>
+                    </div>
+                    <span class="arrow"></span>
+                </div>
+                <div class="setting danger">
+                    <div class="setting-left">
+                        <div class="setting-icon">⚠️</div>
+                        <div class="setting-text">
+                            <h3>Delete / Deactivate Account</h3>
+                            <p>Permanently delete or deactivate your account.</p>
+                        </div>
+                    </div>
+                    <span class="arrow"></span>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>
