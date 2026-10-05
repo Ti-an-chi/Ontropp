@@ -6,7 +6,8 @@
     <title>Account Settings</title>
 
     <style>
-         { margin: 0;
+        * {
+            margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
@@ -141,11 +142,21 @@
             color: #8395ad;
             font-size: 11px;
         }
+
         .arrow {
             color: #6d89af;
-            font-size: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
+            padding: 0 4px;
+            transition: transform 0.2s, color 0.2s;
         }
-      
+        .setting:hover .arrow,
+        .profile-card:hover .arrow {
+            color: #1765d1;
+            transform: translateX(3px);
+        }
+
         .settings {
             display: flex;
             flex-direction: column;
@@ -192,6 +203,9 @@
             color: #8798af;
         }
         .danger h3 {
+            color: #b34d4d;
+        }
+        .danger .arrow {
             color: #b34d4d;
         }
         @media (max-width: 1000px) {
@@ -262,7 +276,7 @@
                             <p>Update your personal information and profile picture.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting">
                     <div class="setting-left">
@@ -272,21 +286,17 @@
                             <p>Manage your brand, portfolio and social links.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting">
                     <div class="setting-left">
                         <div class="setting-icon">🔒</div>
                         <div class="setting-text">
-                            <h3>Account & Security</h3>
+                            <h3>Account &amp; Security</h3>
                             <p>Change your password.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
-                </div>
-                    <span class="arrow"></span>
-                </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting">
                     <div class="setting-left">
@@ -296,7 +306,7 @@
                             <p>Manage your designs, visibility and drafts.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting">
                     <div class="setting-left">
@@ -306,9 +316,7 @@
                             <p>Control order, customer and payment notifications.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
-                </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting">
                     <div class="setting-left">
@@ -318,7 +326,7 @@
                             <p>Set your language, currency and theme.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting danger">
                     <div class="setting-left">
@@ -328,12 +336,10 @@
                             <p>Permanently delete or deactivate your account.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
             </div>
         </main>
-    </div>
-</div>
 
 </body>
 </html>

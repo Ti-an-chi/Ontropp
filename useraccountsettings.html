@@ -145,6 +145,20 @@
             color: #6d89af;
             font-size: 20px;
         }
+        .arrow {
+            color: #6d89af;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
+            padding: 0 4px;
+            transition: transform 0.2s, color 0.2s;
+            }
+
+            .setting:hover .arrow,
+            .profile-card:hover .arrow {
+            color: #1765d1;
+            transform: translateX(3px);
+        }
       
         .settings {
             display: flex;
@@ -262,21 +276,17 @@
                             <p>Update your personal information and profile picture.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting">
                     <div class="setting-left">
                         <div class="setting-icon">🔒</div>
                         <div class="setting-text">
-                            <h3>Account & Security</h3>
+                            <h3>Account &amp; Security</h3>
                             <p>Change your password.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
-                </div>
-                    <span class="arrow"></span>
-                </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting">
                     <div class="setting-left">
@@ -286,7 +296,7 @@
                             <p>Control your email and push notifications.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting">
                     <div class="setting-left">
@@ -296,9 +306,7 @@
                             <p>Set your language, currency and theme.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
-                </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
                 <div class="setting danger">
                     <div class="setting-left">
@@ -308,7 +316,7 @@
                             <p>Permanently delete your account.</p>
                         </div>
                     </div>
-                    <span class="arrow"></span>
+                    <span class="arrow">&gt;</span>
                 </div>
             </div>
         </main>
