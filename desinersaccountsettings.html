@@ -123,15 +123,33 @@
             align-items: center;
             gap: 15px;
         }
-        .avatar {
+         .avatar {
+            position: relative;
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            background: #dce8f8;
+            background: #f0f5fc;
+            border: 2px dashed #b9cbe6;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 25px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .avatar:hover {
+            border-color: #1765d1;
+            background: #e7f0ff;
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .avatar-placeholder {
+            color: #6d89af;
+            font-size: 22px;
+            line-height: 1;
         }
         .profile-info h3 {
             color: #20385f;
@@ -257,9 +275,11 @@
             </div>
             <div class="profile-card">
                 <div class="profile-left">
-                    <div class="avatar">
-                        😊
-                    </div>
+                     <label class="avatar" id="avatar" for="avatarInput" data-user-id="" title="Upload a profile picture">
+                        <img id="avatarImage" src="" alt="Profile picture" hidden>
+                        <span class="avatar-placeholder" id="avatarFallback"></span>
+                        <input type="file" id="avatarInput" accept="image/*" hidden>
+                    </label>
                     <div class="profile-info">
                         <h3>Frederick Tokede</h3>
                         <p>Fredericktokede@gmail.com</p>
