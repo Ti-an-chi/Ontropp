@@ -1,199 +1,319 @@
-// home.js - Home tab functionality
-import API from '../../api.js';
-import { renderProducts } from '../utility/shared.js';
-import { updateElement, changeDisplay } from '../utility/reconfig.js';
-import { ProductPagination } from '../utility/pagination.js';
+/**
+ * home.js
+ * Home tab orchestrator.
+ *
+ * Responsibilities:
+ *   1. Ask api for each section's data.
+ *   2. Drive each section's state (loading / empty / data) via createStateView.
+ *   3. Hand data to a card factory and append the result.
+ *   4. Surface errors via toast.
+ *
+ * Not responsible for:
+ *   - card markup (cards.js)
+ *   - state transitions (state.js)
+ *   - carousel mechanics (carousel.js)
+ *   - error UI (toast.js)
+ */
 
-let seller = null;
+import API from '../../api.mock.js';           // swap to './api.js' when live
+import { createStateView } from '../state.js';
+import { showToast } from '../toast.js';
+import { createCarousel } from '../carousel.js';
+import {
+  TrendingSlide, CategoryTile, RecommendedCard,
+  DesignerCard, FreshCard, StudioCard,
+} from '../cards.js';
+
 let userData = null;
-let sellerPagination = null;
+let isSignedIn = false;
+let carousel = null;
+
+/* =========================================================
+   BOOT
+   ========================================================= */
 
 export async function initHomeTab() {
-  window.bootstrap = await JSON.parse(sessionStorage.getItem('bootstrap')) || await loadUserData();
-  
+  const bootstrap =
+    window.bootstrap ||
+    JSON.parse(sessionStorage.getItem('bootstrap') || 'null') ||
+    (await API.getUserDash());
+
   sessionStorage.removeItem('bootstrap');
-  
-  userData = window.bootstrap?.userData;
-  console.log('User data loaded:', userData);
-  
-  await updateUserUI();
-  await loadDashItems();
+  window.bootstrap = bootstrap;
+
+  userData   = bootstrap?.userData || null;
+  isSignedIn = !!userData?.id;
+
+  renderHello();
+
+  await Promise.all([
+    loadTrending(),
+    loadCategories(),
+    loadRecommended(),
+    loadDesigners(),
+    loadFresh(),
+    loadStudios(),
+  ]);
 }
 
-async function updateUserUI() {
-  updateElement('user-name', userData.username);
-  updateElement('user-email', userData.email);
-  updateElement('user-avatar-img', userData.avatar_url, 'src');
+/* =========================================================
+   HELLO — the only copy that branches on auth
+   ========================================================= */
 
-  if (userData.role !== 'seller') {
-    updateBuyerStats();
+function renderHello() {
+  const section = document.querySelector('[data-state-view="home-hello"]');
+  const sv = createStateView(section);
+  if (!sv) return;
+
+  const dataEl = sv.dataEl;
+  if (isSignedIn) {
+    dataEl.innerHTML = `
+      <h1>Welcome back, <span>${escapeName(userData.username || 'there')}</span></h1>
+      <p>Fresh pieces, new studios, and the designers behind them.</p>`;
   } else {
-    updateSellerDashboard();
+    dataEl.innerHTML = `
+      <h1>Discover <span>ONTROPP</span></h1>
+      <p>Pieces, studios, and the designers behind them.</p>`;
   }
+  sv.data();
 }
 
-async function loadUserData() {
-  try {
-    window.bootstrap = await API.getUserDash();
-    
-    return window.bootstrap;
-  } catch (error) {
-    console.error(`Failed to load user data:  ${error}`);
-    // Default user data as fallback
-    return { userData: {
-      username: 'User',
-      email: 'user@example.com',
-      isSeller: false,
-      role: 'buyer'
-    }};
-  }
-}
+/* =========================================================
+   1. TRENDING
+   ========================================================= */
 
-export async function loadDashItems() {
+async function loadTrending() {
+  const root = document.querySelector('[data-state-view="trending"]');
+  const sv = createStateView(root);
+  if (!sv) return;
+  sv.loading();
+
   try {
-    // Load categories
-    const categories = window.bootstrap.categories || await API.getCategories();
-    renderCategories(categories);
-    
-    // Load recommended products
-    const products = window.bootstrap.recommended || await API.getRecommendedProducts(1, 8);
-    console.log(products.data);
-    renderProducts(products.data, 'recommended-list', 'recommended');
-    
-    // Update empty state
-    const emptyRecEl = document.getElementById('empty-recommendations');
-    if (emptyRecEl) {
-      emptyRecEl.style.display = products.length === 0 ? 'block' : 'none';
+    const items = window.bootstrap?.trending || (await API.getTrending(4));
+
+    if (!items || items.length === 0) {
+      sv.empty();
+      return;
     }
-    
-  } catch (error) {
-    console.error('Failed to load home content:', error);
-    // alert('Failed to load home content.');
+
+    const stage = sv.dataEl;
+    const track = stage.querySelector('[data-carousel-track]');
+    const dots  = stage.querySelector('[data-carousel-dots]');
+    const prev  = stage.querySelector('[data-carousel-prev]');
+    const next  = stage.querySelector('[data-carousel-next]');
+
+    carousel?.destroy();
+    carousel = createCarousel({
+      root: stage,
+      trackEl: track,
+      dotsEl: dots,
+      prevEl: prev,
+      nextEl: next,
+      items,
+      renderSlide: TrendingSlide,
+    });
+
+    sv.data();
+  } catch (err) {
+    console.error('Trending failed:', err);
+    sv.empty();
+    showToast({
+      message: 'Could not load trending pieces.',
+      actionLabel: 'Try again',
+      onAction: loadTrending,
+    });
   }
 }
 
-function updateBuyerStats() {
-  updateElement('orders-count', userData.ordersCount || 0);
-  updateElement('followings-count', userData.followingsCount || 0);
-  updateElement('favorites-count', userData.favoritesCount || 0);
+/* =========================================================
+   2. CATEGORIES
+   ========================================================= */
+
+async function loadCategories() {
+  const root = document.querySelector('[data-state-view="categories"]');
+  const sv = createStateView(root);
+  if (!sv) return;
+  sv.loading();
+
+  try {
+    const cats = (window.bootstrap?.categories || (await API.getCategories()) || []).slice(0, 5);
+
+    if (cats.length === 0) { sv.empty(); return; }
+
+    // One tall at the top-left; everything else uniform.
+    // Edit this array alone if the UX designer wants a different rhythm.
+    const layout = ['tall', '', '', '', ''];
+
+    const grid = sv.dataEl.querySelector('.cat-grid');
+    grid.innerHTML = '';
+    cats.forEach((c, i) => grid.appendChild(CategoryTile(c, layout[i] || '')));
+
+    sv.data();
+  } catch (err) {
+    console.error('Categories failed:', err);
+    sv.empty();
+    showToast({
+      message: 'Could not load categories.',
+      actionLabel: 'Try again',
+      onAction: loadCategories,
+    });
+  }
 }
 
-async function updateSellerDashboard() {
-  if (!userData || !userData.sellerProfile) {
-    console.error('User data or seller profile missing');
+/* =========================================================
+   3. RECOMMENDED — same layout, source depends on auth
+   ========================================================= */
+
+async function loadRecommended() {
+  const root = document.querySelector('[data-state-view="recommended"]');
+  const sv = createStateView(root);
+  if (!sv) return;
+  sv.loading();
+
+  const titleEl = root.querySelector('.home-section-title');
+  if (titleEl) {
+    titleEl.innerHTML = isSignedIn
+      ? `Recommended for you <span class="home-section-sub">based on what you've explored</span>`
+      : `Editor's Selection <span class="home-section-sub">curated for discovery</span>`;
+  }
+
+  try {
+    const raw = window.bootstrap?.recommended
+      || (isSignedIn
+            ? await API.getRecommendedProducts(1, 8)
+            : await API.getEditorPicks(8));
+
+    const items = raw?.data || raw || [];
+    if (items.length === 0) { sv.empty(); return; }
+
+    const list = sv.dataEl.querySelector('.rec-scroll');
+    list.innerHTML = '';
+    items.forEach(p => list.appendChild(RecommendedCard(p)));
+
+    sv.data();
+  } catch (err) {
+    console.error('Recommended failed:', err);
+    sv.empty();
+    showToast({
+      message: 'Could not load recommendations.',
+      actionLabel: 'Try again',
+      onAction: loadRecommended,
+    });
+  }
+}
+
+/* =========================================================
+   4. DESIGNERS
+   ========================================================= */
+
+async function loadDesigners() {
+  const root = document.querySelector('[data-state-view="designers"]');
+  const sv = createStateView(root);
+  if (!sv) return;
+  sv.loading();
+
+  try {
+    const designers = window.bootstrap?.designers || (await API.getFeaturedDesigners(6));
+    if (!designers || designers.length === 0) { sv.empty(); return; }
+
+    const wrap = sv.dataEl.querySelector('.designer-scroll');
+    wrap.innerHTML = '';
+    designers.forEach(d => {
+      wrap.appendChild(DesignerCard(d, { onFollow: handleFollowClick }));
+    });
+
+    sv.data();
+  } catch (err) {
+    console.error('Designers failed:', err);
+    sv.empty();
+    showToast({
+      message: 'Could not load designers.',
+      actionLabel: 'Try again',
+      onAction: loadDesigners,
+    });
+  }
+}
+
+function handleFollowClick(btn, designer) {
+  if (!isSignedIn) {
+    // preserve intent across the sign-in round trip
+    const next = encodeURIComponent(location.pathname + location.hash);
+    window.location.href = `/login.html?next=${next}&follow=${designer.id}`;
     return;
   }
+  // optimistic toggle — wire to API later
+  const following = btn.classList.toggle('following');
+  btn.innerHTML = following
+    ? '<i class="fas fa-check"></i> Following'
+    : '<i class="fas fa-plus"></i> Follow';
+}
+
+/* =========================================================
+   5. FRESH ARRIVALS
+   ========================================================= */
+
+async function loadFresh() {
+  const root = document.querySelector('[data-state-view="fresh"]');
+  const sv = createStateView(root);
+  if (!sv) return;
+  sv.loading();
+
   try {
-    seller = userData.sellerProfile;
-    console.log('Designer profile:', seller);
+    const items = window.bootstrap?.fresh || (await API.getFreshArrivals(10));
+    if (!items || items.length === 0) { sv.empty(); return; }
 
-    updateElement('seller-profile-views', seller.profile_views || 0);
-    updateElement('followers', seller.follows[0]?.count || 0);
-      
-    updateElement('profile-views', seller.profile_views || 0);
-      
-    // update seller info
-    changeDisplay('seller-board', 'block');
+    const wrap = sv.dataEl.querySelector('.fresh-scroll');
+    wrap.innerHTML = '';
+    items.forEach(p => wrap.appendChild(FreshCard(p)));
 
-    // header info (logo, shop name, rating)
-    const logoEl = document.getElementById('seller-logo');
-    const nameEl = document.getElementById('seller-shop-name');
-    const ratingEl = document.getElementById('seller-rating');
-    if (logoEl) logoEl.src = seller.logo_url || '';
-    if (nameEl) nameEl.textContent = seller.shop_name || 'Your Shop';
-    if (ratingEl) ratingEl.textContent = `★ ${seller.rating || 0}`;
-
-    // setup pagination for seller products
-    if (!sellerPagination) {
-      sellerPagination = new ProductPagination('seller-products-grid');
-      sellerPagination.limit = 8;
-      sellerPagination.setPageChangeHandler(async () => {
-        await loadSellerProductsSellerBoard();
-      });
-    }
-
-    await loadSellerProductsSellerBoard();
-    // Hide become seller button
-    changeDisplay('setup-seller-btn', 'none');
-  } catch (error) {
-    console.error('Error updating seller dashboard:', error);
+    sv.data();
+  } catch (err) {
+    console.error('Fresh failed:', err);
+    sv.empty();
+    showToast({
+      message: 'Could not load new arrivals.',
+      actionLabel: 'Try again',
+      onAction: loadFresh,
+    });
   }
 }
 
-async function loadSellerProductsSellerBoard(force = false) {
-  const loadingEl = document.getElementById('loading-seller-products');
-  if (loadingEl) loadingEl.style.display = 'flex';
+/* =========================================================
+   6. STUDIOS
+   ========================================================= */
+
+async function loadStudios() {
+  const root = document.querySelector('[data-state-view="studios"]');
+  const sv = createStateView(root);
+  if (!sv) return;
+  sv.loading();
 
   try {
-    if (!sellerPagination.paginationData || force) {
-      await sellerPagination.initFromURL();
-    }
+    const studios = window.bootstrap?.studios || (await API.getFeaturedStudios(6));
+    if (!studios || studios.length === 0) { sv.empty(); return; }
 
-    const request = {
-      page: sellerPagination.currentPage,
-      limit: sellerPagination.limit,
-      search: sellerPagination.filters.search || ''
-    };
+    const wrap = sv.dataEl.querySelector('.studio-grid');
+    wrap.innerHTML = '';
+    studios.forEach(s => wrap.appendChild(StudioCard(s)));
 
-    const resp = await API.getSellerProducts(seller.id, request.page, request.limit);
-    const products = normalizeResponseProducts(resp);
-    const paginationInfo = resp.pagination || resp.data?.pagination || getPaginationFallback(request.page, products);
-
-    sellerPagination.paginationData = paginationInfo;
-    renderProducts(products, 'seller-products-grid', 'seller');
-    sellerPagination.updatePaginationUI();
-  } catch (error) {
-    console.error('Failed to load seller products:', error);
-  } finally {
-    if (loadingEl) loadingEl.style.display = 'none';
+    sv.data();
+  } catch (err) {
+    console.error('Studios failed:', err);
+    sv.empty();
+    showToast({
+      message: 'Could not load studios.',
+      actionLabel: 'Try again',
+      onAction: loadStudios,
+    });
   }
 }
 
-function normalizeResponseProducts(response) {
-  if (!response) return [];
-  if (Array.isArray(response)) return response;
-  if (Array.isArray(response.products)) return response.products;
-  if (Array.isArray(response.data)) return response.data;
-  if (Array.isArray(response.data?.products)) return response.data.products;
-  return [];
-}
+/* =========================================================
+   UTIL
+   ========================================================= */
 
-function getPaginationFallback(currentPage, products) {
-  return {
-    currentPage,
-    hasNextPage: products.length === sellerPagination.limit,
-    hasPrevPage: currentPage > 1,
-    totalProducts: products.length
-  };
-}
-
-function renderCategories(categories) {
-  const categoriesList = document.querySelector('.categories-list');
-  if (!categoriesList) return;
-  
-  categoriesList.innerHTML = '';
-  
-  categories.forEach(category => {
-    const categoryCard = document.createElement('a');
-    categoryCard.href = `designers.html?category=${category.id}`;
-    categoryCard.className = 'category-card';
-    categoryCard.dataset.category = category.id;
-    
-    categoryCard.innerHTML = `
-      <div class="category-info">
-        <div class="category-icon">
-          <i class="fas fa-${category.icon || 'box'}"></i>
-        </div>
-        <div class="category-details">
-          <h3 class="category-title">${category.name}</h3>
-          <p class="category-count">${category.sellerCount} designers</p>
-        </div>
-      </div>
-      <div class="category-arrow">
-        <i class="fas fa-chevron-right"></i>
-      </div>
-    `;
-    
-    categoriesList.appendChild(categoryCard);
-  });
+function escapeName(str) {
+  return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
 }

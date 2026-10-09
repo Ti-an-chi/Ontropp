@@ -1,0 +1,332 @@
+/* ===== components/cards.css ===== */
+/* Every card used in the Home tab. Reusable anywhere.
+   Cards own their own internal structure & look, never layout
+   of the section they sit in. */
+
+/* =========================================================
+   Trending slide
+   ========================================================= */
+.trending {
+  position: relative; border-radius: var(--radius-xl); overflow: hidden;
+  background: #eef1f5; aspect-ratio: 3 / 2; max-height: 340px;
+  box-shadow: var(--shadow-md);
+}
+.trending-track { display: flex; height: 100%; transition: transform .55s cubic-bezier(.4,0,.2,1); }
+.trending-slide {
+  flex: 0 0 100%; position: relative; height: 100%;
+  background-size: cover; background-position: center; display: block;
+}
+.trending-slide::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.35) 40%, rgba(0,0,0,0) 70%);
+}
+.trending-meta { position: absolute; left: 20px; right: 20px; bottom: 20px; z-index: 2; color: #fff; }
+.trending-kicker {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 999px;
+  background: rgba(255,255,255,.18); backdrop-filter: blur(6px); margin-bottom: 10px;
+}
+.trending-title { font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 6px; }
+.trending-by { font-size: 13px; opacity: .9; display: flex; align-items: center; gap: 6px; }
+.trending-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,.85); border: none; color: var(--text);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  z-index: 3; opacity: 0; transition: opacity .2s;
+}
+.trending:hover .trending-nav { opacity: 1; }
+.trending-nav.prev { left: 12px; }
+.trending-nav.next { right: 12px; }
+.trending-dots { position: absolute; bottom: 12px; right: 20px; display: flex; gap: 6px; z-index: 3; }
+.trending-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,.5); border: none; cursor: pointer; padding: 0;
+}
+.trending-dot.active { background: #fff; width: 18px; border-radius: 999px; }
+
+/* =========================================================
+   Category tile
+   ========================================================= */
+.cat-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 84px; gap: 10px;
+}
+.cat-tile {
+  position: relative; border-radius: var(--radius-lg); overflow: hidden;
+  background-size: cover; background-position: center; background-color: #dfe6ee;
+  display: flex; align-items: flex-end; padding: 12px; color: #fff; isolation: isolate;
+}
+.cat-tile::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 65%);
+  z-index: -1;
+}
+.cat-tile span {
+  font-size: 13px; font-weight: 700; letter-spacing: .2px;
+  text-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+.cat-tile.tall { grid-row: span 2; }
+.cat-tile.wide { grid-column: span 2; }
+
+/* =========================================================
+   Recommended card
+   ========================================================= */
+.rec-scroll {
+  display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 16px 6px; margin: 0 -16px;
+}
+.rec-scroll::-webkit-scrollbar { display: none; }
+.rec-card {
+  flex: 0 0 62%; max-width: 240px; scroll-snap-align: start;
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: var(--white); border: 1px solid var(--border);
+  transition: transform .2s, box-shadow .2s; display: block;
+}
+.rec-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.rec-img {
+  aspect-ratio: 4 / 5; background-size: cover; background-position: center;
+  background-color: #eef1f5; position: relative;
+}
+.rec-badge {
+  position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,.92);
+  color: var(--primary); font-size: 10px; font-weight: 700; letter-spacing: .6px;
+  text-transform: uppercase; padding: 4px 8px; border-radius: 999px;
+}
+.rec-body { padding: 10px 12px 12px; }
+.rec-title {
+  font-size: 13px; font-weight: 600; margin-bottom: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rec-studio { font-size: 11px; color: var(--hash); display: flex; align-items: center; gap: 4px; }
+.rec-studio i { color: var(--secondary); font-size: 9px; }
+
+/* =========================================================
+   Designer card
+   ========================================================= */
+.designer-scroll {
+  display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 16px 6px; margin: 0 -16px;
+}
+.designer-scroll::-webkit-scrollbar { display: none; }
+.designer-card {
+  flex: 0 0 160px; scroll-snap-align: start;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 14px; text-align: center;
+  transition: transform .2s, box-shadow .2s; display: block;
+}
+.designer-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+.designer-avatar {
+  width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 10px;
+  background-size: cover; background-position: center; background-color: #eef1f5;
+  border: 2px solid var(--white); box-shadow: var(--shadow-sm);
+}
+.designer-name {
+  font-size: 14px; font-weight: 700; margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.designer-studio {
+  font-size: 11px; color: var(--hash); margin-bottom: 10px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.designer-follow {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--primary);
+  padding: 5px 12px; border-radius: 999px;
+  border: 1px solid var(--primary); background: transparent; cursor: pointer;
+}
+.designer-follow:hover { background: var(--primary); color: var(--white); }
+.designer-follow.following { background: var(--secondary); border-color: var(--secondary); color: var(--white); }
+
+/* =========================================================
+   Fresh card
+   ========================================================= */
+.fresh-scroll {
+  display: flex; gap: 10px; overflow-x: auto;
+  padding: 0 16px 6px; margin: 0 -16px;
+}
+.fresh-scroll::-webkit-scrollbar { display: none; }
+.fresh-card {
+  flex: 0 0 120px; border-radius: var(--radius-md); overflow: hidden;
+  background: var(--white); border: 1px solid var(--border); display: block;
+}
+.fresh-img { aspect-ratio: 1; background-size: cover; background-position: center; background-color: #eef1f5; }
+.fresh-body { padding: 8px 10px 10px; }
+.fresh-title {
+  font-size: 11px; font-weight: 600; line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; min-height: 28px;
+}
+.fresh-studio {
+  font-size: 10px; color: var(--hash); margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* =========================================================
+   Piece card (explore wall)
+   Image fills the card; title + studio sit on a bottom
+   gradient. Space is reserved via aspect-ratio so masonry
+   columns don't shift when the image arrives.
+   ========================================================= */
+
+.piece-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #eef1f5;
+  text-decoration: none;
+  color: #fff;
+  transition: transform .2s, box-shadow .2s;
+  /* No fixed height: height comes from the media element. */
+}
+
+.piece-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ----- Media ----- */
+.piece-card-media {
+  position: relative;
+  width: 100%;
+  /* aspect-ratio is set inline by PieceCard() from API hints */
+  background: #eef1f5;
+}
+
+.piece-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.piece-card-img--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border);
+  font-size: 28px;
+  /* Placeholder lives inside the reserved box; not absolute. */
+  position: absolute;
+  inset: 0;
+}
+
+/* ----- Bottom gradient + text ----- */
+.piece-card-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 32px 12px 12px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72),
+    rgba(0, 0, 0, 0.35) 40%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none; /* let the whole card stay clickable */
+}
+
+.piece-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+}
+
+.piece-card-studio {
+  font-size: 11px;
+  opacity: .9;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.piece-card-studio i {
+  color: var(--secondary);
+  font-size: 6px;
+  flex-shrink: 0;
+}
+
+.saved-card-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  z-index: 3;
+  transition: background .15s, transform .15s;
+  backdrop-filter: blur(6px);
+}
+.saved-card-remove:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   Studio card
+   ========================================================= */
+.studio-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.studio-card {
+  display: flex; gap: 12px; align-items: center;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 10px;
+  transition: transform .2s, box-shadow .2s;
+}
+.studio-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+.studio-thumb {
+  flex: 0 0 84px; height: 84px; border-radius: var(--radius-md);
+  background-size: cover; background-position: center; background-color: #eef1f5;
+}
+.studio-body { flex: 1; min-width: 0; }
+.studio-name {
+  font-size: 14px; font-weight: 700; margin-bottom: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.studio-by {
+  font-size: 12px; color: var(--hash); margin-bottom: 6px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.studio-tag {
+  display: inline-block; font-size: 10px; font-weight: 600; color: var(--primary);
+  background: rgba(52,131,224,.08); padding: 3px 8px; border-radius: 999px;
+}
+.studio-arrow { color: var(--hash); font-size: 13px; padding-right: 6px; }
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (min-width: 600px) {
+  .cat-grid { grid-auto-rows: 110px; }
+  .rec-card { flex: 0 0 240px; }
+  .designer-card { flex: 0 0 180px; }
+  .fresh-card { flex: 0 0 150px; }
+  .studio-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .trending { aspect-ratio: 16 / 9; max-height: 420px; }
+  .trending-title { font-size: 28px; }
+  .cat-grid { grid-template-columns: repeat(4, 1fr); }
+  .studio-grid { grid-template-columns: repeat(3, 1fr); }
+}

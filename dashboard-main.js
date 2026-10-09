@@ -1,10 +1,48 @@
-// Core dashboard functionality
-import API from './api.js';
+import API from './api.mock.js';
 import { initHomeTab } from './js/tabs/home.js';
 import { initExploreTab } from './js/tabs/explore.js';
-import { initFavouritesTab } from './js/tabs/favourites.js';
+import { initSavedTab } from './js/tabs/saved.js';
 import { initProfileTab } from './js/tabs/profile.js';
 import { updateElement, changeDisplay } from './js/utility/reconfig.js';
+
+// dashboard-main.js — top of file, after imports
+
+/* =========================================================
+   DEV AUTH SIMULATION
+   Uncomment ONE of the blocks below to test different states.
+   Remove entirely when the real auth module lands.
+   ========================================================= */
+
+// Signed-out (default — no code needed, API.getAuth() returns null)
+
+// Signed-in as a buyer:
+// API.setAuth({
+//   id: 'u1',
+//   username: 'Amara',
+//   email: 'amara@ontropp.test',
+//   avatar_url: 'https://i.pravatar.cc/150?img=47',
+//   role: 'buyer',
+// });
+
+// Signed-in as a seller (adds the studio dashboard to Profile):
+API.setAuth({
+  id: 'u1',
+  username: 'Amara',
+  email: 'amara@ontropp.test',
+  avatar_url: 'https://i.pravatar.cc/150?img=47',
+  role: 'seller',
+});
+
+// Signed-in as a designer with followed studios (unlocks the
+// "Following only" and "Recently visited" explore filters):
+// API.setAuth({
+//   id: 'u1',
+//   username: 'Amara',
+//   email: 'amara@ontropp.test',
+//   avatar_url: 'https://i.pravatar.cc/150?img=47',
+//   role: 'buyer',
+// });
+// ⚠️ You'd also need to hydrate viewer.followedDesignerIds — see note below.
 
 // Global state
 let searchTimeout = null;
@@ -31,7 +69,7 @@ async function initDashboard() {
 function getInitialTab() {
   const hash = window.location.hash.replace('#', '');
   
-  const validTabs = [ 'tab-home', 'tab-explore', 'tab-fav', 'tab-profile' ];
+  const validTabs = [ 'tab-home', 'tab-explore', 'tab-saved', 'tab-profile' ];
   
   return validTabs.includes(hash) ? hash  : 'tab-home';
 }
@@ -98,8 +136,8 @@ async function loadTabContent(tabId) {
       case 'tab-explore':
         await initExploreTab();
         break;
-      case 'tab-fav':
-        await initFavouritesTab();
+      case 'tab-saved':
+        await initSavedTab();
         break;
       case 'tab-profile':
         await initProfileTab();

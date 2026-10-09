@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONTROPP — Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href= "./css/CORE.css">
+	<link rel="stylesheet" href= "./css/components.css">
+	<link rel="stylesheet" href="./css/components/cards.css">
+  <link rel="stylesheet" href="./css/tabs/dashboard.css">
+</head>
+<body>
+
+  <!-- ============ Header ============ -->
+  <header class="dashboard-header">
+    <div class="header-container">
+      <div class="logo">ONTROPP.</div>
+      <div class="header-actions">
+        <button class="icon-btn" aria-label="Search"><i class="fas fa-search"></i></button>
+        <a href="signup.html" class="btn btn-primary btn-small">Sign in</a>
+      </div>
+    </div>
+  </header>
+
+<main class="tab-content active">
+
+  <!-- HELLO -->
+  <section class="home-section" data-state-view="home-hello">
+    <div class="sv-state" data-state="loading">
+      <div class="brand-hello">
+        <div class="skeleton-line w-40 h-20"></div>
+        <div class="skeleton-line w-60 h-14 mt-2"></div>
+      </div>
+    </div>
+    <div class="sv-state" data-state="data" hidden>
+      <!-- filled by home.js renderHello() -->
+    </div>
+    <!-- no empty state: a greeting is never empty -->
+  </section>
+
+  <!-- 1. TRENDING -->
+  <section class="home-section" data-state-view="trending">
+    <div class="home-section-head">
+      <h2 class="home-section-title">Trending now</h2>
+      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">Explore <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="sv-state" data-state="loading">
+      <div class="skeleton-trending shimmer"></div>
+    </div>
+
+    <div class="sv-state" data-state="empty" hidden>
+      <div class="sv-empty">
+        <i class="fas fa-fire"></i>
+        <p>Nothing trending right now.</p>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="data" hidden>
+      <div class="trending">
+        <div class="trending-track" data-carousel-track></div>
+        <button class="trending-nav prev" data-carousel-prev aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+        <button class="trending-nav next" data-carousel-next aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+        <div class="trending-dots" data-carousel-dots></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. CATEGORIES -->
+  <section class="home-section" data-state-view="categories">
+    <div class="home-section-head">
+      <h2 class="home-section-title">Browse by mood</h2>
+      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">See all <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="sv-state" data-state="loading">
+      <div class="skeleton-cat-grid">
+        <div class="skeleton-tile shimmer tall"></div>
+        <div class="skeleton-tile shimmer"></div>
+        <div class="skeleton-tile shimmer"></div>
+        <div class="skeleton-tile shimmer"></div>
+        <div class="skeleton-tile shimmer"></div>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="empty" hidden>
+      <div class="sv-empty">
+        <i class="fas fa-compass"></i>
+        <p>Categories are on their way.</p>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="data" hidden>
+      <div class="cat-grid"></div>
+    </div>
+  </section>
+
+  <!-- 3. RECOMMENDED -->
+  <section class="home-section" data-state-view="recommended">
+    <div class="home-section-head">
+      <h2 class="home-section-title" id="home-rec-title">
+        Editor's Selection <span class="home-section-sub">curated for discovery</span>
+      </h2>
+      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">More <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="sv-state" data-state="loading">
+      <div class="skeleton-row">
+        <div class="skeleton-card shimmer"></div>
+        <div class="skeleton-card shimmer"></div>
+        <div class="skeleton-card shimmer"></div>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="empty" hidden>
+      <div class="sv-empty">
+        <i class="fas fa-box-open"></i>
+        <p>No recommendations yet.</p>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="data" hidden>
+      <div class="rec-scroll"></div>
+    </div>
+  </section>
+
+  <!-- 4. DESIGNERS -->
+  <section class="home-section" data-state-view="designers">
+    <div class="home-section-head">
+      <h2 class="home-section-title">Designers to watch</h2>
+      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">See all <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="sv-state" data-state="loading">
+      <div class="skeleton-row">
+        <div class="skeleton-designer shimmer"></div>
+        <div class="skeleton-designer shimmer"></div>
+        <div class="skeleton-designer shimmer"></div>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="empty" hidden>
+      <div class="sv-empty">
+        <i class="fas fa-user-plus"></i>
+        <p>No designers to feature yet.</p>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="data" hidden>
+      <div class="designer-scroll"></div>
+    </div>
+  </section>
+
+  <!-- 5. FRESH -->
+  <section class="home-section" data-state-view="fresh">
+    <div class="home-section-head">
+      <h2 class="home-section-title">Fresh arrivals</h2>
+      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">All new <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="sv-state" data-state="loading">
+      <div class="skeleton-row">
+        <div class="skeleton-fresh shimmer"></div>
+        <div class="skeleton-fresh shimmer"></div>
+        <div class="skeleton-fresh shimmer"></div>
+        <div class="skeleton-fresh shimmer"></div>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="empty" hidden>
+      <div class="sv-empty">
+        <i class="fas fa-inbox"></i>
+        <p>Nothing new just yet.</p>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="data" hidden>
+      <div class="fresh-scroll"></div>
+    </div>
+  </section>
+
+  <!-- 6. STUDIOS -->
+  <section class="home-section" data-state-view="studios">
+    <div class="home-section-head">
+      <h2 class="home-section-title">Studios worth visiting</h2>
+      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">See all <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="sv-state" data-state="loading">
+      <div class="skeleton-grid">
+        <div class="skeleton-studio shimmer"></div>
+        <div class="skeleton-studio shimmer"></div>
+        <div class="skeleton-studio shimmer"></div>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="empty" hidden>
+      <div class="sv-empty">
+        <i class="fas fa-store-slash"></i>
+        <p>Studios coming soon.</p>
+      </div>
+    </div>
+
+    <div class="sv-state" data-state="data" hidden>
+      <div class="studio-grid"></div>
+    </div>
+  </section>
+
+</main>
+<div id="toast-root"></div>
+<script type="module">
+import { initHomeTab } from './js/tabs/home.js';
+      
+      document.addEventListener('DOMContentLoaded', async () => {
+        await initHomeTab();
+      })
+</script>
+</body>
+</html>

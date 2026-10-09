@@ -10,15 +10,33 @@
   --primary2: #2dbe9a;
   --secondary: #2ECC71;
   --accent: #1ca686;
-  --hash: #6B7280;
-  --background: #F9FAFB;
-  --text: #1F2937;
+	
   --success: #10B981;
   --info: #2D70BE;
   --error: #EF4444;
+	
+  --hash: #6B7280;
+  --background: #F9FAFB;
+  --text: #1F2937;
   --white: #FFFFFF;
   --border: #E5E7EB;
-  
+
+  /* Brand */
+  --primary:    #3483E0;
+  --ink:        #111111;
+
+  /* Feedback */
+  --success:    #10B981;
+  --error:      #EF4444;
+
+  /* Neutrals */
+  --text:       #1F2937;
+  --hash:       #6B7280;
+  --background: #F9FAFB;
+  --white:      #FFFFFF;
+  --border:     #E5E7EB;
+
+
   /* Spacing */
   --space-xs: 4px;
   --space-sm: 8px;

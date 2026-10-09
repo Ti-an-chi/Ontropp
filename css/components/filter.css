@@ -1,0 +1,143 @@
+/* ===== components/filters.css =====
+   Filter chips, toggles, and panel. Used by Explore, Saved,
+   and any future list-shaped tab. */
+
+/* ---------- Chip row ---------- */
+.filters-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 10px 16px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  z-index: 89;
+}
+.filters-bar::-webkit-scrollbar { display: none; }
+
+.filters-chip {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background .15s, color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.filters-chip i { font-size: 11px; }
+.filters-chip:hover { border-color: var(--primary); color: var(--primary); }
+
+.filters-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+}
+.filters-chip.active i { color: var(--white); }
+
+.filters-chip--trailing { margin-left: auto; }
+
+/* ---------- Panel ---------- */
+.filters-panel {
+  background: var(--white);
+  margin: 0 -16px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+.filters-panel.open { display: block; }
+
+.filters-group { margin-bottom: 18px; }
+.filters-group:last-child { margin-bottom: 0; }
+
+.filters-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: var(--hash);
+  margin-bottom: 10px;
+}
+
+.filters-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------- Toggle (on/off filter) ---------- */
+.filters-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.filters-toggle i { color: var(--hash); font-size: 13px; }
+.filters-toggle:hover { border-color: var(--primary); }
+.filters-toggle.active {
+  border-color: var(--secondary);
+  background: rgba(46, 204, 113, .08);
+}
+.filters-toggle.active i { color: var(--secondary); }
+
+/* ---------- Signed-out invitation ---------- */
+/* Not a hint — a door. */
+.filters-invite {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(52,131,224,.06), rgba(46,204,113,.06));
+  border: 1px solid var(--border);
+}
+.filters-invite-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.filters-invite-text { flex: 1; min-width: 0; }
+.filters-invite-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.filters-invite-body {
+  font-size: 12px;
+  color: var(--hash);
+  line-height: 1.4;
+}
+.filters-invite-cta {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.filters-invite-cta:hover { text-decoration: underline; }
