@@ -2,22 +2,21 @@
  * saved.js
  * The Saved tab.
  *
- * Framing: this is a moodboard, not a shopping shortlist.
- * No prices, no ratings, no "Order Now." Just your curated pieces.
+ * Framing: a personal shelf, not a shopping shortlist.
+ * No search, no modes, no per-card delete buttons.
+ * One sort toggle, one studio strip, long-press to select.
  *
  * Owns:
- *   - scope ('all' | 'studio' | 'mood')
+ *   - sort ('newest' | 'oldest')
  *   - active studio filter
- *   - active mood filter
- *   - search term
- *   - header count
- *   - the studio strip (built from the saved set)
+ *   - selection mode + selected ids
+ *   - header count + "last added" line
+ *   - studio strip
  *
  * Delegates:
- *   - the wall                    → createWall
- *   - card markup                 → SavedPieceCard
- *   - piece page navigation       → SavedPieceCard's <a href>
- *   - toasts                      → toast.js
+ *   - the wall                → createWall (infinite: false)
+ *   - card markup             → SavedPieceCard
+ *   - toasts                  → toast.js
  */
 
 import API from '../../api.mock.js';
@@ -25,26 +24,16 @@ import { createWall } from '../utility/wall.js';
 import { SavedPieceCard } from '../cards.js';
 import { showToast } from '../toast.js';
 
-const PAGE_SIZE = 48;
-
-const CATEGORY_LABELS = {
-  textiles: 'Textiles',
-  tailoring: 'Tailoring',
-  jewellery: 'Jewellery',
-  objects: 'Objects',
-  beauty: 'Beauty',
-  print: 'Print',
-};
-
 const state = {
-  scope: 'all',        // 'all' | 'studio' | 'mood'
+  sort: 'newest',
   studioId: null,
-  moodId: null,
-  search: '',
+  selectionMode: false,
+  selectedIds: new Set(),
 };
 
 let wall = null;
-let allSaved = [];     // full set, for counting + building the studio strip
+let allSaved = [];
+let gridEl = null;
 
 /* =========================================================
    BOOT
@@ -55,9 +44,9 @@ export async function initSavedTab() {
   if (!mount) return;
 
   wall = createWall(mount, {
-    renderItem: (item) => SavedPieceCard(item, { onRemove: handleRemove }),
+    renderItem: (item) => SavedPieceCard(item, { onLongPress: handleLongPress }),
     fetchPage: fetchSavedPage,
-    pageSize: PAGE_SIZE,
+    infinite: false,
     skeletonCount: 6,
     onError: (err, retry) => {
       showToast({
@@ -69,115 +58,129 @@ export async function initSavedTab() {
   });
 
   wall.setEmptyStateResolver(emptyStateFor);
+  gridEl = wall.gridEl;
 
-  setupScopeChips();
-  setupSearch();
-  setupStudioStrip();
+  // Selection click handling — delegated on the grid.
+  gridEl.addEventListener('click', onGridClick);
+
+  setupSortToggle();
+  setupSelectionBar();
 
   await refresh();
-}
-
-async function refresh() {
-  // Fetch the whole set once so we can build the studio strip
-  // and count. The wall re-fetches from the same source with
-  // the current filters applied.
-  try {
-    const res = await API.getSaved({ page: 1, limit: 200 });
-    allSaved = res.data || [];
-  } catch (err) {
-    allSaved = [];
-  }
-
-  renderStudioStrip();
-  updateHeaderCount();
-  await wall.reload();
 }
 
 /* =========================================================
    DATA
    ========================================================= */
 
-async function fetchSavedPage({ page, pageSize }) {
-  // The mock doesn't support server-side filtering for saved yet,
-  // so we filter here. When the backend adds support, move these
-  // params into the API call and drop the client-side step.
-  const res = await API.getSaved({ page: 1, limit: 500 });
-  let items = res.data || [];
-
-  if (state.search) {
-    const q = state.search.toLowerCase();
-    items = items.filter(p =>
-      p.title.toLowerCase().includes(q) ||
-      p.studio_name.toLowerCase().includes(q)
-    );
+async function refresh() {
+  let res;
+  try {
+    res = await API.getSaved();
+  } catch (err) {
+    console.error('getSaved failed:', err);
+    res = { pieces: [], studios: [], total: 0, lastAddedAt: null };
   }
-  if (state.scope === 'studio' && state.studioId) {
+
+  allSaved = res.pieces || [];
+  updateHeader(res);
+  renderStudioStrip(res.studios || []);
+
+  await wall.reload();
+}
+
+async function fetchSavedPage() {
+  let items = allSaved.slice();
+
+  if (state.studioId) {
     items = items.filter(p => p.studio_id === state.studioId);
   }
-  if (state.scope === 'mood' && state.moodId) {
-    items = items.filter(p => p.category === state.moodId);
+  if (state.sort === 'oldest') {
+    items = items.slice().reverse();
   }
 
-  // Client-side pagination over the filtered slice
-  const start = (page - 1) * pageSize;
-  const slice = items.slice(start, start + pageSize);
   return {
-    data: slice,
-    pagination: {
-      hasNextPage: start + pageSize < items.length,
-    },
+    data: items,
+    pagination: { hasNextPage: false },
   };
 }
 
 /* =========================================================
-   HEADER + STRIPS
+   HEADER
    ========================================================= */
 
-function updateHeaderCount() {
-  const el = document.getElementById('saved-count');
+function updateHeader({ total = 0, studios = [], lastAddedAt }) {
+  const el = document.getElementById('saved-subtitle');
   if (!el) return;
-  const n = allSaved.length;
-  el.textContent = n === 0
-    ? 'Nothing saved yet'
-    : `${n} ${n === 1 ? 'piece' : 'pieces'}`;
-}
 
-function renderStudioStrip() {
-  const strip = document.getElementById('saved-studio-strip');
-  if (!strip) return;
-
-  if (state.scope !== 'studio') {
-    strip.hidden = true;
+  if (total === 0) {
+    el.textContent = 'Nothing saved yet';
     return;
   }
 
-  // Unique studios in the saved set, in the order they appear
-  const seen = new Set();
-  const studios = [];
-  for (const p of allSaved) {
-    if (seen.has(p.studio_id)) continue;
-    seen.add(p.studio_id);
-    studios.push({
-      id: p.studio_id,
-      name: p.studio_name,
-      // image_url is a piece image; good enough for a strip avatar.
-      // A real API would return studio.cover_url.
-      avatar: p.image_url,
-    });
-  }
+  const pieceWord   = total === 1 ? 'piece' : 'pieces';
+  const studioCount = studios.length;
+  const studioWord  = studioCount === 1 ? 'studio' : 'studios';
+  const relative    = relativeTime(lastAddedAt);
+
+  el.textContent = relative
+    ? `${total} ${pieceWord} · ${studioCount} ${studioWord} · added ${relative}`
+    : `${total} ${pieceWord} · ${studioCount} ${studioWord}`;
+}
+
+function relativeTime(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  const day = 24 * 60 * 60 * 1000;
+  const days = Math.floor(diff / day);
+  if (days <= 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 7) return `${days} days ago`;
+  const weeks = Math.floor(days / 7);
+  if (weeks === 1) return 'a week ago';
+  if (weeks < 5) return `${weeks} weeks ago`;
+  const months = Math.floor(days / 30);
+  if (months === 1) return 'a month ago';
+  return `${months} months ago`;
+}
+
+/* =========================================================
+   STUDIO STRIP
+   ========================================================= */
+
+function renderStudioStrip(studios) {
+  const strip = document.getElementById('saved-studio-strip');
+  if (!strip) return;
 
   strip.innerHTML = '';
+
+  // "All" pill first
+  const allBtn = document.createElement('button');
+  allBtn.className = 'saved-studio saved-studio--all' + (state.studioId ? '' : ' active');
+  allBtn.dataset.studioId = '';
+  allBtn.innerHTML = `
+    <div class="saved-studio-avatar"><i class="fas fa-layer-group"></i></div>
+    <div class="saved-studio-name">All</div>
+  `;
+  allBtn.addEventListener('click', () => {
+    state.studioId = null;
+    renderStudioStrip(studios);
+    wall.reload();
+  });
+  strip.appendChild(allBtn);
+
   studios.forEach(s => {
     const btn = document.createElement('button');
     btn.className = 'saved-studio' + (state.studioId === s.id ? ' active' : '');
     btn.dataset.studioId = s.id;
     btn.innerHTML = `
-      <div class="saved-studio-avatar" style="background-image:url('${s.avatar}')"></div>
-      <div class="saved-studio-name">${s.name}</div>
+      <div class="saved-studio-avatar"
+           style="background-image:url('${s.avatar_url || ''}')"></div>
+      <div class="saved-studio-name">${escape(s.name)}</div>
     `;
     btn.addEventListener('click', () => {
       state.studioId = state.studioId === s.id ? null : s.id;
-      renderStudioStrip();
+      renderStudioStrip(studios);
       wall.reload();
     });
     strip.appendChild(btn);
@@ -186,101 +189,161 @@ function renderStudioStrip() {
   strip.hidden = studios.length === 0;
 }
 
-/* =========================================================
-   UI WIRING
-   ========================================================= */
-
-function setupScopeChips() {
-  const chips = document.querySelectorAll('#saved-chip-row .saved-chip');
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      state.scope = chip.dataset.scope;
-
-      const studioStrip = document.getElementById('saved-studio-strip');
-      const moodStrip   = document.getElementById('saved-mood-strip');
-      studioStrip.hidden = state.scope !== 'studio';
-      moodStrip.hidden   = state.scope !== 'mood';
-
-      if (state.scope === 'studio') renderStudioStrip();
-      if (state.scope === 'mood')   renderMoodStrip();
-
-      wall.reload();
-    });
-  });
-}
-
-function renderMoodStrip() {
-  const strip = document.getElementById('saved-mood-strip');
-  if (!strip || strip.dataset.built) return;
-
-  // Reuse category vocabulary — same labels as Explore
-  const moods = Object.entries(CATEGORY_LABELS);
-  strip.innerHTML =
-    `<button class="filters-chip active" data-mood="">All moods</button>` +
-    moods.map(([id, label]) =>
-      `<button class="filters-chip" data-mood="${id}">${label}</button>`
-    ).join('');
-
-  strip.querySelectorAll('.filters-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      strip.querySelectorAll('.filters-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      state.moodId = chip.dataset.mood || null;
-      wall.reload();
-    });
-  });
-
-  strip.dataset.built = '1';
-}
-
-function setupSearch() {
-  const input = document.getElementById('saved-search');
-  if (!input) return;
-  let t;
-  input.addEventListener('input', () => {
-    clearTimeout(t);
-    t = setTimeout(() => {
-      state.search = input.value.trim();
-      wall.reload();
-    }, 350);
-  });
-}
-
-function setupStudioStrip() {
-  // Delegated — the strip rebuilds on scope change, so we can't
-  // bind to children directly. But the buttons bind in renderStudioStrip.
-  // Keeping this function exists so it's obvious where to add future
-  // studio-strip-level interactions (e.g. long press to bulk remove).
+function escape(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
 }
 
 /* =========================================================
-   REMOVE
+   SORT
    ========================================================= */
 
-async function handleRemove(piece, cardEl) {
-  // Optimistic: pull the card out immediately, restore on failure.
-  const parent = cardEl.parentElement;
-  const next = cardEl.nextSibling;
-  cardEl.remove();
+function setupSortToggle() {
+  const btn = document.getElementById('saved-sort');
+  const label = document.getElementById('saved-sort-label');
+  if (!btn || !label) return;
+
+  btn.dataset.sort = state.sort;
+
+  btn.addEventListener('click', () => {
+    state.sort = state.sort === 'newest' ? 'oldest' : 'newest';
+    label.textContent = state.sort === 'newest' ? 'Newest' : 'Oldest';
+    btn.dataset.sort = state.sort;
+    wall.reload();
+  });
+}
+/* =========================================================
+   SELECTION MODE
+   ========================================================= */
+
+function handleLongPress(item, cardEl) {
+  // If already in selection mode, just toggle this card.
+  if (!state.selectionMode) {
+    state.selectionMode = true;
+  }
+  // Always select the long-pressed card.
+  if (!state.selectedIds.has(item.id)) {
+    state.selectedIds.add(item.id);
+    cardEl.classList.add('is-selected');
+  }
+  updateSelectionBar();
+}
+
+function onGridClick(e) {
+  const card = e.target.closest('.saved-piece');
+  if (!card) return;
+
+  // Not in selection mode: let the <a> navigate.
+  if (!state.selectionMode) return;
+
+  // In selection mode: toggle instead of navigate.
+  e.preventDefault();
+  const id = card.dataset.pieceId;
+  if (!id) return;
+
+  if (state.selectedIds.has(id)) {
+    state.selectedIds.delete(id);
+    card.classList.remove('is-selected');
+  } else {
+    state.selectedIds.add(id);
+    card.classList.add('is-selected');
+  }
+
+  if (state.selectedIds.size === 0) {
+    exitSelection();
+  } else {
+    updateSelectionBar();
+  }
+}
+
+function setupSelectionBar() {
+  const bar = document.getElementById('selection-bar');
+  const del = document.getElementById('selection-delete');
+  const cancel = document.getElementById('selection-cancel');
+  if (!bar) return;
+
+  del?.addEventListener('click', deleteSelected);
+  cancel?.addEventListener('click', exitSelection);
+}
+
+function updateSelectionBar() {
+  const bar = document.getElementById('selection-bar');
+  const count = document.getElementById('selection-count');
+  if (!bar || !count) return;
+  const n = state.selectedIds.size;
+  count.textContent = `${n} selected`;
+  bar.hidden = n === 0;
+}
+
+function exitSelection() {
+  state.selectionMode = false;
+  state.selectedIds.clear();
+  document.querySelectorAll('.saved-piece.is-selected')
+    .forEach(el => el.classList.remove('is-selected'));
+  const bar = document.getElementById('selection-bar');
+  if (bar) bar.hidden = true;
+}
+
+async function deleteSelected() {
+  const ids = [...state.selectedIds];
+  if (ids.length === 0) return;
+
+  const ok = confirm(
+    `Remove ${ids.length} ${ids.length === 1 ? 'piece' : 'pieces'} from your shelf?`
+  );
+  if (!ok) return;
+
+  // Optimistic: pull all selected cards out.
+  const cards = ids
+    .map(id => gridEl.querySelector(`.saved-piece[data-piece-id="${id}"]`))
+    .filter(Boolean);
+  const snapshots = cards.map(c => ({
+    el: c,
+    parent: c.parentElement,
+    next: c.nextSibling,
+  }));
+  cards.forEach(c => c.remove());
 
   try {
-    await API.removeSaved(piece.id);
-    allSaved = allSaved.filter(p => p.id !== piece.id);
-    updateHeaderCount();
-    renderStudioStrip();
-    // Also update the mood strip's counts if you want — skip for now.
+    await API.removeManySaved(ids);
+    allSaved = allSaved.filter(p => !state.selectedIds.has(p.id));
+    exitSelection();
+    updateHeader({
+      total: allSaved.length,
+      studios: deriveStudios(allSaved),
+      lastAddedAt: null,
+    });
+    renderStudioStrip(deriveStudios(allSaved));
   } catch (err) {
-    console.error('remove failed:', err);
+    console.error('removeManySaved failed:', err);
     // Restore
-    parent.insertBefore(cardEl, next);
+    snapshots.forEach(({ el, parent, next }) => {
+      if (next && next.parentElement === parent) parent.insertBefore(el, next);
+      else parent.appendChild(el);
+    });
     showToast({
-      message: 'Could not remove that piece.',
+      message: 'Could not remove those pieces.',
       actionLabel: 'Retry',
-      onAction: () => handleRemove(piece, cardEl),
+      onAction: deleteSelected,
     });
   }
+}
+
+function deriveStudios(pieces) {
+  const map = new Map();
+  for (const p of pieces) {
+    if (!map.has(p.studio_id)) {
+      map.set(p.studio_id, {
+        id: p.studio_id,
+        name: p.studio_name,
+        avatar_url: p.studio_avatar_url,
+        piece_count: 0,
+      });
+    }
+    map.get(p.studio_id).piece_count += 1;
+  }
+  return [...map.values()];
 }
 
 /* =========================================================
@@ -288,31 +351,17 @@ async function handleRemove(piece, cardEl) {
    ========================================================= */
 
 function emptyStateFor() {
-  if (state.search) {
-    return {
-      icon: 'fa-magnifying-glass',
-      title: `Nothing matches "${state.search}"`,
-      body: 'Try a different word.',
-    };
-  }
-  if (state.scope === 'studio' && state.studioId) {
+  if (state.studioId) {
     return {
       icon: 'fa-store',
       title: 'Nothing saved from this studio',
-      body: 'Save pieces from other studios, or pick a different one.',
-    };
-  }
-  if (state.scope === 'mood' && state.moodId) {
-    return {
-      icon: 'fa-layer-group',
-      title: `No saved ${CATEGORY_LABELS[state.moodId] || state.moodId} pieces`,
-      body: 'Try another mood.',
+      body: 'Try another studio, or save new pieces from Explore.',
     };
   }
   return {
     icon: 'fa-bookmark',
     title: 'Nothing saved yet',
     body: 'Tap the bookmark on any piece to keep it here.',
-    cta: { label: 'Explore', href: '#tab-explore' },
+    cta: { label: 'Explore pieces', href: '#tab-explore' },
   };
 }

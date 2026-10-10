@@ -33,11 +33,11 @@
   white-space: nowrap;
 }
 .filters-chip i { font-size: 11px; }
-.filters-chip:hover { border-color: var(--primary); color: var(--primary); }
+.filters-chip:hover { border-color: var(--ink); color: var(--ink); }
 
 .filters-chip.active {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--ink);
+  border-color: var(--ink);
   color: var(--white);
 }
 .filters-chip.active i { color: var(--white); }
@@ -88,12 +88,12 @@
   transition: all .15s;
 }
 .filters-toggle i { color: var(--hash); font-size: 13px; }
-.filters-toggle:hover { border-color: var(--primary); }
+.filters-toggle:hover { border-color: var(--ink); }
 .filters-toggle.active {
-  border-color: var(--secondary);
+  border-color: var(--ink);
   background: rgba(46, 204, 113, .08);
 }
-.filters-toggle.active i { color: var(--secondary); }
+.filters-toggle.active i { color: var(--ink); }
 
 /* ---------- Signed-out invitation ---------- */
 /* Not a hint — a door. */

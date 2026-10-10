@@ -1,0 +1,54 @@
+/* ===== components/pagination.css =====
+   Designer dashboard list pagination. */
+
+.pagination-controls {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pagination-btn {
+  background: var(--background);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all .15s;
+  min-width: 100px;
+  justify-content: center;
+}
+.pagination-btn:hover:not(.disabled) {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+.pagination-btn.disabled { opacity: .5; cursor: not-allowed; }
+.page-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--white);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.current-page { font-weight: 600; color: var(--ink); }
+
+@media (max-width: 640px) {
+  .pagination { flex-direction: column; }
+}
+

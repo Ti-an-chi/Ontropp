@@ -1,22 +1,9 @@
 /**
  * wall.js
- * A reusable, paginated card wall.
+ * Reusable paginated (or not) card wall.
  *
  * Owns: state (loading/empty/data), masonry, infinite scroll, append.
  * Does NOT own: data fetching, filters, card markup.
- *
- * Usage:
- *   const wall = createWall(mountEl, {
- *     renderItem: (item) => PieceCard(item),
- *     fetchPage: async ({ page }) => ({ data, pagination }),
- *     skeletonCount: 8,
- *     onError: (err, retry) => showToast({ message: '…', actionLabel: 'Try again', onAction: retry }),
- *     emptyState: (ctx) => ({ icon, title, body }),
- *   });
- *
- *   await wall.reload();   // page 1, clear, show loading
- *   wall.setEmptyStateResolver(fn);  // change empty message per filter
- *   wall.destroy();
  */
 
 import { createMasonry } from './masonry.js';
@@ -29,6 +16,7 @@ export function createWall(mountEl, {
   fetchPage,
   pageSize = PAGE_SIZE_DEFAULT,
   skeletonCount = 8,
+  infinite = true,
   onError,
   emptyState,
 } = {}) {
@@ -37,7 +25,6 @@ export function createWall(mountEl, {
     return null;
   }
 
-  // ---- Build the state wrapper (loading / empty / data) ----
   mountEl.innerHTML = `
     <div class="sv-state" data-state="loading" hidden>
       <div class="piece-wall piece-wall--skeleton" data-role="skeleton"></div>
@@ -65,15 +52,12 @@ export function createWall(mountEl, {
     for (const k of Object.keys(states)) states[k].hidden = k !== name;
   }
 
-  // ---- Masonry ----
   const masonry = createMasonry(gridEl, { gap: 12 });
 
-  // ---- Pagination state ----
   let page = 0;
   let hasMore = true;
   let loading = false;
 
-  // ---- Empty state resolver (can be swapped per filter) ----
   let emptyResolver = emptyState || (() => ({
     icon: 'fa-compass',
     title: 'Nothing here yet',
@@ -87,11 +71,12 @@ export function createWall(mountEl, {
   }
 
   function renderEmpty() {
-    const { icon = 'fa-compass', title = 'Nothing here', body = '' } = emptyResolver() || {};
+    const { icon = 'fa-compass', title = 'Nothing here', body = '', cta } = emptyResolver() || {};
     emptyEl.innerHTML = `
       <i class="fas ${icon}"></i>
       <h3>${title}</h3>
       ${body ? `<p>${body}</p>` : ''}
+      ${cta ? `<a class="explore-empty-cta" href="${cta.href}">${cta.label}</a>` : ''}
     `;
   }
 
@@ -105,14 +90,12 @@ export function createWall(mountEl, {
       hasMore = !!result?.pagination?.hasNextPage;
 
       if (nextPage === 1) {
-        // First page decides loading → empty vs data
         if (items.length === 0) {
           renderEmpty();
           setState('empty');
           loading = false;
           return { hasMore: false };
         }
-        // We may have been in loading state
         setState('data');
       }
 
@@ -132,11 +115,9 @@ export function createWall(mountEl, {
     }
   }
 
-  // ---- Infinite scroll ----
-  const scroll = createInfiniteScroll({
-    sentinelParent,
-    onLoadMore: loadNextPage,
-  });
+  const scroll = infinite
+    ? createInfiniteScroll({ sentinelParent, onLoadMore: loadNextPage })
+    : { reset() {}, destroy() {} };
 
   async function reload() {
     page = 0;
@@ -149,14 +130,12 @@ export function createWall(mountEl, {
     await loadNextPage();
   }
 
-  // Kick off the first load lazily — caller may want to await it.
-  // We expose reload() and let the orchestrator call it.
-
   return {
     reload,
     setEmptyStateResolver(fn) { emptyResolver = fn || emptyResolver; },
     get hasMore() { return hasMore; },
     get page() { return page; },
+    get gridEl() { return gridEl; },
     destroy() {
       scroll.destroy?.();
       masonry.disconnect?.();

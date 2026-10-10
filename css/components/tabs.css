@@ -1,0 +1,68 @@
+/* ===== components/tabs.css =====
+   Tab bars for designer dashboard and portfolio.
+   Not loaded by the main dashboard. */
+
+.tabs {
+  display: flex;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  margin: 0 -16px;
+  padding: 0 16px;
+  position: sticky;
+  top: 60px;
+  z-index: 80;
+}
+.tab {
+  flex: 1;
+  padding: 16px 12px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--hash);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color .15s, border-color .15s;
+}
+.tab:hover { color: var(--ink); }
+.tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+.tab i { font-size: 20px; }
+
+.portfolio-tabs-container {
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.portfolio-tabs {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  padding: 0 16px;
+}
+.portfolio-tab {
+  flex: 1;
+  padding: 16px 8px;
+  background: none;
+  border: none;
+  color: var(--hash);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+.portfolio-tab:hover { color: var(--ink); }
+.portfolio-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+.portfolio-tab i { font-size: 16px; }

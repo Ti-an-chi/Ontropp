@@ -1,0 +1,140 @@
+/* ===== components/buttons.css =====
+   Buttons. Loaded by every tab. */
+
+/* Base */
+.btn {
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity .15s, transform .15s;
+  letter-spacing: -0.1px;
+}
+.btn i { font-size: 14px; }
+
+.btn-primary {
+  background-color: var(--ink);
+  color: var(--white);
+}
+.btn-primary:hover { opacity: .88; }
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-secondary:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-outline:hover {
+  background-color: var(--background);
+  border-color: var(--ink);
+}
+
+/* Icon button */
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--hash);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  transition: all .15s;
+}
+.icon-btn:hover {
+  background-color: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+
+/* Action buttons (small, often in cards) */
+.action-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--white);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.action-btn.edit-btn {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.action-btn.delete-btn {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+/* Follow button */
+.follow-btn {
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--ink);
+  color: var(--white);
+  transition: opacity .15s, transform .15s;
+}
+.follow-btn:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+.follow-btn:active:not(:disabled) { transform: translateY(0); }
+.follow-btn.following {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.follow-btn.following:hover:not(:disabled) {
+  border-color: var(--ink);
+  color: var(--ink);
+  transform: none;
+  opacity: 1;
+}
+.follow-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Add-product button (designer dashboard) */
+.add-product-btn {
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

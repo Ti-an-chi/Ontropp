@@ -1,0 +1,72 @@
+/* ===== components/kebab.css =====
+   Header kebab menu and its dropdown. */
+
+.kebab-menu-container {
+  position: relative;
+}
+
+.kebab-menu-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--hash);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all .15s;
+}
+.kebab-menu-btn:hover {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+
+.kebab-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  min-width: 180px;
+  z-index: 100;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  gap: 12px;
+  transition: background .15s;
+}
+.dropdown-item:hover { background: var(--background); }
+.dropdown-item i {
+  color: var(--hash);
+  font-size: 16px;
+  width: 20px;
+}
+.dropdown-item span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.dropdown-item.logout-item i { color: var(--error); }

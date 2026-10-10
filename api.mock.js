@@ -102,11 +102,11 @@ const PIECES = PIECE_SEEDS.map(([imgId, title, studioId, designerId, category, p
     title,
     studio_id: studioId,
     studio_name: studio.name,
+    studio_avatar_url: studio.cover_url,
     designer_id: designerId,
     category,
     price,
     image_url: IMG(imgId, 600),
-    // Layout hints — the client reserves space with these.
     width: w,
     height: h,
     aspect_ratio: w / h,
@@ -136,10 +136,10 @@ const FRESH = PIECES.slice(4, 12).map(p => ({
   studio_name: p.studio_name,
   image_url: p.image_url.replace('w=600', 'w=400'),
 }));
-
+/*
 const _saved = {
   u1: ['p1', 'p3', 'p6', 'p11', 'p14', 'p18', 'p21'],
-};
+};*/
 
 /* =============================================================
    STATE
@@ -147,11 +147,16 @@ const _saved = {
 
 const _state = {
   auth: null,
-  latency: 400,
-  // Per-user follow graph. Keyed by userId. Empty until auth lands.
+  latency: 250,
   follows: {
     u1: { designerIds: ['d1', 'd3'], studioIds: ['s2', 's4'] },
   },
+  // Piece ids the user has saved, per user.
+  saved: {
+    u1: ['p1', 'p3', 'p6', 'p11', 'p14', 'p18', 'p21', 'p2', 'p7', 'p12', 'p19'],
+  },
+  // Fixed timestamp so the "last added" text is stable across calls.
+  savedLastAddedAt: Date.now() - 3 * 24 * 60 * 60 * 1000, // 3 days ago
 };
 
 const _sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -311,37 +316,67 @@ const API = {
   },
 
 	/* -------------- Saved ------------- */
-	async getSaved({ page = 1, limit = 24 } = {}) {
-	  await _sleep(_state.latency);
-	  if (!_state.auth) throw new Error('Not signed in');
-	  const ids = _saved[_state.auth.id] || [];
-	  const items = ids
-	    .map(id => PIECES.find(p => p.id === id))
-	    .filter(Boolean)
-	    // Most recently saved first — for now, reverse the seed order.
-	    // In real life, saved_at would drive this.
-	    .reverse();
-	  return paginate(items, page, limit);
-	},
 
-	async removeSaved(pieceId) {
-	  await _sleep(_state.latency);
-	  if (!_state.auth) throw new Error('Not signed in');
-	  const ids = _saved[_state.auth.id] ||= [];
-	  const i = ids.indexOf(pieceId);
-	  if (i >= 0) ids.splice(i, 1);
-	  return { ok: true, savedIds: [...ids] };
-	},
+async getSaved() {
+  await _sleep(_state.latency);
+  if (!_state.auth) throw new Error('Not signed in');
+  const ids = _state.saved[_state.auth.id] || [];
+  // Newest first: reverse the insertion order.
+  const pieces = ids
+    .map(id => PIECES.find(p => p.id === id))
+    .filter(Boolean)
+    .reverse();
 
-	async toggleSaved(pieceId) {
-	  await _sleep(_state.latency);
-	  if (!_state.auth) throw new Error('Not signed in');
-	  const ids = _saved[_state.auth.id] ||= [];
-	  const i = ids.indexOf(pieceId);
-	  if (i >= 0) ids.splice(i, 1);
-	  else ids.push(pieceId);
-	  return { saved: i < 0 };
-	},
+  // Derive the studios the user has saved from.
+  const studioMap = new Map();
+  for (const p of pieces) {
+    if (!studioMap.has(p.studio_id)) {
+      studioMap.set(p.studio_id, {
+        id: p.studio_id,
+        name: p.studio_name,
+        avatar_url: p.studio_avatar_url,
+        piece_count: 0,
+      });
+    }
+    studioMap.get(p.studio_id).piece_count += 1;
+  }
+
+  return {
+    pieces: _clone(pieces),
+    studios: [...studioMap.values()],
+    total: pieces.length,
+    lastAddedAt: _state.savedLastAddedAt,
+  };
+},
+
+async removeSaved(pieceId) {
+  await _sleep(_state.latency);
+  if (!_state.auth) throw new Error('Not signed in');
+  const ids = _state.saved[_state.auth.id] ||= [];
+  const i = ids.indexOf(pieceId);
+  if (i >= 0) ids.splice(i, 1);
+  return { ok: true, savedIds: [...ids] };
+},
+
+async removeManySaved(pieceIds) {
+  await _sleep(_state.latency);
+  if (!_state.auth) throw new Error('Not signed in');
+  const ids = _state.saved[_state.auth.id] ||= [];
+  const toRemove = new Set(pieceIds);
+  const next = ids.filter(id => !toRemove.has(id));
+  _state.saved[_state.auth.id] = next;
+  return { ok: true, savedIds: [...next], removed: pieceIds.length };
+},
+
+async toggleSaved(pieceId) {
+  await _sleep(_state.latency);
+  if (!_state.auth) throw new Error('Not signed in');
+  const ids = _state.saved[_state.auth.id] ||= [];
+  const i = ids.indexOf(pieceId);
+  if (i >= 0) { ids.splice(i, 1); return { saved: false }; }
+  ids.push(pieceId);
+  return { saved: true };
+},
 
   /* ---------- Detail stubs ---------- */
   async getPiece(id) {

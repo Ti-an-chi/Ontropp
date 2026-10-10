@@ -183,22 +183,96 @@ export function PieceCard(item) {
    Keeps PieceCard clean for Explore.
    ------------------------------------------------------------- */
 
-export function SavedPieceCard(item, { onRemove } = {}) {
-  const card = PieceCard(item);
+/* -------------------------------------------------------------
+   8. Saved piece card
+   Image, quiet caption, studio mini-avatar. No overlay, no price,
+   no CTA. Space reserved via aspect-ratio.
 
-  if (onRemove) {
-    const btn = document.createElement('button');
-    btn.className = 'saved-card-remove';
-    btn.type = 'button';
-    btn.setAttribute('aria-label', 'Remove from saved');
-    btn.innerHTML = '<i class="fas fa-times"></i>';
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      onRemove(item, card);
-    });
-    card.appendChild(btn);
-  }
+   Long-press fires onLongPress(item, cardEl). Click is delegated
+   by the Saved tab (see saved.js) so the card itself stays dumb.
+   ------------------------------------------------------------- */
+
+export function SavedPieceCard(item, { onLongPress } = {}) {
+  const card = document.createElement('a');
+  card.className = 'saved-piece';
+  card.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
+  card.dataset.pieceId = item.id;
+
+  const title  = escapeHtml(item.title || item.name || '');
+  const studio = escapeHtml(item.studio_name || '');
+  const imgSrc = item.image_url || item.images?.[0] || '';
+  const avatar = item.studio_avatar_url || '';
+
+  const ar = (item.width && item.height)
+    ? `${item.width} / ${item.height}`
+    : (item.aspect_ratio ? `1 / ${1 / item.aspect_ratio}` : '4 / 5');
+
+  card.innerHTML = `
+    <div class="saved-piece-media" style="aspect-ratio:${ar}">
+      ${imgSrc
+        ? `<img class="saved-piece-img" src="${escapeHtml(imgSrc)}" alt="${title}"
+                loading="lazy" decoding="async">`
+        : `<div class="saved-piece-img saved-piece-img--placeholder">
+             <i class="fas fa-image"></i>
+           </div>`}
+      <div class="saved-piece-check" aria-hidden="true">
+        <i class="fas fa-check"></i>
+      </div>
+    </div>
+    <div class="saved-piece-caption">
+      <div class="saved-piece-title">${title}</div>
+      ${studio ? `
+        <div class="saved-piece-studio">
+          ${avatar
+            ? `<span class="saved-piece-studio-avatar"
+                     style="background-image:url('${escapeHtml(avatar)}')"></span>`
+            : ''}
+          <span class="saved-piece-studio-name">${studio}</span>
+        </div>` : ''}
+    </div>
+  `;
+
+  if (onLongPress) attachLongPress(card, () => onLongPress(item, card));
 
   return card;
+}
+
+/* -------------------------------------------------------------
+   Long-press helper (module-private)
+   ------------------------------------------------------------- */
+
+function attachLongPress(el, onLongPress, { delay = 500 } = {}) {
+  let timer = null;
+  let fired = false;
+
+  const start = () => {
+    fired = false;
+    timer = setTimeout(() => {
+      timer = null;
+      fired = true;
+      onLongPress();
+    }, delay);
+  };
+  const cancel = () => {
+    if (timer) { clearTimeout(timer); timer = null; }
+  };
+  const swallowClick = (e) => {
+    if (fired) {
+      e.preventDefault();
+      e.stopPropagation();
+      fired = false;
+    }
+  };
+
+  el.addEventListener('touchstart', start, { passive: true });
+  el.addEventListener('touchend', cancel);
+  el.addEventListener('touchmove', cancel, { passive: true });
+  el.addEventListener('touchcancel', cancel);
+
+  el.addEventListener('mousedown', start);
+  el.addEventListener('mouseup', cancel);
+  el.addEventListener('mouseleave', cancel);
+
+  el.addEventListener('click', swallowClick, true);
+  el.addEventListener('contextmenu', (e) => e.preventDefault());
 }

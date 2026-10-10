@@ -4,100 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ONTROPP - Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="./css/CORE.css">
+  <link rel="stylesheet" href="./css/components/buttons.css">
+  <link rel="stylesheet" href="./css/components/kebab.css">
+  <link rel="stylesheet" href="./css/components/cards.css">
+  <link rel="stylesheet" href="./css/components/filter.css">
+  <link rel="stylesheet" href="./css/components/masonry.css">
   <link rel="stylesheet" href="./css/tabs/dashboard.css">
   <link rel="stylesheet" href="./css/tabs/explore.css">
   <link rel="stylesheet" href="./css/tabs/saved.css">
   <link rel="stylesheet" href="./css/tabs/profile.css">
-	<link rel="stylesheet" href="./css/components/cards.css">
-	<link rel="stylesheet" href="./css/components/filter.css">
-	<link rel="stylesheet" href="./css/components/masonry.css">
-  <!--<link rel="stylesheet" href="./css/components.css"> -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-
-/* Add success/confirmation styles */
-  .success-message {
-    background-color: rgba(46, 204, 113, 0.1);
-    border: 1px solid var(--secondary);
-    color: var(--secondary);
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin: 12px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-.success-message i {
-  font-size: 16px;
-}
-
-/* Add trust indicators for products */
-.trust-indicator {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--secondary);
-  margin-top: 4px;
-}
-
-.trust-indicator i {
-  font-size: 10px;
-}
-
-/* Add safety rating stars */
-.safety-rating {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  margin-top: 4px;
-}
-
-.safety-rating i {
-  color: var(--secondary);
-  font-size: 12px;
-}
-
-/* Update loading spinner */
-.loading-spinner {
-  border-top-color: var(--secondary);
-}
-
-/* Add secure checkout/payment indicators */
-.secure-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background-color: rgba(46, 204, 113, 0.1);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--secondary);
-}
-
-/* Add to product cards in explore */
-.product-safety-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  font-size: 12px;
-}
-
-.safe-delivery {
-  color: var(--secondary);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.safe-delivery i {
-  font-size: 10px;
-}
-  </style>
 </head>
 <body>
   <div class="app-container">
@@ -417,40 +334,38 @@
 	
 		</main>
 
-		<main class="tab-content" id="tab-saved">
-		
-		  <!-- ===== Saved header ===== -->
-		  <section class="saved-header">
-		    <h1 class="saved-title">Saved</h1>
-		    <p class="saved-subtitle" id="saved-count">—</p>
-		  </section>
-		
-		  <!-- ===== Quiet controls ===== -->
-		  <div class="saved-controls" id="saved-controls">
-		    <div class="saved-search">
-		      <i class="fas fa-search"></i>
-		      <input type="text" id="saved-search"
-		             placeholder="Search your saved pieces…"
-		             autocomplete="off">
-		    </div>
-		
-		    <div class="saved-chip-row" id="saved-chip-row">
-		      <button class="saved-chip active" data-scope="all">All</button>
-		      <button class="saved-chip" data-scope="studio">By studio</button>
-		      <button class="saved-chip" data-scope="mood">By mood</button>
-		    </div>
-		  </div>
-		
-		  <!-- ===== Studio strip (only when scope=studio) ===== -->
-		  <div class="saved-studio-strip" id="saved-studio-strip" hidden></div>
-		
-		  <!-- ===== Mood strip (only when scope=mood) ===== -->
-		  <div class="saved-mood-strip filters-bar" id="saved-mood-strip" hidden></div>
-		
-		  <!-- ===== The wall ===== -->
-		  <div class="saved-wall" id="saved-wall"></div>
-		
-		</main>
+    <main class="tab-content" id="tab-saved">
+    
+      <section class="saved-header">
+        <div class="saved-header-row">
+          <h1 class="saved-title">Saved</h1>
+          <button class="saved-sort" id="saved-sort" type="button"
+                  aria-label="Change sort order" data-sort="newest">
+            <span id="saved-sort-label">Newest</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+        </div>
+        <p class="saved-subtitle" id="saved-subtitle">—</p>
+      </section>
+    
+      <div class="saved-controls">
+        <div class="saved-studio-strip" id="saved-studio-strip"></div>
+      </div>
+    
+      <div class="saved-wall" id="saved-wall"></div>
+    
+      <!-- Selection bar, scoped to this tab -->
+      <div class="selection-bar" id="selection-bar" hidden>
+        <span class="selection-count" id="selection-count">0 selected</span>
+        <div class="selection-actions">
+          <button class="selection-btn selection-btn--danger" id="selection-delete" type="button">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+          <button class="selection-btn" id="selection-cancel" type="button">Cancel</button>
+        </div>
+      </div>
+    
+    </main>
 
 		<!-- Profile Tab Content -->
 		<main class="tab-content" id="tab-profile">
@@ -527,9 +442,9 @@
 		      <h3 class="profile-section-title">
 		        <i class="fas fa-heart"></i> Saved Items
 		      </h3>
-		      <a href="#tab-saved" class="see-all" data-switch-tab="tab-saved">
-		        View all <i class="fas fa-arrow-right"></i>
-		      </a>
+          <a href="#tab-saved" class="see-all" data-switch-tab="tab-saved">
+            View all <i class="fas fa-arrow-right"></i>
+          </a>
 		    </div>
 		
 		    <div class="products-grid" id="profile-favourites-grid"></div>
@@ -579,8 +494,8 @@
           <span class="nav-label">Explore</span>
         </a>
         <a href="#" class="nav-item" data-tab="tab-saved">
-          <i class="fas fa-heart"></i>
-          <span class="nav-label">Favourites</span>
+          <i class="fas fa-bookmark"></i>
+          <span class="nav-label">Saved</span>
         </a>
         <a href="#" class="nav-item" data-tab="tab-profile">
           <i class="fas fa-user"></i>

@@ -4,63 +4,72 @@
 /* ------------------------------------ */
 /* 1. VARIABLES - Design System */
 /* ------------------------------------ */
+/* ============================================================
+   DESIGN TOKENS
+
+   Palette philosophy:
+     - --ink is the identity. Buttons, active chips, emphasis.
+     - --primary is the system color. Links, focus, selection.
+     - --success is earned. Saved, confirmed, verified. Nothing else.
+     - Neutrals carry 80% of the visual weight.
+
+   Migration note for existing usages of --secondary:
+     Where it means "button/action"     → use --ink
+     Where it means "success/verified"  → use --success
+     Where it means "link/focus"        → use --primary
+     Where it means "price"             → use --text
+     Where it means "saved/heart"       → use --success (small, icon-only)
+   Do not add new usages of --secondary. It is deprecated.
+   ============================================================ */
+
 :root {
-  /* Colors */
-  --primary: #3483E0;
-  --primary2: #2dbe9a;
-  --secondary: #2ECC71;
-  --accent: #1ca686;
-	
-  --success: #10B981;
-  --info: #2D70BE;
-  --error: #EF4444;
-	
-  --hash: #6B7280;
-  --background: #F9FAFB;
-  --text: #1F2937;
-  --white: #FFFFFF;
-  --border: #E5E7EB;
+  /* ---- Brand ---- */
+  --ink:        #111111;   /* identity: buttons, active states */
+  --primary:    #3483E0;   /* system: links, focus rings, selection */
 
-  /* Brand */
-  --primary:    #3483E0;
-  --ink:        #111111;
-
-  /* Feedback */
-  --success:    #10B981;
+  /* ---- Feedback ---- */
+  --success:    #10B981;   /* earned: saved, confirmed, verified */
   --error:      #EF4444;
+  --info:       #2D70BE;
 
-  /* Neutrals */
+  /* ---- Deprecated alias — remove after sweep ---- */
+  --secondary:  #10B981;   /* was #2ECC71; now matches --success */
+  --primary2:   #2dbe9a;   /* unused; kept for safety during sweep */
+  --accent:     #1ca686;   /* unused; kept for safety during sweep */
+
+  /* ---- Neutrals ---- */
   --text:       #1F2937;
   --hash:       #6B7280;
   --background: #F9FAFB;
   --white:      #FFFFFF;
   --border:     #E5E7EB;
 
-
-  /* Spacing */
+  /* ---- Spacing ---- */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
-  
-  /* Typography */
-  --text-xs: 12px;
-  --text-sm: 14px;
+
+  /* ---- Typography ---- */
+  --text-xs:   12px;
+  --text-sm:   14px;
   --text-base: 16px;
-  --text-lg: 18px;
-  --text-xl: 24px;
-  
-  /* Borders */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  
-  /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --text-lg:   18px;
+  --text-xl:   24px;
+
+  /* ---- Radii ---- */
+  /* Tighter than before: less SaaS, more editorial. */
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+  --radius-pill: 999px;  /* avatars and functional tags only */
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 /* ------------------------------------ */

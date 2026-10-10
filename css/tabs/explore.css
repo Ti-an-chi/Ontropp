@@ -95,7 +95,7 @@
   display: block;
   width: 24px; height: 24px; margin: 8px auto;
   border: 2px solid var(--border);
-  border-top-color: var(--primary);
+  border-top-color: var(--ink);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
