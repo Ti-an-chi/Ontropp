@@ -66,7 +66,7 @@ async function loadUserData() {
   catch (err) {
     console.error('Failed to load user data:', err);
     return { userData: {
-      username: 'Explorer', email: '', role: 'buyer', avatar_url: '', statement: '',
+      username: 'User', email: '', role: 'explorer', avatar_url: '', statement: '',
     } };
   }
 }

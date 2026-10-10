@@ -197,7 +197,7 @@ const API = {
       username,
       email,
       avatar_url: 'https://i.pravatar.cc/150?img=47',
-      role: 'buyer',
+      role: 'exolorer',
     };
     return _clone(_state.auth);
   },
