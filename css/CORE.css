@@ -264,6 +264,12 @@ button {
   gap: 12px;
 }
 
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
 /* Tab Content */
 .tab-content {
   display: none;
@@ -421,18 +427,14 @@ button {
 
 /* Responsive */
 @media (min-width: 768px) {
-  .products-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .products-grid { grid-template-columns: repeat(3, 1fr); }
   
-  .favourites-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .favourites-grid { grid-template-columns: repeat(3, 1fr); }
   
-  .sellers-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .sellers-grid { grid-template-columns: repeat(2, 1fr); }
   
+  .collections-grid { grid-template-columns: repeat(3, 1fr); }
+
   .footer-content {
     flex-direction: row;
     justify-content: space-between;

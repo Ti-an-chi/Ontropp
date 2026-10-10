@@ -1,18 +1,22 @@
 /* ===== tabs/profile.css ===== */
-/* Scoped to #tab-profile so nothing leaks to other tabs */
+/* Layout + section rhythm for #tab-profile only.
+   Cards live in components/cards.css. Grid patterns live in CORE.css. */
 
-#tab-profile {
-  padding-bottom: 24px;
-}
+#tab-profile { padding-bottom: 24px; }
 
-/* ---------- Header card ---------- */
-.profile-card {
+/* ============================================================
+   IDENTITY
+   ============================================================ */
+.profile-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  margin-top: 16px;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 20px;
-  margin-top: 16px;
-  animation: profileFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: profileFadeIn .35s cubic-bezier(.16, 1, .3, 1);
 }
 
 @keyframes profileFadeIn {
@@ -20,13 +24,63 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.profile-card-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
+.profile-identity-body { flex: 1; min-width: 0; }
+
+.profile-name {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+  color: var(--text);
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* ---------- Avatar (StateView-managed) ---------- */
+.profile-statement {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.profile-statement.is-placeholder { color: var(--hash); font-style: italic; }
+
+.profile-identity-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profile-role-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  background: rgba(52, 131, 224, .1);
+  color: var(--primary);
+}
+.profile-role-pill.designer {
+  background: rgba(16, 185, 129, .1);
+  color: var(--success);
+}
+
+.profile-public-link {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.profile-public-link i { font-size: 10px; }
+
+/* ============================================================
+   AVATAR (StateView-managed) — unchanged from your working version
+   ============================================================ */
 .profile-avatar-large {
   position: relative;
   width: 72px;
@@ -34,8 +88,6 @@
   flex-shrink: 0;
 }
 
-/* Base: every state is stacked, hidden by default.
-   StateView flips these to flex via its displays map. */
 .avatar-state {
   position: absolute;
   inset: 0;
@@ -47,11 +99,7 @@
   justify-content: center;
 }
 
-/* --- data --- */
-.avatar-state-data {
-  border: none;                /* img supplies its own framing if needed */
-  overflow: visible;
-}
+.avatar-state-data { border: none; overflow: visible; }
 .avatar-state-data img {
   width: 100%;
   height: 100%;
@@ -61,19 +109,13 @@
   background: var(--background);
 }
 
-/* --- empty --- */
 .avatar-state-empty {
   background: var(--background);
   color: var(--hash);
 }
-.avatar-state-empty i {
-  font-size: 30px;
-}
+.avatar-state-empty i { font-size: 30px; }
 
-/* --- loading --- */
-.avatar-state-loading {
-  background: var(--background);
-}
+.avatar-state-loading { background: var(--background); }
 
 .avatar-upload-spinner {
   width: 22px;
@@ -81,20 +123,17 @@
   border: 2px solid var(--border);
   border-top-color: var(--primary);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin .8s linear infinite;
 }
 
-/* --- error --- */
 .avatar-state-error {
-  background: rgba(239, 68, 68, 0.08);
+  background: rgba(239, 68, 68, .08);
   border-color: var(--error);
   color: var(--error);
   flex-direction: column;
   gap: 4px;
 }
-.avatar-state-error > i {
-  font-size: 20px;
-}
+.avatar-state-error > i { font-size: 20px; }
 
 .avatar-retry-btn {
   font-size: 10px;
@@ -110,15 +149,9 @@
   gap: 3px;
   line-height: 1.4;
 }
-.avatar-retry-btn:hover {
-  background: var(--error);
-  color: var(--white);
-}
-.avatar-retry-btn i {
-  font-size: 9px;
-}
+.avatar-retry-btn:hover { background: var(--error); color: var(--white); }
+.avatar-retry-btn i { font-size: 9px; }
 
-/* --- edit button (always on top, never a state) --- */
 .edit-avatar-btn {
   position: absolute;
   bottom: -2px;
@@ -126,7 +159,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--ink);
   color: var(--white);
   border: 2px solid var(--white);
   cursor: pointer;
@@ -136,78 +169,18 @@
   font-size: 11px;
   padding: 0;
   z-index: 2;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform .2s ease, background .2s ease;
 }
-.edit-avatar-btn:hover {
-  transform: scale(1.08);
-  background: var(--secondary);
-}
+.edit-avatar-btn:hover { transform: scale(1.08); background: var(--primary); }
 
-/* Identity */
-.profile-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.profile-display-name {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.profile-email {
-  font-size: 13px;
-  color: var(--hash);
-  margin-bottom: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.profile-role-pill {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: rgba(52, 131, 224, 0.1);
-  color: var(--primary);
-}
-
-.profile-role-pill.designer {
-  background: rgba(46, 204, 113, 0.1);
-  color: var(--secondary);
-}
-
-.profile-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--primary);
-  padding: 4px 10px;
-  border-radius: var(--radius-md);
-  background: rgba(52, 131, 224, 0.08);
-  margin-top: 8px;
-  transition: background 0.2s ease;
-}
-
-.profile-btn:hover {
-  background: rgba(52, 131, 224, 0.15);
-}
-
+/* ============================================================
+   EDIT PROFILE BUTTON (header-right)
+   ============================================================ */
 .edit-profile-btn {
   align-self: flex-start;
   padding: 6px 10px;
   border-radius: var(--radius-md);
-  background: var(--background);
+  background: var(--white);
   border: 1px solid var(--border);
   color: var(--text);
   font-size: 12px;
@@ -215,60 +188,26 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all .15s ease;
   flex-shrink: 0;
 }
-
 .edit-profile-btn:hover {
-  background: var(--primary);
+  background: var(--ink);
   color: var(--white);
-  border-color: var(--primary);
+  border-color: var(--ink);
 }
+.edit-profile-btn i { font-size: 10px; }
 
-/* Stats row — bottom of header card */
-.profile-stats-row {
-  display: flex;
-  gap: 8px;
-  padding-top: 16px;
-  margin-top: 16px;
-  border-top: 1px solid var(--border);
-}
-
-.profile-stat-item {
-  flex: 1;
-  text-align: center;
-  padding: 6px 4px;
-  border-radius: var(--radius-md);
-  transition: background 0.2s ease;
-}
-
-.profile-stat-item:hover {
-  background: var(--background);
-}
-
-.profile-stat-value {
-  display: block;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.2;
-}
-
-.profile-stat-label {
-  display: block;
-  font-size: 12px;
-  color: var(--hash);
-  margin-top: 2px;
-}
-
-/* ---------- Section shells ---------- */
+/* ============================================================
+   SECTION SHELLS
+   ============================================================ */
 .profile-section {
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 20px;
   margin-top: 12px;
-  animation: profileFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: profileFadeIn .35s cubic-bezier(.16, 1, .3, 1);
 }
 
 .profile-section-header {
@@ -280,255 +219,14 @@
 }
 
 .profile-section-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.profile-section-title i {
-  color: var(--secondary);
-  font-size: 14px;
-}
-
-.see-all {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--primary);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: gap 0.2s ease;
-}
-
-.see-all:hover {
-  gap: 8px;
-}
-
-.see-all i {
-  font-size: 11px;
-}
-
-/* ---------- Designer stats ---------- */
-.designer-actions-group {
-  display: flex;
-  gap: 8px;
-}
-
-.designer-stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-/* Reuse .stat-card from components.css but stack it here */
-.designer-stats-row .stat-card {
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 10px;
-  border-left-width: 3px;
-}
-
-.designer-stats-row .stat-icon {
-  width: 36px;
-  height: 36px;
   font-size: 15px;
-  border-radius: 10px;
-}
-
-.designer-stats-row .stat-details {
-  width: 100%;
-}
-
-.designer-stats-row .stat-title {
-  font-size: 11px;
-  margin-bottom: 2px;
-  line-height: 1.2;
-}
-
-.designer-stats-row .stat-value {
-  font-size: 18px;
-  line-height: 1.2;
-}
-
-.designer-stats-row .stat-value.muted {
-  color: var(--hash);
-  font-weight: 500;
-}
-
-/* ---------- Saved preview — uses .products-grid + .product-card ---------- */
-
-/* Empty state inside saved preview */
-.empty-saved-preview {
-  text-align: center;
-  padding: 24px 16px;
-  color: var(--hash);
-}
-
-.empty-saved-preview .empty-icon {
-  font-size: 36px;
-  color: var(--border);
-  margin-bottom: 8px;
-}
-
-.empty-saved-preview p {
-  font-size: 14px;
-  margin-bottom: 12px;
-}
-
-.empty-saved-preview .empty-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 24px;
-  background: transparent;
-  color: var(--secondary);
-  border: 1.5px solid var(--secondary);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.empty-saved-preview .empty-cta:hover {
-  background: var(--secondary);
-  color: var(--white);
-}
-
-/* ---------- Recently viewed ---------- */
-.recently-viewed-scroll {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 140px;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-  scroll-snap-type: x mandatory;
-}
-
-.recently-viewed-scroll::-webkit-scrollbar { display: none; }
-
-.recently-viewed-item {
-  scroll-snap-align: start;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  cursor: pointer;
-  text-decoration: none;
-  color: var(--text);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.recently-viewed-item:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-  border-color: var(--primary);
-}
-
-.recently-viewed-image {
-  height: 100px;
-  background: var(--background);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.recently-viewed-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.recently-viewed-image i {
-  font-size: 28px;
-  color: var(--primary);
-}
-
-.recently-viewed-details {
-  padding: 8px 10px;
-}
-
-.recently-viewed-title {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text);
-  margin-bottom: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.recently-viewed-price {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--secondary);
-}
-
-/* ===== Identity ===== */
-.profile-identity {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 20px;
-  margin-top: 16px;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  animation: profileFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.profile-identity-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.profile-name {
-  font-size: 20px;
   font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.2px;
-  margin-bottom: 6px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  letter-spacing: -.1px;
 }
 
-.profile-statement {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text);
-  margin-bottom: 10px;
-}
-.profile-statement.is-placeholder {
-  color: var(--hash);
-  font-style: italic;
-}
+.profile-section-actions { display: flex; gap: 14px; }
 
-.profile-identity-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.profile-public-link {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--primary);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.profile-public-link i { font-size: 10px; }
-
-/* ===== Section action (quiet button in header) ===== */
 .profile-section-action {
   display: inline-flex;
   align-items: center;
@@ -544,66 +242,10 @@
 .profile-section-action:hover { color: var(--text); }
 .profile-section-action i { font-size: 10px; }
 
-/* ===== Collections grid ===== */
-.collections-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-@media (min-width: 768px) {
-  .collections-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-.collection-card {
-  display: block;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--white);
-  transition: border-color 0.15s ease, transform 0.15s ease;
-}
-.collection-card:hover {
-  border-color: var(--ink);
-  transform: translateY(-1px);
-}
-
-.collection-cover {
-  aspect-ratio: 4 / 3;
-  background-color: var(--background);
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--border);
-  font-size: 24px;
-}
-
-.collection-body { padding: 10px 12px; }
-
-.collection-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.collection-count {
-  font-size: 11px;
-  color: var(--hash);
-}
-
-/* ===== Trail ===== */
-.trail-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
+/* ============================================================
+   TRAIL
+   ============================================================ */
+.trail-list { list-style: none; padding: 0; margin: 0; }
 
 .trail-item {
   display: flex;
@@ -616,15 +258,15 @@
 .trail-item:last-child { border-bottom: none; }
 
 .trail-icon {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: var(--background);
   color: var(--hash);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10px;
   flex-shrink: 0;
 }
 
@@ -638,13 +280,11 @@
 }
 .trail-text strong { font-weight: 600; }
 
-.trail-time {
-  font-size: 11px;
-  color: var(--hash);
-  flex-shrink: 0;
-}
+.trail-time { font-size: 11px; color: var(--hash); flex-shrink: 0; }
 
-/* ===== Network strip ===== */
+/* ============================================================
+   FOLLOWING strip — mirrors .saved-studio-strip pattern
+   ============================================================ */
 .network-strip {
   display: flex;
   gap: 14px;
@@ -664,11 +304,12 @@
   align-items: center;
   gap: 6px;
   min-width: 60px;
+  text-decoration: none;
 }
 
 .network-avatar {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background-color: var(--background);
   background-size: cover;
@@ -687,7 +328,9 @@
   text-align: center;
 }
 
-/* ===== Signals ===== */
+/* ============================================================
+   SIGNALS
+   ============================================================ */
 .signals-list {
   display: grid;
   grid-template-columns: 1fr;
@@ -706,68 +349,66 @@
   border-radius: var(--radius-md);
 }
 
-.signal-icon {
-  color: var(--hash);
-  font-size: 12px;
-  margin-bottom: 2px;
-}
-
+.signal-icon { color: var(--hash); font-size: 12px; margin-bottom: 2px; }
 .signal-value {
   font-size: 22px;
   font-weight: 700;
   color: var(--text);
   line-height: 1.1;
 }
-
 .signal-text {
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
   line-height: 1.3;
 }
+.signal-label { font-size: 11px; color: var(--hash); }
 
-.signal-label {
-  font-size: 11px;
-  color: var(--hash);
-}
-
-/* ===== Tools ===== */
-.profile-tools {
+/* ============================================================
+   ACCOUNT
+   ============================================================ */
+.account-list {
   display: flex;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.profile-tool-btn {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  background: var(--white);
+  flex-direction: column;
   border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--white);
 }
-.profile-tool-btn:hover {
-  border-color: var(--ink);
-  color: var(--ink);
-}
-.profile-tool-btn i { font-size: 11px; }
 
-/* ===== Empty states ===== */
+.account-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+}
+.account-item:last-child { border-bottom: none; }
+.account-item:hover { background: var(--background); }
+.account-item i:first-child { width: 16px; color: var(--hash); font-size: 12px; }
+.account-item .account-item-label { flex: 1; }
+.account-item .account-item-chevron { color: var(--border); font-size: 10px; }
+.account-item.is-danger { color: var(--error); }
+.account-item.is-danger i:first-child { color: var(--error); }
+
+/* ============================================================
+   EMPTY states inside a section
+   ============================================================ */
 .profile-empty {
   text-align: center;
   padding: 28px 16px;
   color: var(--hash);
 }
 .profile-empty i {
-  font-size: 28px;
+  font-size: 26px;
   color: var(--border);
   margin-bottom: 10px;
   display: block;
@@ -778,36 +419,19 @@
   color: var(--text);
   margin-bottom: 4px;
 }
-.profile-empty-hint {
-  font-size: 12px;
-  color: var(--hash);
-}
+.profile-empty-hint { font-size: 12px; color: var(--hash); }
 
-/* ===== Footer ===== */
-.profile-footer {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  padding: 24px 16px 8px;
-}
-
-.profile-footer-link {
-  font-size: 12px;
-  color: var(--hash);
-  text-decoration: none;
-}
-.profile-footer-link:hover { color: var(--text); }
-
-/* ---------- Responsive ---------- */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (min-width: 768px) {
   .profile-avatar-large { width: 88px; height: 88px; }
-  .profile-display-name { font-size: 22px; }
-  .profile-card { padding: 24px; }
-  .recently-viewed-scroll { grid-auto-columns: 160px; }
+  .profile-name { font-size: 22px; }
+  .profile-identity { padding: 24px; }
+  .profile-section { padding: 24px; }
 }
 
 @media (max-width: 400px) {
-  .designer-stats-row { gap: 6px; }
-  .designer-stats-row .stat-value { font-size: 16px; }
-  .profile-stat-value { font-size: 18px; }
+  .profile-identity { gap: 12px; padding: 16px; }
+  .signal-value { font-size: 18px; }
 }

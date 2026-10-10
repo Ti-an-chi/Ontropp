@@ -1,7 +1,11 @@
 // profile.js — Profile tab
-import API from '../../api.mock.js';
+// Orchestrator only: fetch, delegate to cards.js, mount.
+// No markup strings where a Card() exists.
+
+import API from '../../api.mock.js';   // swap to './api.js' when live
 import { updateElement, changeDisplay } from '../utility/reconfig.js';
 import { formatNumber } from '../utility/shared.js';
+import { CollectionCard } from '../cards.js';
 import StateView from '../uiTools/stateView.js';
 
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
@@ -38,7 +42,7 @@ export async function initProfileTab() {
       window.bootstrap = await loadUserData();
     }
     state.user = window.bootstrap.userData;
-    state.isDesigner = state.user.role === 'designer';
+    state.isDesigner = state.user.role === 'seller';
 
     renderIdentity();
     renderAvatar();
@@ -46,10 +50,10 @@ export async function initProfileTab() {
 
     const dash = await loadProfileDash();
     state.collections = dash.collections || [];
-    state.trail = dash.trail || [];
-    state.network = dash.network || { designers: [], studios: [] };
-    state.signals = dash.signals || null;
-    state.exhibition = dash.exhibition || [];
+    state.trail       = dash.trail || [];
+    state.network     = dash.network || { designers: [], studios: [] };
+    state.signals     = dash.signals || null;
+    state.exhibition  = dash.exhibition || [];
 
     renderCollections();
     renderTrail();
@@ -100,8 +104,8 @@ function renderIdentity() {
   const statementEl = document.getElementById('profile-statement');
   if (statementEl) {
     const fallback = isDesigner
-      ? 'Working from a studio. Add a statement to tell visitors what you make.'
-      : 'Collect what you love. Add a statement to tell designers what you look for.';
+      ? 'Add a statement to tell visitors what you make.'
+      : 'Add a statement to tell designers what you look for.';
     statementEl.textContent = u.statement || fallback;
     statementEl.classList.toggle('is-placeholder', !u.statement);
   }
@@ -112,17 +116,19 @@ function renderIdentity() {
     rolePill.classList.toggle('designer', isDesigner);
   }
 
-  if (isDesigner && u.designerProfile?.id) {
+  if (isDesigner && u.sellerProfile?.id) {
     const linkEl = document.getElementById('profile-link-btn');
     if (linkEl) {
-      linkEl.href = `/portfolio.html?id=${u.designerProfile.id}`;
+      linkEl.href = `/portfolio.html?id=${u.sellerProfile.id}`;
       linkEl.hidden = false;
     }
+  } else {
+    changeDisplay('profile-link-btn', 'none');
   }
 }
 
 /* ============================================================
-   ROLE SECTIONS — show/hide based on mode
+   ROLE SECTIONS
    ============================================================ */
 function renderRoleSections() {
   const isDesigner = state.isDesigner;
@@ -131,11 +137,10 @@ function renderRoleSections() {
   toggle('profile-trail-section',       !isDesigner);
   toggle('profile-network-section',     !isDesigner);
 
-  toggle('profile-signals-section',      isDesigner);
-  toggle('profile-exhibition-section',   isDesigner);
-  toggle('profile-tools',                isDesigner);
+  toggle('profile-signals-section',     isDesigner);
+  toggle('profile-exhibition-section',  isDesigner);
 
-  if (!isDesigner) changeDisplay('profile-link-btn', 'none');
+  updateAccountForRole(isDesigner);
 }
 
 function toggle(id, show) {
@@ -144,22 +149,24 @@ function toggle(id, show) {
 }
 
 /* ============================================================
-   COLLECTIONS / EXHIBITION — same component, two labels
+   COLLECTIONS  (explorer)  &  EXHIBITION  (designer)
+   Same component, different data, different label.
    ============================================================ */
 function renderCollections() {
-  renderCollectionGrid('collections-grid', 'collections-empty', state.collections);
+  mountCards('collections-grid', 'collections-empty', state.collections);
 }
 
 function renderExhibition() {
-  renderCollectionGrid('exhibition-grid', 'exhibition-empty', state.exhibition);
+  mountCards('exhibition-grid', 'exhibition-empty', state.exhibition);
 }
 
-function renderCollectionGrid(gridId, emptyId, items) {
-  const grid = document.getElementById(gridId);
+function mountCards(gridId, emptyId, items) {
+  const grid  = document.getElementById(gridId);
   const empty = document.getElementById(emptyId);
   if (!grid || !empty) return;
 
   if (!items.length) {
+    grid.innerHTML = '';
     grid.hidden = true;
     empty.hidden = false;
     return;
@@ -167,26 +174,26 @@ function renderCollectionGrid(gridId, emptyId, items) {
 
   grid.hidden = false;
   empty.hidden = true;
-
-  grid.innerHTML = items.map(c => `
-    <a class="collection-card" href="#collection-${c.id}">
-      <div class="collection-cover"
-           style="background-image:url('${escapeAttr(c.cover_image || '')}')">
-        ${!c.cover_image ? '<i class="fas fa-layer-group"></i>' : ''}
-      </div>
-      <div class="collection-body">
-        <div class="collection-name">${escapeHtml(c.name)}</div>
-        <div class="collection-count">
-          ${c.piece_count} ${c.piece_count === 1 ? 'piece' : 'pieces'}
-        </div>
-      </div>
-    </a>
-  `).join('');
+  grid.innerHTML = '';
+  items.forEach(c => grid.appendChild(CollectionCard(c)));
 }
 
 /* ============================================================
-   TRAIL — chronological activity
+   TRAIL
    ============================================================ */
+const TRAIL_ICONS = {
+  saved:    'fa-bookmark',
+  visited:  'fa-eye',
+  followed: 'fa-user-plus',
+  inquiry:  'fa-comment',
+};
+const TRAIL_VERBS = {
+  saved:    'saved',
+  visited:  'visited',
+  followed: 'started following',
+  inquiry:  'reached out to',
+};
+
 function renderTrail() {
   const list = document.getElementById('trail-list');
   if (!list) return;
@@ -207,26 +214,12 @@ function renderTrail() {
           You ${verb} <strong>${escapeHtml(t.target_name || '')}</strong>
         </span>
         <span class="trail-time">${relativeTime(t.timestamp)}</span>
-      </li>
-    `;
+      </li>`;
   }).join('');
 }
 
-const TRAIL_ICONS = {
-  saved:    'fa-bookmark',
-  visited:  'fa-eye',
-  followed: 'fa-user-plus',
-  inquiry:  'fa-comment',
-};
-const TRAIL_VERBS = {
-  saved:    'saved',
-  visited:  'visited',
-  followed: 'started following',
-  inquiry:  'reached out to',
-};
-
 /* ============================================================
-   NETWORK — designers + studios followed
+   FOLLOWING (network strip)
    ============================================================ */
 function renderNetwork() {
   const strip = document.getElementById('network-strip');
@@ -253,12 +246,11 @@ function renderNetwork() {
       <span class="network-avatar"
             style="background-image:url('${escapeAttr(i.avatar || '')}')"></span>
       <span class="network-name">${escapeHtml(i.name)}</span>
-    </a>
-  `).join('');
+    </a>`).join('');
 }
 
 /* ============================================================
-   SIGNALS — designer feedback, not vanity metrics
+   SIGNALS  (designer)
    ============================================================ */
 function renderSignals() {
   const list = document.getElementById('signals-list');
@@ -266,9 +258,9 @@ function renderSignals() {
 
   const s = state.signals;
   const signals = [
-    { icon: 'fa-bookmark', value: s.savedThisWeek,     label: 'saves this week' },
+    { icon: 'fa-bookmark', value: s.savedThisWeek,      label: 'saves this week' },
     { icon: 'fa-comment',  value: s.inquiriesThisMonth, label: 'inquiries this month' },
-    { icon: 'fa-star',     text: s.topCollection,       label: 'top collection' },
+    { icon: 'fa-star',     text:  s.topCollection,      label: 'top collection' },
   ];
 
   list.innerHTML = signals.map(sig => {
@@ -280,13 +272,57 @@ function renderSignals() {
         <span class="signal-icon"><i class="fas ${sig.icon}"></i></span>
         ${display}
         <span class="signal-label">${escapeHtml(sig.label)}</span>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
 /* ============================================================
-   AVATAR — unchanged from your working version
+   ACCOUNT
+   ============================================================ */
+function updateAccountForRole(isDesigner) {
+  const list = document.getElementById('account-list');
+  if (!list) return;
+
+  const items = isDesigner
+    ? [
+        { icon: 'fa-pen',             label: 'Edit profile',     action: () => openEditProfile() },
+        { icon: 'fa-store',           label: 'Studio settings',  action: () => go('useraccountsettings.html') },
+        { icon: 'fa-cog',             label: 'Account settings', action: () => go('useraccountsettings.html') },
+        { icon: 'fa-question-circle', label: 'Help & Support',   action: () => go('help.html') },
+        { icon: 'fa-sign-out-alt',    label: 'Log out', danger: true, action: () => logout() },
+      ]
+    : [
+        { icon: 'fa-pen',             label: 'Edit profile',     action: () => openEditProfile() },
+        { icon: 'fa-palette',         label: 'Open a Studio',    action: () => go('setup-seller.html') },
+        { icon: 'fa-cog',             label: 'Account settings', action: () => go('useraccountsettings.html') },
+        { icon: 'fa-question-circle', label: 'Help & Support',   action: () => go('help.html') },
+        { icon: 'fa-sign-out-alt',    label: 'Log out', danger: true, action: () => logout() },
+      ];
+
+  list.innerHTML = items.map((it, i) => `
+    <button class="account-item ${it.danger ? 'is-danger' : ''}" data-action="${i}">
+      <i class="fas ${it.icon}"></i>
+      <span class="account-item-label">${escapeHtml(it.label)}</span>
+      <i class="fas fa-chevron-right account-item-chevron"></i>
+    </button>`).join('');
+
+  list.querySelectorAll('.account-item').forEach(btn => {
+    btn.addEventListener('click', () => items[+btn.dataset.action].action());
+  });
+}
+
+function openEditProfile() {
+  // wire to modal later; navigate for now
+  document.getElementById('edit-avatar-input')?.click();
+}
+function go(url) { window.location.href = url; }
+function logout() {
+  // wire to your auth flow
+  window.location.href = 'login.html';
+}
+
+/* ============================================================
+   AVATAR — unchanged; it works
    ============================================================ */
 function setupAvatarStateView() {
   const container = document.getElementById('avatar-state-container');
@@ -374,7 +410,7 @@ async function runAvatarUpload() {
   }
 
   const img = document.getElementById('profile-avatar-img');
-  const previousSrc = img?.src || state.user?.avatar_url || '';
+  const previousSrc   = img?.src || state.user?.avatar_url || '';
   const previousState = avatarState?.currentState || 'empty';
 
   avatarState.show('loading');
@@ -417,24 +453,13 @@ async function runAvatarUpload() {
    ============================================================ */
 function setupActions() {
   document.getElementById('new-collection-btn')
-    ?.addEventListener('click', () => {
-      // wire to a modal later; for now, no-op so the button isn't dead
-    });
+    ?.addEventListener('click', () => { /* modal later */ });
+
+  document.getElementById('exhibition-add-btn')
+    ?.addEventListener('click', () => go('upload.html'));
 
   document.getElementById('manage-exhibition-btn')
-    ?.addEventListener('click', () => {
-      window.location.href = 'designerDashboard.html';
-    });
-
-  document.getElementById('profile-add-piece-btn')
-    ?.addEventListener('click', () => {
-      window.location.href = 'upload.html';
-    });
-
-  document.getElementById('profile-studio-settings-btn')
-    ?.addEventListener('click', () => {
-      window.location.href = 'useraccountsettings.html';
-    });
+    ?.addEventListener('click', () => go('designerDashboard.html'));
 }
 
 function setupTabSwitchers() {

@@ -628,3 +628,46 @@
   .cat-grid { grid-template-columns: repeat(4, 1fr); }
   .studio-grid { grid-template-columns: repeat(3, 1fr); }
 }
+/* ============================================================
+   Collection card — used by profile's Collections AND Exhibition.
+   ============================================================ */
+.collection-card {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--white);
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color .15s ease, transform .15s ease;
+}
+.collection-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.collection-cover {
+  aspect-ratio: 4 / 3;
+  background-color: var(--background);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border);
+  font-size: 22px;
+}
+
+.collection-body { padding: 10px 12px; }
+
+.collection-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collection-count { font-size: 11px; color: var(--hash); }

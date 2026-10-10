@@ -179,12 +179,6 @@ export function PieceCard(item) {
 
 /* -------------------------------------------------------------
    8. Saved piece card
-   Composition: PieceCard + a remove button.
-   Keeps PieceCard clean for Explore.
-   ------------------------------------------------------------- */
-
-/* -------------------------------------------------------------
-   8. Saved piece card
    Image, quiet caption, studio mini-avatar. No overlay, no price,
    no CTA. Space reserved via aspect-ratio.
 
@@ -235,6 +229,32 @@ export function SavedPieceCard(item, { onLongPress } = {}) {
   if (onLongPress) attachLongPress(card, () => onLongPress(item, card));
 
   return card;
+}
+
+/* -------------------------------------------------------------
+   9. Collection card — used by profile Collections + Exhibition.
+   ------------------------------------------------------------- */
+
+export function CollectionCard(item) {
+  const a = el('a', 'collection-card');
+  a.href = item.href || `/collection.html?id=${encodeURIComponent(item.id)}`;
+
+  const name  = escapeHtml(item.name || 'Untitled');
+  const cover = item.cover_image || '';
+  const count = Number(item.piece_count || 0);
+  const countLabel = `${count} ${count === 1 ? 'piece' : 'pieces'}`;
+
+  a.innerHTML = `
+    <div class="collection-cover"
+         style="${cover ? `background-image:url('${escapeHtml(cover)}')` : ''}">
+      ${cover ? '' : '<i class="fas fa-layer-group"></i>'}
+    </div>
+    <div class="collection-body">
+      <div class="collection-name">${name}</div>
+      <div class="collection-count">${countLabel}</div>
+    </div>`;
+
+  return a;
 }
 
 /* -------------------------------------------------------------
