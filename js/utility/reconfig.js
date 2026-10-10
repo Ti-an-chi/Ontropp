@@ -205,3 +205,20 @@ export const orderHandler = {
 async function togglefollowSeller(sellerId, button) {
   return;
 }
+
+/**
+ * Wire every [data-switch-tab] element in the document to dispatch
+ * the 'switchTab' CustomEvent. Idempotent-safe per element.
+ */
+export function setupTabSwitchers(root = document) {
+  root.querySelectorAll('[data-switch-tab]').forEach(el => {
+    if (el.dataset._switchBound) return;
+    el.dataset._switchBound = '1';
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.dispatchEvent(new CustomEvent('switchTab', {
+        detail: el.dataset.switchTab,
+      }));
+    });
+  });
+}

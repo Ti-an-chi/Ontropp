@@ -366,9 +366,36 @@
 
     <main class="tab-content" id="tab-profile">
     
-      <!-- Identity -->
+      <!-- ===== Identity ===== -->
       <section class="profile-identity">
-        <!-- avatar state container unchanged -->
+        <div class="profile-avatar-large" id="avatar-state-container">
+    
+          <div class="avatar-state avatar-state-loading" data-state="loading">
+            <div class="avatar-upload-spinner"></div>
+          </div>
+    
+          <div class="avatar-state avatar-state-data" data-state="data">
+            <img id="profile-avatar-img" src="" alt="Profile">
+          </div>
+    
+          <div class="avatar-state avatar-state-empty" data-state="empty">
+            <i class="fas fa-user"></i>
+          </div>
+    
+          <div class="avatar-state avatar-state-error" data-state="error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <button class="avatar-retry-btn" id="avatar-retry-btn" type="button" aria-label="Retry upload">
+              <i class="fas fa-redo"></i> Retry
+            </button>
+          </div>
+    
+          <button class="edit-avatar-btn" id="edit-avatar-btn" type="button" aria-label="Change photo">
+            <i class="fas fa-camera"></i>
+          </button>
+    
+          <input type="file" id="edit-avatar-input" accept="image/*" hidden>
+        </div>
+    
         <div class="profile-identity-body">
           <h1 class="profile-name" id="profile-display-name">Loading…</h1>
           <p class="profile-statement" id="profile-statement"></p>
@@ -379,16 +406,17 @@
             </a>
           </div>
         </div>
-        <button class="edit-profile-btn" id="edit-profile-btn">
+    
+        <button class="edit-profile-btn" id="edit-profile-btn" type="button" aria-label="Edit profile">
           <i class="fas fa-pen"></i>
         </button>
       </section>
     
-      <!-- Explorer: Collections -->
+      <!-- ===== Explorer: Collections ===== -->
       <section class="profile-section" id="profile-collections-section" hidden>
         <div class="profile-section-header">
           <h2 class="profile-section-title">Collections</h2>
-          <button class="profile-section-action" id="new-collection-btn">
+          <button class="profile-section-action" id="new-collection-btn" type="button">
             <i class="fas fa-plus"></i> New
           </button>
         </div>
@@ -400,7 +428,7 @@
         </div>
       </section>
     
-      <!-- Explorer: Trail -->
+      <!-- ===== Explorer: Trail ===== -->
       <section class="profile-section" id="profile-trail-section" hidden>
         <div class="profile-section-header">
           <h2 class="profile-section-title">Trail</h2>
@@ -408,7 +436,7 @@
         <ul class="trail-list" id="trail-list"></ul>
       </section>
     
-      <!-- Explorer: Following (no see-all) -->
+      <!-- ===== Explorer: Following ===== -->
       <section class="profile-section" id="profile-network-section" hidden>
         <div class="profile-section-header">
           <h2 class="profile-section-title">Following</h2>
@@ -416,7 +444,7 @@
         <div class="network-strip" id="network-strip"></div>
       </section>
     
-      <!-- Designer: Signals -->
+      <!-- ===== Designer: Signals ===== -->
       <section class="profile-section" id="profile-signals-section" hidden>
         <div class="profile-section-header">
           <h2 class="profile-section-title">Signals</h2>
@@ -424,15 +452,15 @@
         <div class="signals-list" id="signals-list"></div>
       </section>
     
-      <!-- Designer: Exhibition -->
+      <!-- ===== Designer: Exhibition ===== -->
       <section class="profile-section" id="profile-exhibition-section" hidden>
         <div class="profile-section-header">
           <h2 class="profile-section-title">Exhibition</h2>
           <div class="profile-section-actions">
-            <button class="profile-section-action" id="exhibition-add-btn">
+            <button class="profile-section-action" id="exhibition-add-btn" type="button">
               <i class="fas fa-plus"></i> Add
             </button>
-            <button class="profile-section-action" id="manage-exhibition-btn">
+            <button class="profile-section-action" id="manage-exhibition-btn" type="button">
               <i class="fas fa-list"></i> Manage
             </button>
           </div>
@@ -445,7 +473,7 @@
         </div>
       </section>
     
-      <!-- Account — always -->
+      <!-- ===== Account ===== -->
       <section class="profile-section" id="profile-account-section">
         <div class="profile-section-header">
           <h2 class="profile-section-title">Account</h2>
@@ -454,7 +482,7 @@
       </section>
     
     </main>
-		
+    
     <!-- Footer -->
     <footer class="dashboard-footer">
       <div class="footer-content">

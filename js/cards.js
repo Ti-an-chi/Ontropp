@@ -12,6 +12,7 @@
 /* -------------------------------------------------------------
    helpers
    ------------------------------------------------------------- */
+import { formatNumber } from './utility/shared.js'
 
 function el(tag, className, html) {
   const n = document.createElement(tag);
@@ -232,7 +233,7 @@ export function SavedPieceCard(item, { onLongPress } = {}) {
 }
 
 /* -------------------------------------------------------------
-   9. Collection card — used by profile Collections + Exhibition.
+   9. Collection card — used by Profile Collections + Exhibition.
    ------------------------------------------------------------- */
 
 export function CollectionCard(item) {
@@ -255,6 +256,89 @@ export function CollectionCard(item) {
     </div>`;
 
   return a;
+}
+
+/* -------------------------------------------------------------
+   10. Trail item — one row in the Profile "Trail" list.
+   Returns an <li>. Caller appends to a <ul>.
+   ------------------------------------------------------------- */
+
+const TRAIL_ICONS = {
+  saved:    'fa-bookmark',
+  visited:  'fa-eye',
+  followed: 'fa-user-plus',
+  inquiry:  'fa-comment',
+};
+const TRAIL_VERBS = {
+  saved:    'saved',
+  visited:  'visited',
+  followed: 'started following',
+  inquiry:  'reached out to',
+};
+
+export function TrailItem(item, { relativeTime } = {}) {
+  const icon = TRAIL_ICONS[item.type] || 'fa-circle';
+  const verb = TRAIL_VERBS[item.type] || 'interacted with';
+  const when = relativeTime ? relativeTime(item.timestamp) : '';
+
+  const li = document.createElement('li');
+  li.className = 'trail-item';
+  li.innerHTML = `
+    <span class="trail-icon"><i class="fas ${icon}"></i></span>
+    <span class="trail-text">
+      You ${verb} <strong>${escapeHtml(item.target_name || '')}</strong>
+    </span>
+    <span class="trail-time">${when}</span>`;
+  return li;
+}
+
+/* -------------------------------------------------------------
+   11. Network chip — following strip item.
+   ------------------------------------------------------------- */
+
+export function NetworkChip(item) {
+  const a = el('a', 'network-chip');
+  a.href = item.href || `#${item.kind}-${item.id}`;
+  a.innerHTML = `
+    <span class="network-avatar"
+          style="background-image:url('${escapeHtml(item.avatar || '')}')"></span>
+    <span class="network-name">${escapeHtml(item.name || '')}</span>`;
+  return a;
+}
+
+/* -------------------------------------------------------------
+   12. Signal card — designer feedback tile.
+   ------------------------------------------------------------- */
+
+export function SignalCard({ icon, value, text, label }) {
+  const display = text
+    ? `<span class="signal-text">${escapeHtml(text)}</span>`
+    : `<span class="signal-value">${formatNumber(value ?? 0)}</span>`;
+
+  const el_ = document.createElement('div');
+  el_.className = 'signal-card';
+  el_.innerHTML = `
+    <span class="signal-icon"><i class="fas ${icon}"></i></span>
+    ${display}
+    <span class="signal-label">${escapeHtml(label)}</span>`;
+  return el_;
+}
+
+/* -------------------------------------------------------------
+   13. Account row — used by Profile Account list.
+   Orchestrator binds clicks via [data-action] delegation.
+   ------------------------------------------------------------- */
+
+export function AccountItem({ icon, label, action, danger }) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'account-item' + (danger ? ' is-danger' : '');
+  btn.dataset.action = action;
+  btn.innerHTML = `
+    <i class="fas ${icon}"></i>
+    <span class="account-item-label">${escapeHtml(label)}</span>
+    <i class="fas fa-chevron-right account-item-chevron"></i>`;
+  return btn;
 }
 
 /* -------------------------------------------------------------

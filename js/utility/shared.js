@@ -146,3 +146,28 @@ export function formatNumber(num) {
 export function formatPrice(price) {
   return new Intl.NumberFormat('en-NG').format(price);
 }
+
+export function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+export function escapeAttr(str) {
+  return escapeHtml(str).replace(/`/g, '&#96;');
+}
+
+export function relativeTime(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  const h = Math.floor(diff / 3600000);
+  if (h < 1) return 'just now';
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d === 1) return 'yesterday';
+  if (d < 7) return `${d}d ago`;
+  const w = Math.floor(d / 7);
+  return `${w}w ago`;
+}
