@@ -1,20 +1,25 @@
 // profile.js — Profile tab
-import API from '../../api.js';
+import API from '../../api.mock.js';
 import { updateElement, changeDisplay } from '../utility/reconfig.js';
-import { formatNumber, formatPrice } from '../utility/shared.js';
+import { formatNumber } from '../utility/shared.js';
 import StateView from '../uiTools/stateView.js';
 
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 const UPLOAD_PRESET = 'seller_logo_unsigned';
 
-let userData = null;
-let isLoading = false;
+const state = {
+  user: null,
+  isDesigner: false,
+  collections: [],
+  trail: [],
+  network: { designers: [], studios: [] },
+  signals: null,
+  exhibition: [],
+};
 
-// Avatar state machinery
 let avatarState = null;
-// Tracks an in-flight upload so retry can resume without re-uploading the file.
-// { file: File|null, uploadedUrl: string|null }
 let pendingAvatarUpload = null;
+let isLoading = false;
 
 /* ============================================================
    INIT
@@ -26,23 +31,31 @@ export async function initProfileTab() {
   try {
     setupAvatarStateView();
     setupAvatarUpload();
-    setupDesignerActions();
+    setupActions();
     setupTabSwitchers();
 
     if (!window.bootstrap?.userData) {
       window.bootstrap = await loadUserData();
     }
-    userData = window.bootstrap.userData;
+    state.user = window.bootstrap.userData;
+    state.isDesigner = state.user.role === 'designer';
 
-    renderHeader();
-    renderStats();
-		console.log('user or designer');
-    renderDesignerBlock();
+    renderIdentity();
+    renderAvatar();
+    renderRoleSections();
 
-    await Promise.allSettled([
-      loadSavedPreview(),
-      loadRecentlyViewed(),
-    ]);
+    const dash = await loadProfileDash();
+    state.collections = dash.collections || [];
+    state.trail = dash.trail || [];
+    state.network = dash.network || { designers: [], studios: [] };
+    state.signals = dash.signals || null;
+    state.exhibition = dash.exhibition || [];
+
+    renderCollections();
+    renderTrail();
+    renderNetwork();
+    renderSignals();
+    renderExhibition();
   } finally {
     isLoading = false;
   }
@@ -51,105 +64,269 @@ export async function initProfileTab() {
 async function loadUserData() {
   try {
     return await API.getUserDash();
-  } catch (error) {
-    console.error('Failed to load user data:', error);
+  } catch (err) {
+    console.error('Failed to load user data:', err);
     return {
       userData: {
-        username: 'Shopper',
-        email: 'shopper@example.com',
+        username: 'Explorer',
+        email: 'explorer@example.com',
         role: 'buyer',
         avatar_url: '',
+        statement: '',
       },
     };
   }
 }
 
-/* ============================================================
-   HEADER
-   ============================================================ */
-function renderHeader() {
-  const isDesigner = userData.role === 'seller';
+async function loadProfileDash() {
+  if (typeof API.getProfileDash !== 'function') return {};
+  try {
+    return await API.getProfileDash();
+  } catch (err) {
+    console.warn('Profile dash unavailable:', err.message);
+    return {};
+  }
+}
 
-  updateElement('profile-display-name', userData.username || 'Shopper');
-  updateElement('profile-display-email', userData.email || '');
+/* ============================================================
+   IDENTITY
+   ============================================================ */
+function renderIdentity() {
+  const u = state.user;
+  const isDesigner = state.isDesigner;
+
+  updateElement('profile-display-name', u.username || 'Explorer');
+
+  const statementEl = document.getElementById('profile-statement');
+  if (statementEl) {
+    const fallback = isDesigner
+      ? 'Working from a studio. Add a statement to tell visitors what you make.'
+      : 'Collect what you love. Add a statement to tell designers what you look for.';
+    statementEl.textContent = u.statement || fallback;
+    statementEl.classList.toggle('is-placeholder', !u.statement);
+  }
 
   const rolePill = document.getElementById('profile-role');
   if (rolePill) {
-    rolePill.textContent = isDesigner ? 'Designer' : 'Shopper';
+    rolePill.textContent = isDesigner ? 'designer' : 'explorer';
     rolePill.classList.toggle('designer', isDesigner);
   }
 
-  renderAvatar();
-
-  // Public profile link — designers only
-  if (isDesigner && userData.sellerProfile?.id) {
+  if (isDesigner && u.designerProfile?.id) {
     const linkEl = document.getElementById('profile-link-btn');
     if (linkEl) {
-      linkEl.href = `/portfolio.html?id=${userData.sellerProfile.id}`;
+      linkEl.href = `/portfolio.html?id=${u.designerProfile.id}`;
       linkEl.hidden = false;
     }
   }
 }
 
 /* ============================================================
-   AVATAR — StateView + upload pipeline
+   ROLE SECTIONS — show/hide based on mode
+   ============================================================ */
+function renderRoleSections() {
+  const isDesigner = state.isDesigner;
+
+  toggle('profile-collections-section', !isDesigner);
+  toggle('profile-trail-section',       !isDesigner);
+  toggle('profile-network-section',     !isDesigner);
+
+  toggle('profile-signals-section',      isDesigner);
+  toggle('profile-exhibition-section',   isDesigner);
+  toggle('profile-tools',                isDesigner);
+
+  if (!isDesigner) changeDisplay('profile-link-btn', 'none');
+}
+
+function toggle(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.hidden = !show;
+}
+
+/* ============================================================
+   COLLECTIONS / EXHIBITION — same component, two labels
+   ============================================================ */
+function renderCollections() {
+  renderCollectionGrid('collections-grid', 'collections-empty', state.collections);
+}
+
+function renderExhibition() {
+  renderCollectionGrid('exhibition-grid', 'exhibition-empty', state.exhibition);
+}
+
+function renderCollectionGrid(gridId, emptyId, items) {
+  const grid = document.getElementById(gridId);
+  const empty = document.getElementById(emptyId);
+  if (!grid || !empty) return;
+
+  if (!items.length) {
+    grid.hidden = true;
+    empty.hidden = false;
+    return;
+  }
+
+  grid.hidden = false;
+  empty.hidden = true;
+
+  grid.innerHTML = items.map(c => `
+    <a class="collection-card" href="#collection-${c.id}">
+      <div class="collection-cover"
+           style="background-image:url('${escapeAttr(c.cover_image || '')}')">
+        ${!c.cover_image ? '<i class="fas fa-layer-group"></i>' : ''}
+      </div>
+      <div class="collection-body">
+        <div class="collection-name">${escapeHtml(c.name)}</div>
+        <div class="collection-count">
+          ${c.piece_count} ${c.piece_count === 1 ? 'piece' : 'pieces'}
+        </div>
+      </div>
+    </a>
+  `).join('');
+}
+
+/* ============================================================
+   TRAIL — chronological activity
+   ============================================================ */
+function renderTrail() {
+  const list = document.getElementById('trail-list');
+  if (!list) return;
+
+  if (!state.trail.length) {
+    const section = document.getElementById('profile-trail-section');
+    if (section) section.hidden = true;
+    return;
+  }
+
+  list.innerHTML = state.trail.map(t => {
+    const icon = TRAIL_ICONS[t.type] || 'fa-circle';
+    const verb = TRAIL_VERBS[t.type] || 'interacted with';
+    return `
+      <li class="trail-item">
+        <span class="trail-icon"><i class="fas ${icon}"></i></span>
+        <span class="trail-text">
+          You ${verb} <strong>${escapeHtml(t.target_name || '')}</strong>
+        </span>
+        <span class="trail-time">${relativeTime(t.timestamp)}</span>
+      </li>
+    `;
+  }).join('');
+}
+
+const TRAIL_ICONS = {
+  saved:    'fa-bookmark',
+  visited:  'fa-eye',
+  followed: 'fa-user-plus',
+  inquiry:  'fa-comment',
+};
+const TRAIL_VERBS = {
+  saved:    'saved',
+  visited:  'visited',
+  followed: 'started following',
+  inquiry:  'reached out to',
+};
+
+/* ============================================================
+   NETWORK — designers + studios followed
+   ============================================================ */
+function renderNetwork() {
+  const strip = document.getElementById('network-strip');
+  const section = document.getElementById('profile-network-section');
+  if (!strip || !section) return;
+
+  const items = [
+    ...state.network.designers.map(d => ({
+      id: d.id, name: d.name, avatar: d.avatar_url, kind: 'designer',
+    })),
+    ...state.network.studios.map(s => ({
+      id: s.id, name: s.name, avatar: s.cover_url, kind: 'studio',
+    })),
+  ];
+
+  if (!items.length) {
+    section.hidden = true;
+    return;
+  }
+
+  section.hidden = false;
+  strip.innerHTML = items.map(i => `
+    <a class="network-chip" href="#${i.kind}-${i.id}">
+      <span class="network-avatar"
+            style="background-image:url('${escapeAttr(i.avatar || '')}')"></span>
+      <span class="network-name">${escapeHtml(i.name)}</span>
+    </a>
+  `).join('');
+}
+
+/* ============================================================
+   SIGNALS — designer feedback, not vanity metrics
+   ============================================================ */
+function renderSignals() {
+  const list = document.getElementById('signals-list');
+  if (!list || !state.signals) return;
+
+  const s = state.signals;
+  const signals = [
+    { icon: 'fa-bookmark', value: s.savedThisWeek,     label: 'saves this week' },
+    { icon: 'fa-comment',  value: s.inquiriesThisMonth, label: 'inquiries this month' },
+    { icon: 'fa-star',     text: s.topCollection,       label: 'top collection' },
+  ];
+
+  list.innerHTML = signals.map(sig => {
+    const display = sig.text
+      ? `<span class="signal-text">${escapeHtml(sig.text)}</span>`
+      : `<span class="signal-value">${formatNumber(sig.value ?? 0)}</span>`;
+    return `
+      <div class="signal-card">
+        <span class="signal-icon"><i class="fas ${sig.icon}"></i></span>
+        ${display}
+        <span class="signal-label">${escapeHtml(sig.label)}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ============================================================
+   AVATAR — unchanged from your working version
    ============================================================ */
 function setupAvatarStateView() {
   const container = document.getElementById('avatar-state-container');
   if (!container) return;
 
-	avatarState = new StateView(container, {
-  selectors: {
-    loading: '[data-state="loading"]',
-    data:    '[data-state="data"]',
-    empty:   '[data-state="empty"]',
-    error:   '[data-state="error"]',
-  },
-  displays: {
-    loading: 'flex',
-    data:    'flex',
-    empty:   'flex',
-    error:   'flex',
-  },
-});
+  avatarState = new StateView(container, {
+    selectors: {
+      loading: '[data-state="loading"]',
+      data:    '[data-state="data"]',
+      empty:   '[data-state="empty"]',
+      error:   '[data-state="error"]',
+    },
+    displays: {
+      loading: 'flex', data: 'flex', empty: 'flex', error: 'flex',
+    },
+  });
 
-  // Broken image URL handler — this decides 'error' when we're NOT mid-upload.
   const img = document.getElementById('profile-avatar-img');
   if (img) {
     img.addEventListener('error', () => {
-      if (!pendingAvatarUpload) {
-        avatarState.show('error');
-      }
+      if (!pendingAvatarUpload) avatarState.show('error');
     });
   }
 }
 
 function renderAvatar() {
   if (!avatarState) return;
-
-  const url = userData?.avatar_url;
+  const url = state.user?.avatar_url;
   const img = document.getElementById('profile-avatar-img');
 
-  if (!url) {
-    avatarState.show('empty');
-    return;
-  }
+  if (!url) { avatarState.show('empty'); return; }
+  if (!img) { avatarState.show('data'); return; }
 
-  if (!img) {
-    avatarState.show('data');
-    return;
-  }
-
-  // Wait for the image to actually decode before showing 'data'.
   const onLoad = () => {
     img.removeEventListener('load', onLoad);
     avatarState.show('data');
   };
   img.addEventListener('load', onLoad, { once: true });
-
   img.src = url;
 
-  // Cached images may fire 'load' before the listener attaches — nudge it.
   if (img.complete && img.naturalWidth > 0) {
     img.removeEventListener('load', onLoad);
     avatarState.show('data');
@@ -163,26 +340,20 @@ function setupAvatarUpload() {
   const retryBtn = document.getElementById('avatar-retry-btn');
 
   const openPicker = () => input?.click();
-
   triggerBtn?.addEventListener('click', openPicker);
   editBtn?.addEventListener('click', openPicker);
 
   input?.addEventListener('change', function () {
     const file = this.files?.[0];
     if (!file) return;
-
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file (JPG, PNG, etc.)');
-      this.value = '';
-      return;
+      this.value = ''; return;
     }
     if (file.size > MAX_AVATAR_SIZE) {
       alert('Image must be under 2MB');
-      this.value = '';
-      return;
+      this.value = ''; return;
     }
-
-    // Fresh upload — clear any previous pending state
     pendingAvatarUpload = { file, uploadedUrl: null };
     runAvatarUpload();
     this.value = '';
@@ -190,20 +361,12 @@ function setupAvatarUpload() {
 
   retryBtn?.addEventListener('click', () => {
     if (!pendingAvatarUpload) return;
-    // If we already have the URL, skip upload and just retry the profile PATCH.
     runAvatarUpload();
   });
 }
 
-/**
- * Upload pipeline. Resumes from wherever pendingAvatarUpload is:
- *   - file set, no uploadedUrl  → upload to Cloudinary, then PATCH profile
- *   - file set, uploadedUrl set → skip Cloudinary, just PATCH profile
- *   - nothing usable            → reset, restore previous visual (no error)
- */
 async function runAvatarUpload() {
   if (!pendingAvatarUpload) return;
-
   if (!pendingAvatarUpload.file && !pendingAvatarUpload.uploadedUrl) {
     pendingAvatarUpload = null;
     renderAvatar();
@@ -211,13 +374,12 @@ async function runAvatarUpload() {
   }
 
   const img = document.getElementById('profile-avatar-img');
-  const previousSrc = img?.src || userData?.avatar_url || '';
+  const previousSrc = img?.src || state.user?.avatar_url || '';
   const previousState = avatarState?.currentState || 'empty';
 
   avatarState.show('loading');
 
   try {
-    // Stage 1: upload to Cloudinary (skipped on resume)
     if (!pendingAvatarUpload.uploadedUrl) {
       const formData = new FormData();
       formData.append('file', pendingAvatarUpload.file);
@@ -226,205 +388,55 @@ async function runAvatarUpload() {
 
       const resp = await API.uploadImage(formData);
       pendingAvatarUpload.uploadedUrl = resp.secure_url;
-
-      // Optimistic preview
       if (img) img.src = pendingAvatarUpload.uploadedUrl;
     }
 
-    // Stage 2: persist to profile (retry resumes here)
     await API.updateProfile({ avatar_url: pendingAvatarUpload.uploadedUrl });
 
-    // Commit to userData + bootstrap
-    if (userData) userData.avatar_url = pendingAvatarUpload.uploadedUrl;
+    if (state.user) state.user.avatar_url = pendingAvatarUpload.uploadedUrl;
     if (window.bootstrap?.userData) {
       window.bootstrap.userData.avatar_url = pendingAvatarUpload.uploadedUrl;
     }
 
     pendingAvatarUpload = null;
     avatarState.show('data');
-
   } catch (err) {
     console.error('Avatar upload failed:', err);
-
-    // Revert optimistic src
     if (img) img.src = previousSrc;
-
-    // No URL → nothing to retry against. Restore visual, no error state.
     if (!pendingAvatarUpload?.uploadedUrl) {
       pendingAvatarUpload = null;
       avatarState.show(previousState === 'loading' ? 'empty' : previousState);
       return;
     }
-
-    // We have the URL — the PATCH failed. Error state + retry resumes Stage 2.
     avatarState.show('error');
   }
 }
 
 /* ============================================================
-   STATS ROW
+   ACTIONS
    ============================================================ */
-function renderStats() {
-  const row = document.getElementById('profile-stats-row');
-  if (!row) return;
+function setupActions() {
+  document.getElementById('new-collection-btn')
+    ?.addEventListener('click', () => {
+      // wire to a modal later; for now, no-op so the button isn't dead
+    });
 
-  const stats = [
-    { label: 'Saved',     value: userData.favoritesCount ?? userData.savedCount ?? 0 },
-    { label: 'Following', value: userData.followingsCount ?? userData.followingCount ?? 0 },
-  ];
+  document.getElementById('manage-exhibition-btn')
+    ?.addEventListener('click', () => {
+      window.location.href = 'designerDashboard.html';
+    });
 
-  row.innerHTML = stats.map(s => `
-    <div class="profile-stat-item">
-      <span class="profile-stat-value">${formatNumber(s.value)}</span>
-      <span class="profile-stat-label">${s.label}</span>
-    </div>
-  `).join('');
+  document.getElementById('profile-add-piece-btn')
+    ?.addEventListener('click', () => {
+      window.location.href = 'upload.html';
+    });
+
+  document.getElementById('profile-studio-settings-btn')
+    ?.addEventListener('click', () => {
+      window.location.href = 'useraccountsettings.html';
+    });
 }
 
-/* ============================================================
-   DESIGNER BLOCK
-   ============================================================ */
-function renderDesignerBlock() {
-	if (userData.role !== 'seller') {
-		changeDisplay('profile-link-btn', 'none')
-		return;
-	};
-
-	const block = document.getElementById('profile-designer-block');
-	if (!block) return;
-	block.hidden = false;
-
-	renderDesignerStats();
-}
-
-function renderDesignerStats() {
-  const row = document.getElementById('designer-stats-row');
-  if (!row) return;
-
-  const s = userData.stats || {};
-
-  // Reuses .stat-card from components.css
-  const cards = [
-    {
-      icon: 'fa-eye',
-      label: 'Total Views',
-      value: s.totalProductViews ?? null,
-    },
-    {
-      icon: 'fa-heart',
-      label: 'Saved this week',
-      value: s.savedThisWeek ?? null,
-    },
-    {
-      icon: 'fa-user-friends',
-      label: 'Followers',
-      value: s.followers ?? userData.followersCount ?? null,
-    },
-  ];
-
-  row.innerHTML = cards.map(c => `
-    <div class="stat-card">
-      <div class="stat-icon"><i class="fas ${c.icon}"></i></div>
-      <div class="stat-details">
-        <h3 class="stat-title">${c.label}</h3>
-        <p class="stat-value ${c.value === null ? 'muted' : ''}">
-          ${c.value === null ? '—' : formatNumber(c.value)}
-        </p>
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ============================================================
-   SAVED PREVIEW — uses .products-grid + .product-card
-   ============================================================ */
-async function loadSavedPreview() {
-  const grid = document.getElementById('profile-favourites-grid');
-  const empty = document.getElementById('empty-favourites-preview');
-  if (!grid || !empty) return;
-
-  try {
-    const favourites = await API.getFavourites();
-    const items = Array.isArray(favourites) ? favourites.slice(0, 4) : [];
-
-    if (items.length === 0) {
-      grid.innerHTML = '';
-      grid.hidden = true;
-      empty.hidden = false;
-      return;
-    }
-
-    grid.hidden = false;
-    empty.hidden = true;
-
-    grid.innerHTML = items.map(item => `
-      <a href="product.html?id=${item.id}" class="product-card">
-        <div class="product-image">
-          ${item.cover_image
-            ? `<img src="${item.cover_image}" alt="${escapeHtml(item.name)}" loading="lazy">`
-            : `<i class="fas fa-box"></i>`}
-        </div>
-        <div class="product-details">
-          <h3 class="product-title">${escapeHtml(item.name)}</h3>
-          <p class="product-price">₦${formatPrice(item.price)}</p>
-        </div>
-      </a>
-    `).join('');
-  } catch (error) {
-    console.warn('Saved preview unavailable:', error.message);
-    grid.hidden = true;
-    empty.hidden = false;
-  }
-}
-
-/* ============================================================
-   RECENTLY VIEWED
-   ============================================================ */
-async function loadRecentlyViewed() {
-  const section = document.getElementById('profile-recently-viewed');
-  const scroll = document.getElementById('recently-viewed-scroll');
-  if (!section || !scroll) return;
-
-  if (typeof API.getRecentlyViewed !== 'function') return;
-
-  try {
-    const items = await API.getRecentlyViewed();
-    if (!Array.isArray(items) || items.length === 0) return;
-
-    scroll.innerHTML = items.slice(0, 6).map(item => `
-      <a href="product.html?id=${item.id}" class="recently-viewed-item">
-        <div class="recently-viewed-image">
-          ${item.cover_image
-            ? `<img src="${item.cover_image}" alt="${escapeHtml(item.name)}" loading="lazy">`
-            : `<i class="fas fa-box"></i>`}
-        </div>
-        <div class="recently-viewed-details">
-          <div class="recently-viewed-title">${escapeHtml(item.name)}</div>
-          <div class="recently-viewed-price">₦${formatPrice(item.price)}</div>
-        </div>
-      </a>
-    `).join('');
-
-    section.hidden = false;
-  } catch (error) {
-    console.warn('Recently viewed unavailable:', error.message);
-  }
-}
-
-/* ============================================================
-   DESIGNER ACTIONS
-   ============================================================ */
-function setupDesignerActions() {
-  document.getElementById('profile-add-product-btn')
-    ?.addEventListener('click', () => { window.location.href = 'upload.html'; });
-
-  document.getElementById('manage-products-profile-btn')
-    ?.addEventListener('click', () => { window.location.href = 'designerDashboard.html'; });
-}
-
-/* ============================================================
-   TAB SWITCHERS
-   ============================================================ */
 function setupTabSwitchers() {
   document.querySelectorAll('[data-switch-tab]').forEach(el => {
     el.addEventListener('click', (e) => {
@@ -439,12 +451,27 @@ function setupTabSwitchers() {
 /* ============================================================
    HELPERS
    ============================================================ */
+function relativeTime(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  const h = Math.floor(diff / 3600000);
+  if (h < 1) return 'just now';
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d === 1) return 'yesterday';
+  if (d < 7) return `${d}d ago`;
+  const w = Math.floor(d / 7);
+  return `${w}w ago`;
+}
+
 function escapeHtml(str) {
   if (str == null) return '';
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function escapeAttr(str) {
+  return escapeHtml(str).replace(/`/g, '&#96;');
 }

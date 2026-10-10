@@ -471,6 +471,333 @@
   color: var(--secondary);
 }
 
+/* ===== Identity ===== */
+.profile-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  margin-top: 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  animation: profileFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-identity-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-statement {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.profile-statement.is-placeholder {
+  color: var(--hash);
+  font-style: italic;
+}
+
+.profile-identity-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profile-public-link {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.profile-public-link i { font-size: 10px; }
+
+/* ===== Section action (quiet button in header) ===== */
+.profile-section-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--hash);
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+}
+.profile-section-action:hover { color: var(--text); }
+.profile-section-action i { font-size: 10px; }
+
+/* ===== Collections grid ===== */
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.collection-card {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--white);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.collection-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.collection-cover {
+  aspect-ratio: 4 / 3;
+  background-color: var(--background);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border);
+  font-size: 24px;
+}
+
+.collection-body { padding: 10px 12px; }
+
+.collection-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collection-count {
+  font-size: 11px;
+  color: var(--hash);
+}
+
+/* ===== Trail ===== */
+.trail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.trail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.trail-item:last-child { border-bottom: none; }
+
+.trail-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--background);
+  color: var(--hash);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.trail-text {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.trail-text strong { font-weight: 600; }
+
+.trail-time {
+  font-size: 11px;
+  color: var(--hash);
+  flex-shrink: 0;
+}
+
+/* ===== Network strip ===== */
+.network-strip {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+  margin: 0 -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.network-strip::-webkit-scrollbar { display: none; }
+
+.network-chip {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 60px;
+}
+
+.network-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--background);
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--border);
+}
+
+.network-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* ===== Signals ===== */
+.signals-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 600px) {
+  .signals-list { grid-template-columns: repeat(3, 1fr); }
+}
+
+.signal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: var(--background);
+  border-radius: var(--radius-md);
+}
+
+.signal-icon {
+  color: var(--hash);
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.signal-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.signal-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.signal-label {
+  font-size: 11px;
+  color: var(--hash);
+}
+
+/* ===== Tools ===== */
+.profile-tools {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.profile-tool-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.profile-tool-btn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.profile-tool-btn i { font-size: 11px; }
+
+/* ===== Empty states ===== */
+.profile-empty {
+  text-align: center;
+  padding: 28px 16px;
+  color: var(--hash);
+}
+.profile-empty i {
+  font-size: 28px;
+  color: var(--border);
+  margin-bottom: 10px;
+  display: block;
+}
+.profile-empty p {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.profile-empty-hint {
+  font-size: 12px;
+  color: var(--hash);
+}
+
+/* ===== Footer ===== */
+.profile-footer {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  padding: 24px 16px 8px;
+}
+
+.profile-footer-link {
+  font-size: 12px;
+  color: var(--hash);
+  text-decoration: none;
+}
+.profile-footer-link:hover { color: var(--text); }
+
 /* ---------- Responsive ---------- */
 @media (min-width: 768px) {
   .profile-avatar-large { width: 88px; height: 88px; }

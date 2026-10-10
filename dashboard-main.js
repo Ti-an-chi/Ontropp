@@ -30,7 +30,7 @@ API.setAuth({
   username: 'Amara',
   email: 'amara@ontropp.test',
   avatar_url: 'https://i.pravatar.cc/150?img=47',
-  role: 'seller',
+  role: 'explorer',
 });
 
 // Signed-in as a designer with followed studios (unlocks the

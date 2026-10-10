@@ -244,7 +244,7 @@ const API = {
       userData: signedIn
         ? {
             ..._clone(_state.auth),
-            sellerProfile: _state.auth.role === 'seller' ? {
+            designerProfile: _state.auth.role === 'designer' ? {
               id: 's1',
               shop_name: 'Atelier Nneka',
               logo_url: 'https://i.pravatar.cc/150?img=47',
@@ -317,66 +317,119 @@ const API = {
 
 	/* -------------- Saved ------------- */
 
-async getSaved() {
-  await _sleep(_state.latency);
-  if (!_state.auth) throw new Error('Not signed in');
-  const ids = _state.saved[_state.auth.id] || [];
-  // Newest first: reverse the insertion order.
-  const pieces = ids
-    .map(id => PIECES.find(p => p.id === id))
-    .filter(Boolean)
-    .reverse();
-
-  // Derive the studios the user has saved from.
-  const studioMap = new Map();
-  for (const p of pieces) {
-    if (!studioMap.has(p.studio_id)) {
-      studioMap.set(p.studio_id, {
-        id: p.studio_id,
-        name: p.studio_name,
-        avatar_url: p.studio_avatar_url,
-        piece_count: 0,
-      });
+  async getSaved() {
+    await _sleep(_state.latency);
+    if (!_state.auth) throw new Error('Not signed in');
+    const ids = _state.saved[_state.auth.id] || [];
+    // Newest first: reverse the insertion order.
+    const pieces = ids
+      .map(id => PIECES.find(p => p.id === id))
+      .filter(Boolean)
+      .reverse();
+  
+    // Derive the studios the user has saved from.
+    const studioMap = new Map();
+    for (const p of pieces) {
+      if (!studioMap.has(p.studio_id)) {
+        studioMap.set(p.studio_id, {
+          id: p.studio_id,
+          name: p.studio_name,
+          avatar_url: p.studio_avatar_url,
+          piece_count: 0,
+        });
+      }
+      studioMap.get(p.studio_id).piece_count += 1;
     }
-    studioMap.get(p.studio_id).piece_count += 1;
-  }
+  
+    return {
+      pieces: _clone(pieces),
+      studios: [...studioMap.values()],
+      total: pieces.length,
+      lastAddedAt: _state.savedLastAddedAt,
+    };
+  },
+  
+  async removeSaved(pieceId) {
+    await _sleep(_state.latency);
+    if (!_state.auth) throw new Error('Not signed in');
+    const ids = _state.saved[_state.auth.id] ||= [];
+    const i = ids.indexOf(pieceId);
+    if (i >= 0) ids.splice(i, 1);
+    return { ok: true, savedIds: [...ids] };
+  },
+  
+  async removeManySaved(pieceIds) {
+    await _sleep(_state.latency);
+    if (!_state.auth) throw new Error('Not signed in');
+    const ids = _state.saved[_state.auth.id] ||= [];
+    const toRemove = new Set(pieceIds);
+    const next = ids.filter(id => !toRemove.has(id));
+    _state.saved[_state.auth.id] = next;
+    return { ok: true, savedIds: [...next], removed: pieceIds.length };
+  },
+  
+  async toggleSaved(pieceId) {
+    await _sleep(_state.latency);
+    if (!_state.auth) throw new Error('Not signed in');
+    const ids = _state.saved[_state.auth.id] ||= [];
+    const i = ids.indexOf(pieceId);
+    if (i >= 0) { ids.splice(i, 1); return { saved: false }; }
+    ids.push(pieceId);
+    return { saved: true };
+  },
 
-  return {
-    pieces: _clone(pieces),
-    studios: [...studioMap.values()],
-    total: pieces.length,
-    lastAddedAt: _state.savedLastAddedAt,
-  };
-},
-
-async removeSaved(pieceId) {
-  await _sleep(_state.latency);
-  if (!_state.auth) throw new Error('Not signed in');
-  const ids = _state.saved[_state.auth.id] ||= [];
-  const i = ids.indexOf(pieceId);
-  if (i >= 0) ids.splice(i, 1);
-  return { ok: true, savedIds: [...ids] };
-},
-
-async removeManySaved(pieceIds) {
-  await _sleep(_state.latency);
-  if (!_state.auth) throw new Error('Not signed in');
-  const ids = _state.saved[_state.auth.id] ||= [];
-  const toRemove = new Set(pieceIds);
-  const next = ids.filter(id => !toRemove.has(id));
-  _state.saved[_state.auth.id] = next;
-  return { ok: true, savedIds: [...next], removed: pieceIds.length };
-},
-
-async toggleSaved(pieceId) {
-  await _sleep(_state.latency);
-  if (!_state.auth) throw new Error('Not signed in');
-  const ids = _state.saved[_state.auth.id] ||= [];
-  const i = ids.indexOf(pieceId);
-  if (i >= 0) { ids.splice(i, 1); return { saved: false }; }
-  ids.push(pieceId);
-  return { saved: true };
-},
+  /* ---------- Profile dash — one call, everything the tab needs ---------- */
+  async getProfileDash() {
+    await _sleep(_state.latency);
+    const auth = _state.auth;
+    if (!auth) {
+      return { collections: [], trail: [], network: { designers: [], studios: [] } };
+    }
+  
+    const isDesigner = auth.role === 'designer';
+    const savedIds = _state.saved[auth.id] || [];
+    const savedPieces = savedIds
+      .map(id => PIECES.find(p => p.id === id))
+      .filter(Boolean);
+  
+    const collections = [
+      { id: 'c1', name: 'Lagos textiles',  cover_image: savedPieces[0]?.image_url, piece_count: 4 },
+      { id: 'c2', name: 'Gifts for Ada',   cover_image: savedPieces[1]?.image_url, piece_count: 3 },
+      { id: 'c3', name: 'Studio ceramics', cover_image: savedPieces[2]?.image_url, piece_count: 2 },
+    ];
+  
+    const trail = [
+      { type: 'saved',    target_name: savedPieces[0]?.title || 'a piece',
+        target_id: savedPieces[0]?.id, timestamp: Date.now() - 2 * 3600 * 1000 },
+      { type: 'visited',  target_name: 'Atelier Nneka', target_id: 's1',
+        timestamp: Date.now() - 26 * 3600 * 1000 },
+      { type: 'followed', target_name: 'Form Studio', target_id: 's2',
+        timestamp: Date.now() - 3 * 24 * 3600 * 1000 },
+    ];
+  
+    const network = {
+      designers: DESIGNERS.slice(0, 4),
+      studios:   STUDIOS.slice(0, 3),
+    };
+  
+    if (isDesigner) {
+      return {
+        collections, trail, network,
+        signals: {
+          savedThisWeek: 12,
+          inquiriesThisMonth: 3,
+          topCollection: 'The Indigo Series',
+        },
+        exhibition: [
+          { id: 'e1', name: 'The Indigo Series', cover_image: PIECES[0].image_url, piece_count: 6 },
+          { id: 'e2', name: 'Spring 2026',       cover_image: PIECES[4].image_url, piece_count: 8 },
+          { id: 'e3', name: 'Experiments',       cover_image: PIECES[6].image_url, piece_count: 3 },
+        ],
+      };
+    }
+  
+    return { collections, trail, network };
+  },
 
   /* ---------- Detail stubs ---------- */
   async getPiece(id) {
