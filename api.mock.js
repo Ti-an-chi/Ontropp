@@ -386,7 +386,7 @@ const API = {
       return { collections: [], trail: [], network: { designers: [], studios: [] } };
     }
   
-    const isDesigner = auth.role === 'seller';
+    const isDesigner = auth.role === 'designer';
     const savedIds = _state.saved[auth.id] || [];
     const savedPieces = savedIds
       .map(id => PIECES.find(p => p.id === id))

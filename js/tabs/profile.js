@@ -35,7 +35,7 @@ export async function initProfileTab() {
       window.bootstrap = await loadUserData();
     }
     state.user = window.bootstrap.userData;
-    state.isDesigner = state.user.role === 'seller';
+    state.isDesigner = state.user.role === 'designer';
 
     setupAvatar();
     setupActions();
@@ -102,10 +102,10 @@ function renderIdentity() {
     rolePill.classList.toggle('designer', isDesigner);
   }
 
-  if (isDesigner && u.sellerProfile?.id) {
+  if (isDesigner && u.designerProfile?.id) {
     const linkEl = document.getElementById('profile-link-btn');
     if (linkEl) {
-      linkEl.href = `/portfolio.html?id=${u.sellerProfile.id}`;
+      linkEl.href = `/portfolio.html?id=${u.designerProfile.id}`;
       linkEl.hidden = false;
     }
   } else {
@@ -277,7 +277,7 @@ function handleAccountAction(action) {
     'edit':             () => avatar?.openPicker(),
     'studio-settings':  () => { window.location.href = 'useraccountsettings.html'; },
     'account-settings': () => { window.location.href = 'useraccountsettings.html'; },
-    'open-studio':      () => { window.location.href = 'setup-seller.html'; },
+    'open-studio':      () => { window.location.href = 'designerDashboard.html'; },
     'help':             () => { window.location.href = 'help.html'; },
     'logout':           () => { window.location.href = 'login.html'; },
   };
