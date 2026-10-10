@@ -1,3 +1,2 @@
-# Ontropp
-# A market place for people that can't afford Shopify 
-# someone helllppp
+# ONTROPP
+# A platform for fashion creatives
