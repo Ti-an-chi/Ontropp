@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONTROPP — Seller Dashboard</title>
+<style>
+:root{--bg:#f7f9fd;--surface:#fff;--light:#f2f5fb;--border:#e6ebf3;--text:#142747;--muted:#71819f;--brand:#3182ce;--green:#2ecc71;--green-dark:#27ae60;--purple:#8b5cf6;--amber:#f59e0b;--radius:15px;--shadow:0 4px 18px rgba(32,67,115,.055)}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+button,input{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer}a{text-decoration:none;color:inherit}
+.topbar{height:68px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:24px;padding:0 3%;position:sticky;top:0;z-index:10}
+.logo{font-size:25px;font-weight:850;letter-spacing:-1px;color:var(--brand);white-space:nowrap}
+.search{height:40px;max-width:440px;flex:1;margin:auto;display:flex;align-items:center;gap:10px;background:var(--light);border:1px solid #edf0f7;border-radius:24px;padding:0 15px;color:var(--muted)}
+.search input{width:100%;border:0;outline:0;background:transparent;color:var(--text);font-size:12px}.top-actions{display:flex;align-items:center;gap:12px}
+.icon-btn{width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--border);background:white;border-radius:50%;color:var(--muted);position:relative}
+.badge{position:absolute;right:-2px;top:-4px;background:#ef4444;color:white;border-radius:20px;font-size:10px;min-width:16px;height:16px;display:grid;place-items:center}
+.user-avatar{width:36px;height:36px;object-fit:cover;border-radius:50%}
+main{max-width:1500px;margin:auto;padding:24px 26px 30px}
+.welcome-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(270px,.8fr);gap:18px}
+.hero{min-height:218px;border-radius:var(--radius);padding:27px;display:flex;align-items:center;overflow:hidden;position:relative;background:linear-gradient(115deg,#f0f6ff,#f7f6ff 62%,#f0fff7);border:1px solid #edf1fa}
+.hero-copy{position:relative;z-index:1;max-width:58%}.eyebrow{font-size:12px;font-weight:650;margin-bottom:12px}
+.hero h1{font-size:clamp(25px,2.4vw,34px);line-height:1.16;letter-spacing:-.8px;max-width:470px;margin-bottom:12px}
+.hero p{color:#647797;line-height:1.65;max-width:430px;font-size:13px}
+.hero-art{position:absolute;right:0;bottom:0;width:48%;height:100%;display:flex;align-items:center;justify-content:center}
+.hero-art img{height:90%;width:100%;object-fit:cover;object-position:center;border-radius:90px 0 0 0;mask-image:linear-gradient(to left,black 68%,transparent 100%);opacity:.92}
+.live-pill{position:absolute;right:7%;bottom:26%;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700}
+.live-dot{width:10px;height:10px;background:var(--green);border-radius:50%;box-shadow:0 0 0 4px #dff8e9}
+.quick-card,.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.quick-card{padding:18px}.panel-title{font-size:15px;font-weight:750;display:flex;align-items:center;gap:9px}
+.quick-list{display:grid;gap:9px;margin-top:14px}
+.quick-action{width:100%;display:flex;align-items:center;gap:12px;text-align:left;text-decoration:none;padding:12px;border:1px solid #e8edf5;border-radius:10px;background:var(--light);color:var(--text);font-weight:600}
+.quick-action .symbol{font-size:18px;color:var(--brand);width:23px;text-align:center}
+.quick-action.primary{background:var(--green);color:white;border-color:var(--green)}.quick-action.primary .symbol{color:white}
+.quick-action:hover{filter:brightness(.98);transform:translateY(-1px)}.quick-action .count{margin-left:auto;background:var(--amber);color:white;border-radius:50%;font-size:10px;width:18px;height:18px;display:grid;place-items:center}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:20px 0}
+.stat{display:flex;align-items:center;gap:14px;min-height:106px;padding:17px;background:white;border:1px solid var(--border);border-radius:13px;box-shadow:var(--shadow)}
+.stat-icon{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;font-size:19px}
+.blue{background:#e2f0ff;color:var(--brand)}.purple{background:#f0e7ff;color:var(--purple)}.green{background:#e1faeb;color:var(--green-dark)}.amber{background:#fff2d8;color:var(--amber)}
+.stat-label{color:var(--muted);font-size:12px;margin-bottom:6px}.stat-value{font-size:23px;font-weight:800;letter-spacing:-.5px}.trend{font-size:11px;color:var(--green-dark);margin-top:5px}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(290px,.8fr);gap:18px;align-items:start}
+.panel{padding:17px;margin-bottom:18px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.panel-subtitle{color:var(--muted);font-size:11px;margin-top:5px}.link-btn{color:var(--brand);font-weight:650;font-size:12px;white-space:nowrap}
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.product{min-width:0;border:1px solid #edf0f6;border-radius:12px;padding:7px;box-shadow:0 2px 9px rgba(30,60,100,.04);background:white}
+.product[hidden]{display:none}.product-image-wrap{position:relative}.product img{display:block;width:100%;aspect-ratio:1.08/1;object-fit:cover;border-radius:8px;background:var(--light)}
+.status{position:absolute;left:6px;bottom:6px;border-radius:20px;padding:4px 8px;font-size:10px;font-weight:750;background:var(--green);color:white}.status.draft{background:#fff0d2;color:#b77908}
+.product-meta{padding:8px 2px 1px}.product-name{font-size:11px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px}.product-price{color:#435777}.more{width:25px;height:25px;border:1px solid var(--border);background:white;border-radius:8px;color:var(--muted)}
+.activity-list{display:grid}.activity{display:flex;gap:12px;padding:13px 0;border-top:1px solid #edf0f5}.activity:first-child{border-top:0;padding-top:0}
+.activity-icon{width:35px;height:35px;flex:0 0 35px;border-radius:50%;display:grid;place-items:center;font-size:16px}
+.activity-text{min-width:0;flex:1;font-size:11px;line-height:1.55}.activity-text strong{display:block;font-size:12px;margin-bottom:2px}.activity-text span{color:var(--muted)}
+.activity time{font-size:10px;color:#94a3b8;white-space:nowrap;padding-top:3px}
+.tips{background:linear-gradient(115deg,#f6f3ff,#f8faff);border-color:#eee8ff;position:relative;overflow:hidden}
+.tips-top{display:flex;align-items:center;gap:11px}.tip-bulb{width:38px;height:38px;border-radius:50%;background:#eadfff;color:var(--purple);display:grid;place-items:center;font-size:19px}
+.tip-chips{display:flex;flex-wrap:wrap;gap:8px;margin:17px 0}.tip-chip{background:white;border:1px solid #ececf5;border-radius:8px;padding:8px 10px;font-size:10px;color:#536580}.tip-chip b{color:var(--green-dark);margin-right:5px}
+.outline-btn{background:white;border:1px solid #c4a8ff;color:var(--purple);border-radius:22px;padding:9px 16px;font-size:11px;font-weight:700}
+.store-ready{background:linear-gradient(120deg,#effcf5,#f7fffb);border-color:#dff6e9}.store-ready-inner{display:flex;align-items:flex-start;gap:12px}
+.store-icon{width:37px;height:37px;border-radius:50%;display:grid;place-items:center;background:#d9f8e6;color:var(--green-dark);font-size:18px;flex:0 0 37px}
+.store-ready p{font-size:11px;line-height:1.6;color:var(--muted);margin:7px 0 13px}.add-wide{display:block;text-align:center;text-decoration:none;width:100%;padding:11px 15px;background:var(--green);color:white;border:0;border-radius:9px;font-weight:750;font-size:12px}
+.empty{display:none;text-align:center;padding:35px 15px;color:var(--muted);border:1px dashed var(--border);border-radius:12px}.empty strong{display:block;color:var(--text);margin:9px 0 5px}
+footer{border-top:1px solid var(--border);padding:18px 0 0;display:flex;justify-content:space-between;gap:12px;color:#91a0b8;font-size:10px}footer strong{font-size:16px;color:var(--brand);margin-right:12px}
+.mobile-nav{display:none}
+@media(max-width:1050px){main{padding:18px}.welcome-layout,.content-grid{grid-template-columns:1fr}.quick-card{order:2}.quick-list{grid-template-columns:repeat(4,minmax(0,1fr))}.quick-action{justify-content:center;flex-direction:column;text-align:center;gap:7px;font-size:11px}.stats{gap:10px}.stat{padding:13px;gap:10px}.stat-icon{width:36px;height:36px;flex-basis:36px}}
+@media(max-width:650px){
+ body{padding-bottom:68px}.topbar{height:108px;padding:8px 15px;gap:8px;flex-wrap:wrap;align-content:center;row-gap:8px}.logo{font-size:21px}
+ .search{order:3;max-width:none;flex-basis:100%;height:36px;margin:0}.top-actions{margin-left:auto}.user-avatar{width:32px;height:32px}
+ main{padding:12px 12px 24px}.welcome-layout{gap:12px}.hero{min-height:180px;padding:18px}.hero-copy{max-width:72%}
+ .eyebrow{font-size:10px;margin-bottom:8px}.hero h1{font-size:23px;max-width:270px;margin-bottom:8px}.hero p{font-size:11px;line-height:1.5;max-width:260px}
+ .hero-art{width:39%;opacity:.85}.hero-art img{height:74%;border-radius:35px 0 0 0}.live-pill{right:5%;bottom:12%;font-size:9px;padding:7px}.live-dot{width:7px;height:7px;box-shadow:0 0 0 3px #dff8e9}
+ .quick-card{padding:13px}.quick-list{gap:7px}.quick-action{min-height:78px;padding:8px 4px;font-size:10px;border-radius:9px}.quick-action .symbol{font-size:17px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.stat{min-height:86px;padding:11px;gap:9px}.stat-icon{width:34px;height:34px;flex-basis:34px;font-size:16px}
+ .stat-label{font-size:10px;margin-bottom:4px}.stat-value{font-size:20px}.trend{font-size:9px}.content-grid{gap:0}
+ .panel{padding:13px;margin-bottom:12px}.panel-title{font-size:14px}.panel-subtitle{font-size:10px}.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .product{padding:6px}.product img{aspect-ratio:1.12/1}.product-name{font-size:11px}.activity time{font-size:9px}
+ .tips{padding:13px}.tip-chips{gap:6px;margin:13px 0}.tip-chip{font-size:9px;padding:7px}.store-ready{margin-bottom:12px}
+ footer{font-size:9px;flex-wrap:wrap;padding-bottom:8px}.mobile-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 6px max(8px,env(safe-area-inset-bottom))}
+ .mobile-nav a{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;color:#8b9ab2;padding:3px}.mobile-nav a.active{color:var(--brand);font-weight:750}.mobile-nav span{font-size:19px;line-height:1}
+}
+@media(max-width:360px){.hero h1{font-size:20px}.hero-copy{max-width:76%}.hero-art{width:34%}.stat{gap:7px;padding:9px}.stat-icon{width:30px;height:30px;flex-basis:30px}.stat-value{font-size:18px}.quick-action{font-size:9px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="#">ONTROPP.</a>
+  <label class="search"><input id="searchInput" type="search" " aria-label="Search products"></label>
+  <div class="top-actions">
+    <button class="icon-btn" aria-label="Notifications">♧<span class="badge">3</span></button>
+    <img class="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Profile">
+    <button class="icon-btn" aria-label="Account menu" style="border:0">⌄</button>
+  </div>
+</header>
+<main>
+  <section class="welcome-layout">
+    <div class="hero">
+      <div class="hero-copy"><div class="eyebrow">👋 Good morning, Frederick 👏</div><h1>Manage your products,<br>grow your brand</h1><p>Keep track of your performance, manage your listings, and connect with your audience — all in one place.</p></div>
+      <div class="hero-art"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80" alt="Fashion collection"><div class="live-pill"><span class="live-dot"></span><span>Your store is live<small style="display:block;color:var(--muted);font-weight:400;margin-top:3px">Keep going, you're doing great!</small></span></div></div>
+    </div>
+    <section class="quick-card"><h2 class="panel-title">Quick Actions</h2><div class="quick-list">
+      <a class="quick-action primary" href="upload.html"><span class="symbol">＋</span>Add Product</a>
+      <a class="quick-action" href="designerDashboard.html"><span class="symbol">▤</span>Manage Listings</a>
+      <a class="quick-action" href="newprofilepage.html"><span class="symbol">▣</span>View public profile</a>
+    </div></section>
+  </section>
+  <section class="stats" aria-label="Store statistics">
+    <article class="stat"><span class="stat-icon blue">⬡</span><div><div class="stat-label">Total Products</div><div class="stat-value">12</div><div class="trend">↗ +2 this week</div></div></article>
+    <article class="stat"><span class="stat-icon purple">◉</span><div><div class="stat-label">Page Views</div><div class="stat-value">1,248</div><div class="trend">↗ +18% this week</div></div></article>
+    <article class="stat"><span class="stat-icon green">🧡</span><div><div class="stat-label">Total Likes</div><div class="stat-value">34</div><div class="trend">↗ +12% this week</div></div></article>
+    <article class="stat"><span class="stat-icon amber">♟</span><div><div class="stat-label">Followers</div><div class="stat-value">256</div><div class="trend">↗ +8% this week</div></div></article>
+  </section>
+  <section class="content-grid">
+    <div>
+      <section class="panel">
+        <div class="panel-head"><div><h2 class="panel-title"><span class="stat-icon blue" style="width:34px;height:34px;flex-basis:34px">⬡</span>Your Products</h2><p class="panel-subtitle">Manage, edit and update your products.</p></div><a href="#" class="link-btn">View all →</a></div>
+        <div class="products" id="products">
+          <article class="product" data-name="Green Bloom Dress" data-category="dress"><div class="product-image-wrap"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=500&q=80" alt="Green Bloom Dress"><span class="status">Published</span></div><div class="product-meta"><div class="product-name">Green Bloom Dress</div><div class="product-bottom"><button class="more" aria-label="More options for Green Bloom Dress"></button></div></div></article>
+          <article class="product" data-name="Leather Handbag" data-category="bag"><div class="product-image-wrap"><img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=500&q=80" alt="Leather Handbag"><span class="status draft">◆ Draft</span></div><div class="product-meta"><div class="product-name">Leather Handbag</div><div class="product-bottom"><button class="more" aria-label="More options for Leather Handbag"></button></div></div></article>
+          <article class="product" data-name="Tailored Suit" data-category="clothing"><div class="product-image-wrap"><img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=500&q=80" alt="Tailored Suit"><span class="status">Published</span></div><div class="product-meta"><div class="product-name">Tailored Suit</div><div class="product-bottom"><button class="more" aria-label="More options for Tailored Suit"></button></div></div></article>
+          <article class="product" data-name="Statement Earrings" data-category="jewellery"><div class="product-image-wrap"><img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=500&q=80" alt="Statement Earrings"><span class="status">Published</span></div><div class="product-meta"><div class="product-name">Statement Earrings</div><div class="product-bottom"><button class="more" aria-label="More options for Statement Earrings"></button></div></div></article>
+        </div>
+        <div class="empty" id="noResults"><span style="font-size:26px">⌕</span><strong>No products found</strong>Try another product name or category.</div>
+      </section>
+      <section class="panel tips"><div class="tips-top"><span class="tip-bulb">♧</span><div><h2 class="panel-title">Tips for better sales</h2><p class="panel-subtitle">A few quick tips to help you grow your store.</p></div></div>
+        <div class="tip-chips"><span class="tip-chip"><b>✓</b>Use high-quality product images</span><span class="tip-chip"><b>✓</b>Add detailed descriptions</span><span class="tip-chip"><b>✓</b>Set competitive prices</span><span class="tip-chip"><b>✓</b>Share on social media</span></div><button class="outline-btn">View more tips →</button>
+      </section>
+    </div>
+    <aside>
+      <section class="panel"><div class="panel-head"><h2 class="panel-title"><span class="stat-icon" style="background:#eef2fa;color:#71819f;width:34px;height:34px;flex-basis:34px">◷</span>Recent Activity</h2><a href="#" class="link-btn">View all →</a></div>
+        <div class="activity-list">
+          <div class="activity"><span class="activity-icon purple">◩</span><div class="activity-text"><strong>Product published</strong><span>Green Bloom Dress</span></div><time>5h ago</time></div>
+          <div class="activity"><span class="activity-icon blue">▣</span><div class="activity-text"><strong>New inquiry</strong><span>From Ayo: “Love your designs!”</span></div><time>7h ago</time></div>
+          <div class="activity"><span class="activity-icon amber">✎</span><div class="activity-text"><strong>Product updated</strong><span>Leather Handbag</span></div><time>1d ago</time></div>
+        </div>
+      </section>
+      <section class="panel store-ready"><div class="store-ready-inner"><span class="store-icon">▣</span><div><h2 class="panel-title">Your store is ready!</h2><p>Start adding products and reach more customers today.</p><a class="add-wide" href="upload.html">＋ Add Product</a></div></div></section>
+    </aside>
+  </section>
+  <footer><div><strong>ONTROPP.</strong><span>Create · Sell · Grow</span></div><span>© 2025 Ontropp. All rights reserved.</span></footer>
+</main>
+</html>
