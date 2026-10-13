@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#fafbfd;--surface:#fff;--surface-light:#f3f4f8;--border:#e8e8e8;--text:#1a202c;--muted:#6b7280;--brand:#3182ce;--accent:#2ecc71;--accent-light:#58d68d;--success:#27ae60}
+:root{--bg:#fafbfd;--surface:#fff;--surface-light:#f3f4f8;--border:#e8e8e8;--text:#1a202c;--muted:#6b7280;--brand:#3182ce;--accent:#2ecc71;--ink:#111111;--accent-light:#58d68d;--success:#27ae60}
 html{scroll-behavior:smooth}
 body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 button,a{font:inherit}
@@ -48,6 +48,7 @@ a{color:inherit;text-decoration:none}
 .btn-message:hover{background:var(--accent-light)}
 .btn-follow{min-width:150px}
 .btn-follow:hover{border-color:var(--accent);color:var(--accent)}
+.btn-follow.active{background:var(--ink); color: #fff; border: none;}
 .btn-share{width:46px;padding:0}
 
 /* Stats & tabs */
@@ -145,7 +146,7 @@ a{color:inherit;text-decoration:none}
 
         <div class="actions">
           <button class="btn btn-message">💬 Message</button>
-          <button class="btn btn-follow">＋ Follow</button>
+          <button class="btn btn-follow" id="btn-follow">＋ Follow</button>
           <button class="btn btn-share" aria-label="Share profile"><i class="fas fa-share-alt"></i></button>
         </div>
       </div>
@@ -161,41 +162,68 @@ a{color:inherit;text-decoration:none}
     </div>
 
     <nav class="tabs" id="profile-tab">
-      <button class="tab active">Work</button>
-      <button class="tab">Services</button>
-      <button class="tab">About</button>
-      <button class="tab">Reviews</button>
+      <button class="tab active" data-tab="work">Work</button>
+      <button class="tab" data-tab="services">Services</button>
+      <button class="tab" data-tab="about">About</button>
+      <button class="tab" data-tab="reviews">Reviews</button>
     </nav>
-
-    <section class="work-section">
-      <div class="section-heading"><h2>Work</h2><span>12 pieces</span></div>
-
-      <div class="masonry">
-        <article class="work-card"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=85" alt="Fashion design"><span class="likes">♡ 142</span></article>
-        <article class="work-card"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=85" alt="Fashion portrait"><span class="likes">♡ 98</span></article>
-        <article class="work-card"><img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=800&q=85" alt="Black fashion collection"><span class="likes">♡ 76</span></article>
-        <article class="work-card"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=85" alt="Fashion editorial"><span class="likes">♡ 53</span></article>
-        <article class="work-card"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=85" alt="Designer clothing"><span class="likes">♡ 64</span></article>
-        <article class="work-card"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85" alt="Green fashion design"><span class="likes">♡ 89</span></article>
-        <article class="work-card"><img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=800&q=85" alt="Red fashion collection"><span class="likes">♡ 41</span></article>
-        <article class="work-card"><img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=85" alt="Fashion portrait"><span class="likes">♡ 72</span></article>
+    
+    <section class="portfolio-container">
+      <div class="portfolio-section work" id="portfolio-work">
+        <div class="section-heading"><h2>Work</h2></div>
+    
+        <div class="masonry">
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=85" alt="Fashion design"><span class="likes">♡ 142</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=85" alt="Fashion portrait"><span class="likes">♡ 98</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=800&q=85" alt="Black fashion collection"><span class="likes">♡ 76</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=85" alt="Fashion editorial"><span class="likes">♡ 53</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=85" alt="Designer clothing"><span class="likes">♡ 64</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85" alt="Green fashion design"><span class="likes">♡ 89</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=800&q=85" alt="Red fashion collection"><span class="likes">♡ 41</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=85" alt="Fashion portrait"><span class="likes">♡ 72</span></article>
+        </div>
       </div>
+    
+      <div class="portfolio-section services" id="portfolio-services"></div>
+      <div class="portfolio-section about" id="portfolio-about"></div>
+      <div class="portfolio-section reviews" id="portfolio-reviews"></div>
     </section>
   </section>
 </main>
-
+  
   <script>
     const tabs = document.getElementById("profile-tab");
-    tabs.addEventListener('click', (e) => {
-      if (!e.target.classList.contains('tab')) return;
+    const sections = document.querySelectorAll(".portfolio-section");
+    const followBtn = document.getElementById("btn-follow");
+  
+    // Hide all sections except work on load
+    sections.forEach(section => {
+      if (!section.classList.contains("work")) {
+        section.style.display = "none";
+      }
+    });
+  
+    tabs.addEventListener("click", (e) => {
+      const clickedTab = e.target.closest(".tab");
+      if (!clickedTab) return;
+  
+      // Update active tab
+      tabs.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+      clickedTab.classList.add("active");
+  
+      // Get the target name from data-tab
+      const target = clickedTab.dataset.tab;
+  
+      // Show only the matching section
+      sections.forEach(section => {
+        section.style.display = section.classList.contains(target) ? "block" : "none";
+      });
+    });
 
-      tabs.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-      })
-
-      e.target.classList.add('active')
+    followBtn.addEventListener('click', () => {
+      followBtn.classList.toggle('active')
+      followBtn.textContent = followBtn.classList.contains('active') ? "Following" : "＋ Follow";
     })
   </script>
-
 </body>
 </html>
