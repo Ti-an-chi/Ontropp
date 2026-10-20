@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>ONTROPP | Fashion Design</title>
-    <style>
-        /* ==================================
-   1. GLOBAL STYLES
-================================== */
 
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+          <style>
 * {
     margin: 0;
     padding: 0;
@@ -151,17 +150,27 @@ img {
     height: clamp(420px, 44vw, 680px);
     position: relative;
     overflow: hidden;
-    background: #8b7257;
+    background: #171717;   
 }
 
 .featured-image > img {
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center 35%;
+    object-fit: contain;   
+    object-position: center;
+}
+.featured-image {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    background: var(--cream);
 }
 
+.featured-image > img {
+    height: auto;
+    object-fit: unset;
+}
 .image-search {
     position: absolute;
     right: 28px;
@@ -707,10 +716,6 @@ img {
         max-height: 520px;
     }
 
-    .featured-image > img {
-        object-position: center 30%;
-    }
-
     .image-search {
         right: 15px;
         bottom: 15px;
@@ -923,7 +928,9 @@ img {
     }
 
 }
+
     </style>
+
 </head>
 
 <body>
@@ -957,8 +964,6 @@ img {
     </header>
 
     <main>
-
-        <!-- FEATURED FASHION IMAGE -->
 
         <section class="featured-section">
 
@@ -1017,6 +1022,7 @@ img {
                     </p>
 
                 </div>
+
 
                 <div class="designer-profile">
 
@@ -1092,7 +1098,6 @@ img {
                 </div>
 
             </div>
-        
 
 <div class="design-note">
 
@@ -1340,7 +1345,6 @@ img {
         </section>
 
     </main>
-
 
     <nav class="bottom-navigation" aria-label="Main navigation">
 
