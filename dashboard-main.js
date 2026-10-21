@@ -1,4 +1,4 @@
-import API from './api.mock.js';
+import API from './api.js';
 import { initHomeTab } from './js/tabs/home.js';
 import { initExploreTab } from './js/tabs/explore.js';
 import { initSavedTab } from './js/tabs/saved.js';
@@ -25,13 +25,13 @@ import { updateElement, changeDisplay } from './js/utility/reconfig.js';
 // });
 
 // Signed-in as a seller (adds the studio dashboard to Profile):
-API.setAuth({
+/* API.setAuth({
   id: 'u1',
   username: 'Amara',
   email: 'amara@ontropp.test',
   avatar_url: 'https://i.pravatar.cc/150?img=47',
   role: 'explorer',
-});
+}); */
 
 // Signed-in as a designer with followed studios (unlocks the
 // "Following only" and "Recently visited" explore filters):

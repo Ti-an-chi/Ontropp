@@ -34,12 +34,12 @@ export function escapeHtml(str) {
 export function TrendingSlide(item) {
   const a = el('a', 'trending-slide');
   a.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
-  a.style.backgroundImage = `url('${item.image_url || ''}')`;
+  a.style.backgroundImage = `url('${item.cover_image || ''}')`;
   a.style.backgroundPosition = item.focal_point || 'center';
   a.innerHTML = `
     <div class="trending-meta">
       <span class="trending-kicker">${escapeHtml(item.kicker || 'Featured piece')}</span>
-      <h3 class="trending-title">${escapeHtml(item.title || '')}</h3>
+      <h3 class="trending-title">${escapeHtml(item.name || '')}</h3>
       <div class="trending-by">
         <i class="fas fa-circle"></i> ${escapeHtml(item.studio_name || '')}
       </div>

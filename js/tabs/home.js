@@ -15,7 +15,8 @@
  *   - error UI (toast.js)
  */
 
-import API from '../../api.mock.js';           // swap to './api.js' when live
+import API from '../../api.js';
+import { PublicApi } from '../network/public.js';
 import { createStateView } from '../state.js';
 import { showToast } from '../toast.js';
 import { createCarousel } from '../carousel.js';
@@ -89,7 +90,7 @@ async function loadTrending() {
   sv.loading();
 
   try {
-    const items = window.bootstrap?.trending || (await API.getTrending(4));
+    const items = window.bootstrap?.trending ??  (await PublicApi.getTrendingPieces(4));
 
     if (!items || items.length === 0) {
       sv.empty();
