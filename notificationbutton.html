@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | ONTROPP</title>
+    <style>
+        :root {
+            --bg: #f7f9fc;
+            --brand: #3483E0;
+            --tint: #eaf2fd;
+            --text: #1d2733;
+            --muted: #6b7785;
+            --line: #e3e9f0;
+        }
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+
+        .topbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 24px; background: var(--brand); color: #fff;
+        }
+        .topbar h1 { margin: 0; font-size: 1.4rem; }
+        .acnt-btn {
+            width: 40px; height: 40px; border: none; border-radius: 50%;
+            background: #fff; color: var(--brand); font-size: 1.1rem; font-weight: bold; cursor: pointer;
+        }
+
+        main { max-width: 100%; margin: 0 auto; padding: 88px 16px 40px; }
+        .notifications { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+
+        .notifications > div {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px; border-bottom: 1px solid var(--line);
+        }
+        .notifications > div:last-child { border-bottom: none; }
+        .notifications > div.unread { background: var(--tint); border-left: 4px solid var(--brand); }
+
+        .btn {
+            width: 44px; height: 44px; border: 1px solid var(--line);
+            border-radius: 50%; background: #fff; font-size: 1.2rem;
+        }
+        h3 { margin: 0; font-size: 1rem; font-weight: 600; }
+        p { margin: 2px 0 0; font-size: 0.85rem; color: var(--muted); }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <h1>Notifications</h1>
+    <button class="acnt-btn">F</button>
+</header>
+<main>
+    <div class="notifications">
+        <div class="first-notification unread">
+            <button class="btn">👤</button>
+            <section><h3>Atelier started following you</h3><p>12 minutes ago</p></section>
+        </div>
+        <div class="second-notification unread">
+            <button class="btn">❤️</button>
+            <section><h3>You liked 3 designs</h3><p>2 hours ago</p></section>
+        </div>
+        <div class="third-notification">
+            <button class="btn">💾</button>
+            <section><h3>You saved 3 designs</h3><p>5 hours ago</p></section>
+        </div>
+        <div class="fourth-notification">
+            <button class="btn">👥</button>
+            <section><h3>You started following 3 designers</h3><p>Yesterday</p></section>
+        </div>
+        <div class="fifth-notification">
+            <button class="btn">📤</button>
+            <section><h3>You shared 4 designs</h3><p>2 days ago</p></section>
+        </div>
+    </div>
+</main>
+</body>
+</html>
