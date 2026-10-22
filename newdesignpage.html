@@ -225,9 +225,6 @@ img {
 }
 
 
-/* ==================================
-   5. DESCRIPTION
-================================== */
 
 .design-details {
     width: 100%;
@@ -375,121 +372,6 @@ img {
    8b. DESIGN NOTE
 ================================== */
 
-.design-note {
-    margin-top: 32px;
-    padding: 20px;
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-}
-
-.note-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.note-label i {
-    color: var(--blue);
-}
-
-.design-note textarea {
-    display: block;
-    width: 100%;
-    min-height: 96px;
-    padding: 14px 16px;
-    resize: vertical;
-
-    font: inherit;
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--text);
-
-    background: var(--cream);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    outline: none;
-}
-
-.design-note textarea:focus {
-    border-color: var(--blue);
-    background: var(--white);
-}
-
-.design-note textarea::placeholder {
-    color: var(--muted);
-}
-
-.note-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-top: 12px;
-}
-
-.note-count {
-    font-size: 12px;
-    color: var(--muted);
-}
-
-.note-save {
-    padding: 10px 24px;
-    border: none;
-    border-radius: 30px;
-    background: var(--blue);
-    color: var(--white);
-    font-size: 13px;
-}
-
-.note-save:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-
-.saved-note {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-}
-
-.saved-note[hidden] {
-    display: none;
-}
-
-.saved-note-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-}
-
-.saved-note-head h3 {
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.saved-note-actions {
-    display: flex;
-    gap: 16px;
-}
-
-.saved-note-actions button {
-    border: none;
-    background: transparent;
-    color: var(--blue);
-    font-size: 12px;
-}
-
-.saved-note p {
-    font-size: 13px;
-    line-height: 1.7;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
 .other-works {
     background: var(--cream);
     padding: 28px 5% 35px;
@@ -1099,37 +981,6 @@ img {
 
             </div>
 
-<div class="design-note">
-
-    <label for="designNote" class="note-label">
-        <i class="fa-regular fa-pen-to-square"></i>
-        Write a short note about your design
-    </label>
-
-    <textarea
-        id="designNote"
-        maxlength="300"
-        placeholder="Share the inspiration, the story behind it, or how it should be worn..."></textarea>
-
-    <div class="note-footer">
-        <span class="note-count" id="noteCount">0 / 300</span>
-        <button type="button" class="note-save" id="noteSave" disabled>
-            Save note
-        </button>
-    </div>
-
-    <div class="saved-note" id="savedNote" hidden>
-        <div class="saved-note-head">
-            <h3>Your note</h3>
-            <div class="saved-note-actions">
-                <button type="button" id="noteEdit">Edit</button>
-                <button type="button" id="noteDelete">Delete</button>
-            </div>
-        </div>
-        <p id="savedNoteText"></p>
-    </div>
-
-</div>
         </section>
 
         <section class="other-works">
