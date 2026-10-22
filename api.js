@@ -336,38 +336,53 @@ async getPiecesPaginated(page = 1, limit = 20, filters = {}) {
     return resp.data;
   },
 
+  // 1. HARD CODED CATEGORIES 
+  _hardcodedCategories() {
+    const IMG = (id, w = 800) =>
+      `https://images.unsplash.com/${id}?w=${w}&q=70&auto=format&fit=crop`;
+  
+    return [
+      { id: 'textiles',  name: 'Textiles',  icon: 'scroll', image_url: IMG('photo-1490481651871-ab68de25d43d') },
+      { id: 'tailoring', name: 'Tailoring', icon: 'cut',    image_url: IMG('photo-1516257984-b1b4d707412e') },
+      { id: 'jewellery', name: 'Jewellery', icon: 'gem',    image_url: IMG('photo-1523170335258-f5ed11844a49') },
+      { id: 'objects',   name: 'Objects',   icon: 'shapes', image_url: IMG('photo-1567016432779-094069958ea5') },
+      { id: 'beauty',    name: 'Beauty',    icon: 'spa',    image_url: IMG('photo-1522335789203-aabd1fc54bc9') },
+      { id: 'print',     name: 'Print',     icon: 'stamp',  image_url: IMG('photo-1606760227091-3dd870d97f1d') },
+    ];
+  },
+  
   // 2. CATEGORIES
   async getCategories() {
-	  const cacheKey = 'ontropp_categories';
-	  const cached = sessionStorage.getItem(cacheKey);
-	
-		if (cached) {
-		  try {
-		    const parsed = JSON.parse(cached);
-		
-		    if (Date.now() < parsed.expires_at) {
-		      return parsed.data;
-		    }
-		
-		    sessionStorage.removeItem(cacheKey);
-		  } catch {
-		    sessionStorage.removeItem(cacheKey);
-		  }
-		}
-	
-	  const response = await this._fetch('/categories');
-	  const data = response.data;
-	
-	  sessionStorage.setItem(
-	    cacheKey,
-	    JSON.stringify({
-	      data,
-	      expires_at: Date.now() + 15 * 60 * 1000
-	    })
-	  );
-	
-	  return data;
-	},
+    // ── Cache check (unchanged) ──────────────────────────────
+    const cacheKey = 'ontrop_categories';
+    const cached = sessionStorage.getItem(cacheKey);
+  
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (Date.now() < parsed.expires_at) {
+          return parsed.data;
+        }
+        sessionStorage.removeItem(cacheKey);
+      } catch {
+        sessionStorage.removeItem(cacheKey);
+      }
+    }
+  
+    // ── Hardcoded source (swap for _fetch later) ─────────────
+    const data = this._hardcodedCategories();
+  
+    // ── Cache write (unchanged) ──────────────────────────────
+    sessionStorage.setItem(
+      cacheKey,
+      JSON.stringify({
+        data,
+        expires_at: Date.now() + 15 * 60 * 1000,
+      })
+    );
+  
+    return data;
+  },
 
   async getProductsByCategory(category, page = 1, limit = 20) {
     // Using search param to filter by category
