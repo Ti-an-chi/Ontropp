@@ -41,7 +41,7 @@ export function TrendingSlide(item) {
       <span class="trending-kicker">${escapeHtml(item.kicker || 'Featured piece')}</span>
       <h3 class="trending-title">${escapeHtml(item.name || '')}</h3>
       <div class="trending-by">
-        <i class="fas fa-circle"></i> ${escapeHtml(item.studio_name || '')}
+        <i class="fas fa-circle"></i> ${escapeHtml(item.brand_name || '')}
       </div>
     </div>`;
   return a;
@@ -74,7 +74,7 @@ export function RecommendedCard(item) {
     <div class="rec-body">
       <div class="rec-title">${escapeHtml(item.title || item.name || '')}</div>
       <div class="rec-studio">
-        <i class="fas fa-circle"></i> ${escapeHtml(item.studio_name || item.seller_name || '')}
+        <i class="fas fa-circle"></i> ${escapeHtml(item.studio_name || item.seller.shop_name || '')}
       </div>
     </div>`;
   return a;
@@ -89,9 +89,9 @@ export function DesignerCard(designer, { onFollow } = {}) {
   const a = el('a', 'designer-card');
   a.href = `/designer.html?id=${encodeURIComponent(designer.id)}`;
   a.innerHTML = `
-    <div class="designer-avatar" style="background-image:url('${designer.avatar_url || ''}')"></div>
+    <div class="designer-avatar" style="background-image:url('${designer.logo_url || ''}')"></div>
     <div class="designer-name">${escapeHtml(designer.name || '')}</div>
-    <div class="designer-studio">${escapeHtml(designer.studio_name || '')}</div>
+    <div class="designer-studio">${escapeHtml(designer.shop_name || '')}</div>
     <span class="designer-follow" role="button" tabindex="0">
       <i class="fas fa-plus"></i> Follow
     </span>`;
@@ -138,7 +138,7 @@ export function StudioCard(studio) {
     <div class="studio-body">
       <div class="studio-name">${escapeHtml(studio.shop_name || '')}</div>
       <div class="studio-by">${escapeHtml(studio.designer.name || '')} · ${escapeHtml(studio.location || '')}</div>
-      ${studio.tag ? `<span class="studio-tag">${escapeHtml(studio.category.name)}</span>` : ''}
+      ${studio.category.name ? `<span class="studio-tag">${escapeHtml(studio.category.name)}</span>` : ''}
     </div>
     <i class="fas fa-chevron-right studio-arrow"></i>`;
   return a;

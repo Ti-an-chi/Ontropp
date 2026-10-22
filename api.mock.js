@@ -315,6 +315,40 @@ const API = {
     return paginate(items, page, limit);
   },
 
+  /* ---------- Piece Detail Support ---------- */
+  async getPiece(id) {
+    await _sleep(_state.latency);
+    const p = PIECES.find(x => x.id === id) || PIECES[0];
+    return _clone({ 
+      ...p, 
+      description: 'Handcrafted piece from a featured ONTROPP studio.',
+      collection: `${p.category.charAt(0).toUpperCase() + p.category.slice(1)} Collection`,
+      details: {
+        fabric: ['Silk Blend', 'Cotton', 'Linen', 'Wool'][Math.floor(Math.random() * 4)],
+        colour: ['Sky Blue', 'Royal Crimson', 'Emerald', 'Gold'][Math.floor(Math.random() * 4)],
+        fit: ['Structured', 'Relaxed', 'Tailored', 'Flowing'][Math.floor(Math.random() * 4)],
+      }
+    });
+  },
+  
+  async getDesigner(id) {
+    await _sleep(_state.latency);
+    const d = DESIGNERS.find(d => d.id === id) || DESIGNERS[0];
+    return _clone(d);
+  },
+  
+  async getStudio(id) {
+    await _sleep(_state.latency);
+    const s = STUDIOS.find(s => s.id === id) || STUDIOS[0];
+    return _clone(s);
+  },
+  
+  async getDesignerPieces(designerId, limit = 8) {
+    await _sleep(_state.latency);
+    const pieces = PIECES.filter(p => p.designer_id === designerId).slice(0, limit);
+    return _clone(pieces);
+  },
+
 	/* -------------- Saved ------------- */
 
   async getSaved() {

@@ -1,7 +1,7 @@
 // profile.js — Profile tab orchestrator.
 // Fetch, delegate to factories, mount. No markup strings for components.
 
-import API from '../../api.mock.js';
+import API from '../../api.js';
 import { updateElement, changeDisplay, setupTabSwitchers } from '../utility/reconfig.js';
 import { relativeTime, escapeHtml } from '../utility/shared.js';
 import {

@@ -3,194 +3,383 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Details - ONTROPP</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/css/CORE.css">
-  <link rel="stylesheet" href="/css/components.css">
-  <link rel="stylesheet" href="/css/pages/product.css">
+
+  <title>ONTROPP | Fashion Design</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="./css/CORE.css">
+  <link rel="stylesheet" href="./css/components/buttons.css">
+  <link rel="stylesheet" href="./css/components/cards.css">
+  <link rel="stylesheet" href="./css/pages/piece.css">
+
 </head>
+
 <body>
-  <!-- Header -->
-  <header class="dashboard-header">
-    <div class="header-container">
-      <a href="javascript:history.back()" class="icon-btn" aria-label="Go back">
-        <i class="fas fa-arrow-left"></i>
-      </a>
-      <div class="logo">ONTROPP.</div>
-      <div class="header-actions">
-        <button class="icon-btn" id="shareProductBtn" aria-label="Share">
-          <i class="fas fa-share-alt"></i>
-        </button>
-      </div>
+
+  <header class="header">
+
+    <a href="#" class="logo">ONTROPP</a>
+
+    <div class="header-icons">
+
+      <button type="button" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+      </button>
+
+      <img
+        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100"
+        alt="User profile"
+        class="profile-picture">
+
     </div>
+
   </header>
 
-  <!-- Main Content -->
-  <main class="product-container" id="productContainer">
-    <!-- Loading State -->
-    <div class="product-loading" id="loadingState">
-      <div class="loading-spinner"></div>
-      <p>Loading product details...</p>
-    </div>
+  <main>
 
-    <!-- Product Content (hidden initially) -->
-    <div class="product-content" id="productContent" style="display: none;">
-      
-      <!-- Image Gallery -->
-      <div class="product-gallery">
-        <div class="gallery-main" id="galleryMain">
-          <img src="" alt="Product image" id="mainImage">
-          <button class="gallery-prev" id="galleryPrev"><i class="fas fa-chevron-left"></i></button>
-          <button class="gallery-next" id="galleryNext"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="gallery-thumbnails" id="galleryThumbnails"></div>
+    <section class="featured-section">
+
+      <div class="featured-image">
+
+        <img
+          src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1800"
+          alt="Olive Majesty fashion design">
+
+        <button type="button" class="image-search" aria-label="Find similar designs">
+          <i class="fa-solid fa-camera"></i>
+        </button>
+
       </div>
 
-      <!-- Product Info -->
-      <div class="product-info-section">
-        <div class="product-header">
-          <h1 class="product-name" id="productName"></h1>
-          
-          <div class="product-meta-top">
-            <span class="product-category" id="productCategory"></span>
-            <span class="product-date" id="productDate"></span>
-          </div>
+      <div class="image-actions">
 
-          <div class="product-price-section">
-            <span class="product-price" id="productPrice"></span>
-            <span class="product-condition" id="productCondition"></span>
-          </div>
+        <div class="action-buttons">
 
-          <div class="product-stats">
-            <div class="stat-item">
-              <i class="fas fa-eye"></i>
-              <span id="productViews">0</span>
-            </div>
-            <div class="stat-item">
-              <i class="fas fa-heart"></i>
-              <span id="productLikes">0</span>
-            </div>
-            <div class="stat-item">
-              <i class="fas fa-calendar"></i>
-              <span id="productListed">Recently</span>
-            </div>
-          </div>
+          <button type="button" aria-label="Like design">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+
+          <button type="button" aria-label="Share design">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+          </button>
+
+          <button type="button" aria-label="More options">
+            <i class="fa-solid fa-ellipsis"></i>
+          </button>
+
+          <button type="button" class="btn btn-primary save-pill">Save</button>
+
         </div>
 
-        <!-- Action Buttons -->
-        <div class="product-actions-sticky">
-          <button class="action-btn-fav" id="favouriteBtn">
-            <i class="far fa-heart"></i>
-            <span>Save</span>
-          </button>
-          <button class="action-btn-wa" id="whatsappOrderBtn">
-            <i class="fab fa-whatsapp"></i>
-            <span>Order now</span>
+      </div>
+
+      <div class="design-details">
+
+        <div class="design-description">
+
+          <h1>Atelier Nneka</h1>
+
+          <p class="collection">
+            Hand-dyed silk wrap dress — "Earth &amp; Elegance" collection.
+          </p>
+
+          <p class="description">
+            This design blends traditional craftsmanship with modern silhouettes,
+            celebrating culture, strength and femininity.
+          </p>
+
+        </div>
+
+
+        <div class="designer-profile">
+
+          <div class="designer-info">
+
+            <div class="initials-avatar">AK</div>
+
+            <div class="designer-text">
+              <h3>AK Couture</h3>
+              <p>Fashion Designer</p>
+            </div>
+
+          </div>
+
+          <button type="button" class="follow-btn">Follow</button>
+
+        </div>
+
+        <div class="tags">
+          <span>Evening Wear</span>
+          <span>Couture</span>
+          <span>African Inspired</span>
+          <span>Bespoke</span>
+        </div>
+
+        <div class="garment-details">
+
+          <h2>More about this design</h2>
+
+          <div class="garment-grid">
+
+            <div class="garment-item">
+              <i class="fa-solid fa-layer-group"></i>
+              <div>
+                <span>Fabric</span>
+                <p>Silk Blend</p>
+              </div>
+            </div>
+
+            <div class="garment-item">
+              <i class="fa-solid fa-palette"></i>
+              <div>
+                <span>Colour</span>
+                <p>Sky Blue</p>
+              </div>
+            </div>
+
+            <div class="garment-item">
+              <i class="fa-solid fa-shirt"></i>
+              <div>
+                <span>Fit</span>
+                <p>Structured</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="design-note">
+
+        <label for="designNote" class="note-label">
+          <i class="fa-regular fa-pen-to-square"></i>
+          Write a short note about your design
+        </label>
+
+        <textarea
+          id="designNote"
+          maxlength="300"
+          placeholder="Share the inspiration, the story behind it, or how it should be worn..."></textarea>
+
+        <div class="note-footer">
+          <span class="note-count" id="noteCount">0 / 300</span>
+          <button type="button" class="btn btn-primary note-save" id="noteSave" disabled>
+            Save note
           </button>
         </div>
 
-        <!-- Seller Info Card
-        <div class="seller-card-compact" id="sellerCard">
-          <a href="portfolio.html?id=" class="seller-link" id="sellerLink">
-            <div class="seller-avatar-small">
-              <i class="fas fa-store"></i>
+        <div class="saved-note" id="savedNote" hidden>
+          <div class="saved-note-head">
+            <h3>Your note</h3>
+            <div class="saved-note-actions">
+              <button type="button" id="noteEdit">Edit</button>
+              <button type="button" id="noteDelete">Delete</button>
             </div>
-            <div class="seller-info">
-              <div class="seller-name-row">
-                <h3 id="sellerName">TechGadgets NG</h3>
-              </div>
-              <div class="seller-meta">
-                <span class="seller-rating">
-                  <i class="fas fa-star"></i> <span id="sellerRating">4.9</span>
-                </span>
-                <span class="dot">•</span>
-                <span class="seller-followers" id="sellerFollowers">61k followers</span>
-              </div>
-            </div>
+          </div>
+          <p id="savedNoteText"></p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="other-works">
+
+      <div class="gallery-heading">
+
+        <h2>More Works by AK Couture</h2>
+
+        <a href="#" class="view-all">
+          View All
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+      </div>
+
+      <div class="fashion-gallery">
+
+        <article class="fashion-card">
+          <a href="#" class="fashion-image">
+            <img src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600"
+                 alt="Royal Crimson evening wear" loading="lazy">
           </a>
-          <button class="follow-seller-btn" id="followSellerBtn">
-            <i class="fas fa-user-plus"></i> Follow
-          </button>
-        </div> -->
-
-        <!-- Product Description -->
-        <div class="product-description">
-          <h3>Description</h3>
-          <p id="productDescription"></p>
-        </div>
-
-        <!-- Specifications -->
-        <div class="product-specs">
-          <h3>Specifications</h3>
-          <div class="specs-grid" id="specsGrid"></div>
-        </div>
-        
-        <!-- Seller Section -->
-        <div class="seller-section">
-        
-          <h3 class="section-title">About the Seller</h3>
-        
-          <div class="seller-card-expanded">
-        
-            <div class="seller-top">
-              <div class="seller-avatar">
-                <i class="fas fa-store"></i>
-              </div>
-        
-              <div class="seller-main-info">
-                <div class="seller-name-row">
-                  <h3 id="sellerName">ONTROPP Gadgets</h3>
-                  <span class="verified-badge" id="sellerVerified">
-                    <i class="fas fa-check-circle"></i>
-                  </span>
-                </div>
-        
-                <div class="seller-location">
-                  <i class="fas fa-map-marker-alt"></i>
-                  <span id="sellerLocation">Lagos, Nigeria</span>
-                </div>
-              </div>
+          <div class="card-information">
+            <div>
+              <h3>Royal Crimson</h3>
+              <p>Evening Wear</p>
             </div>
-        
-            <div class="seller-stats-grid">
-              <div class="seller-stat">
-                <i class="fas fa-star"></i>
-                <span><strong id="sellerRating">4.8</strong> Rating</span>
-              </div>
-              
-              <div class="seller-stat">
-                <i class="fas fa-users"></i>
-                <span><strong id="sellerFollowers">1,290</strong> Followers</span>
-              </div>
-              
-              <div class="seller-stat">
-                <i class="fas fa-box"></i>
-                <span><strong id="sellerListings">23</strong> Listings</span>
-              </div>
-            </div>
-            
-            <div class="seller-actions">
-              <a href="#" id="sellerLink" class="btn-view-store">View Store</a>
-            </div>
-        
+            <button type="button" aria-label="Like Royal Crimson">
+              <i class="fa-regular fa-heart"></i>
+            </button>
           </div>
-        </div>
+        </article>
+
+        <article class="fashion-card">
+          <a href="#" class="fashion-image">
+            <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600"
+                 alt="The Grace bridal design" loading="lazy">
+          </a>
+          <div class="card-information">
+            <div>
+              <h3>The Grace</h3>
+              <p>Bridal / Couture</p>
+            </div>
+            <button type="button" aria-label="Like The Grace">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+          </div>
+        </article>
+
+        <article class="fashion-card">
+          <a href="#" class="fashion-image">
+            <img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=600"
+                 alt="Heritage Blue fashion" loading="lazy">
+          </a>
+          <div class="card-information">
+            <div>
+              <h3>Heritage Blue</h3>
+              <p>Traditional Inspired</p>
+            </div>
+            <button type="button" aria-label="Like Heritage Blue">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+          </div>
+        </article>
+
+        <article class="fashion-card">
+          <a href="#" class="fashion-image">
+            <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600"
+                 alt="Golden Roots fashion" loading="lazy">
+          </a>
+          <div class="card-information">
+            <div>
+              <h3>Golden Roots</h3>
+              <p>Couture</p>
+            </div>
+            <button type="button" aria-label="Like Golden Roots">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+          </div>
+        </article>
+
+        <article class="fashion-card">
+          <a href="#" class="fashion-image">
+            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600"
+                 alt="The Nomad resort wear" loading="lazy">
+          </a>
+          <div class="card-information">
+            <div>
+              <h3>The Nomad</h3>
+              <p>Resort Wear</p>
+            </div>
+            <button type="button" aria-label="Like The Nomad">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+          </div>
+        </article>
+
+        <article class="fashion-card">
+          <a href="#" class="fashion-image">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600"
+                 alt="Emerald Bloom fashion" loading="lazy">
+          </a>
+          <div class="card-information">
+            <div>
+              <h3>Emerald Bloom</h3>
+              <p>Evening Wear</p>
+            </div>
+            <button type="button" aria-label="Like Emerald Bloom">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+          </div>
+        </article>
+
+        <article class="fashion-card">
+          <a href="#" class="fashion-image">
+            <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=600"
+                 alt="Desert Muse fashion" loading="lazy">
+          </a>
+          <div class="card-information">
+            <div>
+              <h3>Desert Muse</h3>
+              <p>Ready to Wear</p>
+            </div>
+            <button type="button" aria-label="Like Desert Muse">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+          </div>
+        </article>
+
+        <article class="fashion-card">
+          <a href="#" class="fashion-image">
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600"
+                 alt="Amethyst evening wear" loading="lazy">
+          </a>
+          <div class="card-information">
+            <div>
+              <h3>Amethyst</h3>
+              <p>Evening Wear</p>
+            </div>
+            <button type="button" aria-label="Like Amethyst">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+          </div>
+        </article>
+
       </div>
-    </div>
+
+    </section>
+
   </main>
 
-  <!-- Footer -->
-  <footer class="dashboard-footer">
-    <div class="footer-content">
-      <p class="footer-text">© 2026 ONTROPP. All rights reserved.</p>
-      <div class="footer-links">
-        <a href="#" class="footer-link">Terms</a>
-        <a href="#" class="footer-link">Privacy</a>
-        <a href="#" class="footer-link">Help</a>
-      </div>
-    </div>
-  </footer>
+  <script>
+    (() => {
+      const ta       = document.getElementById('designNote');
+      const count    = document.getElementById('noteCount');
+      const saveBtn  = document.getElementById('noteSave');
+      const savedBox = document.getElementById('savedNote');
+      const savedTxt = document.getElementById('savedNoteText');
+      const editBtn  = document.getElementById('noteEdit');
+      const delBtn   = document.getElementById('noteDelete');
 
-  <script type="module" src="/js/pages/products.js"></script>
+      const MAX = 300;
+
+      const update = () => {
+        const len = ta.value.length;
+        count.textContent = `${len} / ${MAX}`;
+        saveBtn.disabled = len === 0;
+      };
+
+      ta.addEventListener('input', update);
+
+      saveBtn.addEventListener('click', () => {
+        const text = ta.value.trim();
+        if (!text) return;
+        savedTxt.textContent = text;
+        savedBox.hidden = false;
+        ta.value = '';
+        update();
+      });
+
+      editBtn.addEventListener('click', () => {
+        ta.value = savedTxt.textContent;
+        savedBox.hidden = true;
+        update();
+        ta.focus();
+      });
+
+      delBtn.addEventListener('click', () => {
+        savedTxt.textContent = '';
+        savedBox.hidden = true;
+        update();
+      });
+
+      update();
+    })();
+  </script>
+
 </body>
 </html>

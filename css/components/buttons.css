@@ -138,3 +138,8 @@
   align-items: center;
   gap: 6px;
 }
+
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

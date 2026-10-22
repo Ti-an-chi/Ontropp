@@ -1,0 +1,548 @@
+/* ============================================================
+   PIECE PAGE
+   Page-specific styles only. Buttons come from buttons.css.
+   Tokens come from CORE.css. Nothing is hardcoded.
+   ============================================================ */
+
+/* Fixed header takes space out of the scroll flow. */
+body {
+  padding-top: 66px;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 66px;
+  padding: 12px 4.5%;
+  background: var(--white);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+
+  z-index: 1000;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.header-icons button {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-size: 21px;
+}
+
+.profile-picture {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+/* ============================================================
+   FEATURED IMAGE — full width, natural aspect
+   ============================================================ */
+
+.featured-section {
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+}
+
+.featured-image {
+  position: relative;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.featured-image > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.image-search {
+  position: absolute;
+  right: 28px;
+  bottom: 25px;
+
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+
+  background: var(--ink);
+  color: var(--white);
+  font-size: 17px;
+}
+
+
+/* ============================================================
+   IMAGE ACTIONS
+   Icons are bespoke; Save reuses .btn.btn-primary.
+   ============================================================ */
+
+.image-actions {
+  padding: 20px 5% 10px;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.action-buttons > button:not(.btn) {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-pill {
+  margin-left: auto;
+  border-radius: var(--radius-pill);
+  padding: 12px 31px;
+}
+
+
+/* ============================================================
+   DESCRIPTION
+   ============================================================ */
+
+.design-details {
+  padding: 8px 5% 32px;
+}
+
+.design-description h1 {
+  font-size: 27px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.design-description p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.collection { margin-bottom: 4px; }
+.description { max-width: 850px; }
+
+
+/* ============================================================
+   DESIGNER PROFILE
+   ============================================================ */
+
+.designer-profile {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.designer-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.initials-avatar {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--white);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.designer-text h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.designer-text p {
+  font-size: 13px;
+  color: var(--hash);
+}
+
+/* Keeps the design's pill follow button while inheriting
+   .follow-btn behavior (ink fill, hover, following state). */
+.designer-profile .follow-btn {
+  border-radius: var(--radius-pill);
+  padding: 11px 25px;
+  font-size: 13px;
+}
+
+
+/* ============================================================
+   TAGS
+   ============================================================ */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 24px;
+}
+
+.tags span {
+  padding: 9px 16px;
+  background: var(--border);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+}
+
+
+/* ============================================================
+   GARMENT INFORMATION
+   ============================================================ */
+
+.garment-details {
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.garment-details h2 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 25px;
+}
+
+.garment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 25px;
+}
+
+.garment-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.garment-item > i {
+  font-size: 23px;
+  color: var(--primary);
+}
+
+.garment-item span,
+.garment-item p {
+  font-size: 12px;
+}
+
+.garment-item p {
+  color: var(--hash);
+  margin-top: 5px;
+}
+
+
+/* ============================================================
+   DESIGN NOTE
+   ============================================================ */
+
+.design-note {
+  margin: 0 5% 32px;
+  padding: 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+
+.note-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.note-label i { color: var(--primary); }
+
+.design-note textarea {
+  display: block;
+  width: 100%;
+  min-height: 96px;
+  padding: 14px 16px;
+  resize: vertical;
+
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  outline: none;
+}
+
+.design-note textarea:focus {
+  border-color: var(--primary);
+  background: var(--white);
+}
+
+.design-note textarea::placeholder { color: var(--hash); }
+
+.note-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 12px;
+}
+
+.note-count {
+  font-size: 12px;
+  color: var(--hash);
+}
+
+.note-save { border-radius: var(--radius-pill); }
+
+.saved-note {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.saved-note[hidden] { display: none; }
+
+.saved-note-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.saved-note-head h3 {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.saved-note-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.saved-note-actions button {
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font-size: 12px;
+}
+
+.saved-note p {
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+
+/* ============================================================
+   MORE WORKS
+   ============================================================ */
+
+.other-works {
+  background: var(--background);
+  padding: 28px 5% 35px;
+}
+
+.gallery-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.gallery-heading h2 {
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.view-all {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 17px;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-pill);
+  color: var(--primary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+
+/* ============================================================
+   FASHION GALLERY
+   ============================================================ */
+
+.fashion-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px 16px;
+}
+
+.fashion-card { min-width: 0; }
+
+.fashion-image {
+  display: block;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--border);
+}
+
+.fashion-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.fashion-card:hover .fashion-image img { transform: scale(1.04); }
+
+.card-information {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 3px 0;
+}
+
+.card-information h3 {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.card-information p {
+  font-size: 11px;
+  color: var(--hash);
+}
+
+.card-information button {
+  border: none;
+  background: transparent;
+  color: var(--hash);
+  font-size: 16px;
+  padding: 2px;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .header { gap: 18px; }
+  .logo { font-size: 21px; }
+
+  .fashion-gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fashion-image { height: 230px; }
+  .other-works { padding-left: 4%; padding-right: 4%; }
+}
+
+@media (max-width: 600px) {
+  .header { padding: 13px 5%; gap: 13px; min-height: 0; }
+  .logo { font-size: 20px; }
+  .header-icons { gap: 16px; }
+  .header-icons button { font-size: 18px; }
+  .profile-picture { width: 32px; height: 32px; }
+
+  .image-search {
+    right: 15px;
+    bottom: 15px;
+    width: 39px;
+    height: 39px;
+  }
+
+  .image-actions { padding: 17px 5% 8px; }
+  .action-buttons { gap: 22px; }
+  .action-buttons > button:not(.btn) { font-size: 19px; }
+  .save-pill { padding: 11px 25px; font-size: 13px; }
+
+  .design-details { padding: 8px 5% 25px; }
+  .design-description h1 { font-size: 24px; }
+  .design-description p { font-size: 13px; }
+
+  .designer-profile { margin-top: 18px; padding-top: 16px; }
+  .designer-info { gap: 11px; }
+  .initials-avatar { width: 44px; height: 44px; font-size: 16px; }
+  .designer-text h3 { font-size: 13px; }
+  .designer-text p { font-size: 11px; }
+  .designer-profile .follow-btn { padding: 10px 17px; font-size: 12px; }
+
+  .tags { gap: 8px; margin: 18px 0 22px; }
+  .tags span { padding: 8px 11px; font-size: 10px; }
+
+  .garment-details h2 { font-size: 15px; margin-bottom: 20px; }
+  .garment-grid { gap: 10px; }
+  .garment-item { flex-direction: column; align-items: flex-start; gap: 9px; }
+  .garment-item > i { font-size: 19px; }
+  .garment-item span,
+  .garment-item p { font-size: 11px; }
+
+  .design-note { margin: 0 5% 25px; padding: 16px; }
+
+  .other-works { padding: 25px 4% 30px; }
+  .gallery-heading { align-items: center; gap: 8px; }
+  .gallery-heading h2 { font-size: 17px; line-height: 1.4; }
+  .view-all { padding: 9px 11px; font-size: 11px; gap: 6px; }
+
+  .fashion-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 23px 12px; }
+  .fashion-image { height: 230px; border-radius: var(--radius-md); }
+  .card-information { padding-top: 9px; }
+  .card-information h3 { font-size: 11px; }
+  .card-information p { font-size: 10px; line-height: 1.5; }
+  .card-information button { font-size: 15px; }
+}
+
+@media (max-width: 380px) {
+  .logo { font-size: 18px; }
+  .action-buttons { gap: 18px; }
+  .save-pill { padding: 10px 19px; }
+  .gallery-heading h2 { font-size: 15px; }
+  .view-all { padding: 8px; }
+  .fashion-image { height: 185px; }
+  .garment-grid { gap: 7px; }
+}
+
+@media (min-width: 1400px) {
+  .fashion-gallery { gap: 30px 20px; }
+  .fashion-image { height: 280px; }
+}

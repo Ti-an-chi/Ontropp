@@ -91,6 +91,7 @@ async function loadTrending() {
 
   try {
     const items = window.bootstrap?.trending ??  (await PublicApi.getTrendingPieces(4));
+    console.log(items);
 
     if (!items || items.length === 0) {
       sv.empty();
@@ -137,7 +138,7 @@ async function loadCategories() {
   sv.loading();
 
   try {
-    const cats = (window.bootstrap?.categories || (await API.getCategories()) || []).slice(0, 5);
+    const cats = ((await API.getCategories()) || []).slice(0, 5);
 
     if (cats.length === 0) { sv.empty(); return; }
 
