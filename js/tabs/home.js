@@ -17,6 +17,7 @@
 
 import API from '../../api.js';
 import { PublicApi } from '../network/public.js';
+import { DesignerFollowButton } from '../utility/reconfig.js';
 import { createStateView } from '../state.js';
 import { showToast } from '../toast.js';
 import { createCarousel } from '../carousel.js';
@@ -221,7 +222,14 @@ async function loadDesigners() {
     const wrap = sv.dataEl.querySelector('.designer-scroll');
     wrap.innerHTML = '';
     designers.forEach(d => {
-      wrap.appendChild(DesignerCard(d, { onFollow: handleFollowClick }));
+      const card = DesignerCard(d);
+      const btn  = card.querySelector('.designer-follow');
+      new DesignerFollowButton(btn, d.id, !!d.is_following, {
+        onChange: (isFollowing) => {
+          d.is_following = isFollowing;
+        },
+      });
+      wrap.appendChild(card);
     });
 
     sv.data();
@@ -298,6 +306,7 @@ async function loadStudios() {
 
     const wrap = sv.dataEl.querySelector('.studio-grid');
     wrap.innerHTML = '';
+    console.log(studios[0]);
     studios.forEach(s => wrap.appendChild(StudioCard(s)));
 
     sv.data();

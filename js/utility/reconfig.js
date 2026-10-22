@@ -1,4 +1,5 @@
 // ========== reconfig.js ==========
+import API from "../../api.js";
 
 export function updateElement(id, value, property = 'textContent') {
   const el = document.getElementById(id);
@@ -70,7 +71,7 @@ export function showNotification(message, type= 'info', href = null){
   }, 3000);
 }
 
-// Navigate to seller profile
+// Navigate to designer profile
 export function viewSellerProfile(sellerId) {
   window.location.href = `/portfolio.html?id=${sellerId}`;
 }
@@ -116,7 +117,7 @@ export class DesignerFollowButton {
 
     if (this.isPending) return;
 
-    const user = window.UserSession?.getUserSession() || localStorage.getItem('ontrop_token');;
+    const user = window.UserSession?.getUserSession() || localStorage.getItem('ontrop_token');
     if (!user) {
       showNotification('Please sign in to follow designers', 'error', '/signup.html');
       return;
@@ -158,11 +159,11 @@ export class DesignerFollowButton {
   }
 
   async defaultFollow(shopId) {
-    return window.API.followSeller(shopId);
+    return API.followSeller(shopId);
   }
 
   async defaultUnfollow(shopId) {
-    return window.API.unfollowSeller(shopId);
+    return API.unfollowSeller(shopId);
   }
   
   static create(shopId, isFollowing, options = {}) {

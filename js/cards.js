@@ -85,29 +85,22 @@ export function RecommendedCard(item) {
    onFollow: (btnEl, designer) => void
    ------------------------------------------------------------- */
 
-export function DesignerCard(designer, { onFollow } = {}) {
-  const a = el('a', 'designer-card');
+export function DesignerCard(designer) {
+  const wrapper = el('div', 'designer-card');
+
+  const a = el('a', 'designer-link');
   a.href = `/designer.html?id=${encodeURIComponent(designer.id)}`;
   a.innerHTML = `
     <div class="designer-avatar" style="background-image:url('${designer.logo_url || ''}')"></div>
     <div class="designer-name">${escapeHtml(designer.name || '')}</div>
-    <div class="designer-studio">${escapeHtml(designer.shop_name || '')}</div>
-    <span class="designer-follow" role="button" tabindex="0">
-      <i class="fas fa-plus"></i> Follow
-    </span>`;
+    <div class="designer-studio">${escapeHtml(designer.shop_name || '')}</div>`;
 
-  const btn = a.querySelector('.designer-follow');
-  const handler = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onFollow?.(btn, designer);
-  };
-  btn.addEventListener('click', handler);
-  btn.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') handler(e);
-  });
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'designer-follow';
 
-  return a;
+  wrapper.append(a, btn);
+  return wrapper;
 }
 
 /* -------------------------------------------------------------
@@ -137,7 +130,7 @@ export function StudioCard(studio) {
     <div class="studio-thumb" style="background-image:url('${studio.avatar_url || ''}')"></div>
     <div class="studio-body">
       <div class="studio-name">${escapeHtml(studio.shop_name || '')}</div>
-      <div class="studio-by">${escapeHtml(studio.designer.name || '')} · ${escapeHtml(studio.location || '')}</div>
+      <div class="studio-by">${escapeHtml(studio.designer.username || '')} · ${escapeHtml(studio.location || '')}</div>
       ${studio.category.name ? `<span class="studio-tag">${escapeHtml(studio.category.name)}</span>` : ''}
     </div>
     <i class="fas fa-chevron-right studio-arrow"></i>`;
