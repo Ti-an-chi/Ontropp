@@ -14,7 +14,7 @@
  *   - error UI                        → toast
  */
 
-import API from '../../api.mock.js';
+import API from '../../api.js';
 import { showToast } from '../toast.js';
 import { PieceCard } from '../cards.js';
 import { createWall } from '../utility/wall.js';
@@ -54,10 +54,7 @@ let echoEl = null;
 
 export async function initExploreTab() {
   // 1. Viewer context (once)
-  const ctx = await API.getViewerContext();
-  viewer.signedIn = !!ctx.signedIn;
-  viewer.followedDesignerIds = new Set(ctx.followedDesignerIds || []);
-  viewer.recentlyVisitedStudioIds = new Set(ctx.recentlyVisitedStudioIds || []);
+  viewer.signedIn = !!localStorage.getItem('ontrop_token');
 
   // 2. Build the wall
   const mount = document.getElementById('explore-wall')?.parentElement
@@ -97,20 +94,12 @@ export async function initExploreTab() {
    ========================================================= */
 
 async function fetchPage({ page, pageSize }) {
-  // Server applies viewer refinements so pagination stays honest.
-  return API.getProducts({
-    page,
-    limit: pageSize,
+  return API.getPiecesPaginated(page, pageSize, {
     search: filters.search,
-    category: filters.category,
+    categories: filters.category,
     followingOnly: filters.following,
-    recentOnly: filters.recent,
-    viewerContext: viewer.signedIn
-      ? {
-          followedDesignerIds: [...viewer.followedDesignerIds],
-          recentlyVisitedStudioIds: [...viewer.recentlyVisitedStudioIds],
-        }
-      : null,
+   // recentOnly: filters.recent,
+   // location: filters.location
   });
 }
 

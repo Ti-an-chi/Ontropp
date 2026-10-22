@@ -214,7 +214,7 @@ async function loadDesigners() {
   sv.loading();
 
   try {
-    const designers = window.bootstrap?.designers || (await API.getFeaturedDesigners(6));
+    const designers = window.bootstrap?.designers || (await PublicApi.getTrendingDesigners(6));
     if (!designers || designers.length === 0) { sv.empty(); return; }
 
     const wrap = sv.dataEl.querySelector('.designer-scroll');
@@ -260,7 +260,9 @@ async function loadFresh() {
   sv.loading();
 
   try {
-    const items = window.bootstrap?.fresh || (await API.getFreshArrivals(10));
+    const resp = window.bootstrap?.fresh || (await API.getPiecesPaginated(1, 10, { order: 'newest' }));
+    console.log('fresh response', resp);
+    const items = resp.pieces;
     if (!items || items.length === 0) { sv.empty(); return; }
 
     const wrap = sv.dataEl.querySelector('.fresh-scroll');
@@ -290,7 +292,7 @@ async function loadStudios() {
   sv.loading();
 
   try {
-    const studios = window.bootstrap?.studios || (await API.getFeaturedStudios(6));
+    const studios = window.bootstrap?.studios || (await PublicApi.getFeaturedStudios(6));
     if (!studios || studios.length === 0) { sv.empty(); return; }
 
     const wrap = sv.dataEl.querySelector('.studio-grid');

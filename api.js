@@ -54,7 +54,6 @@ const API = {
     const url = `${this.baseURL}${path.startsWith('/') ? path : '/' + path}`;
   
     const keys = this.tokenStorage[tokenType];
-    console.log(keys.access);
     const token = localStorage.getItem(keys.access);
   
     const headers = {
@@ -269,17 +268,50 @@ const API = {
     return await this._fetch(`/seller/products?${params}`);
   },
   
-  
   /* ---------------- PRODUCT DATA --------------- */
   // 1. PRODUCTS
-  async getProductsPaginated(page = 1, limit = 20, filters = {}) {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-      ...filters
-    });
-    return await this._fetch(`/products?${params}`);
-  },
+  /**
+ * Fetch a page of explore pieces.
+ *
+ * @param {number} page   — 1-indexed. Always sent.
+ * @param {number} limit  — page size. Always sent.
+ * @param {object} filters
+ * @param {string}   [filters.search='']       — free text, empty = no constraint
+ * @param {string}   [filters.category='all']  — 'all' = no constraint, else one of
+ *                                                textiles|tailoring|jewellery|objects|beauty|print
+ * @param {boolean}  [filters.following=false] — signed-in only; server derives the
+ *                                                follows set from the session, we just
+ *                                                pass the flag. Ignored server-side if
+ *                                                there's no authenticated user.
+ * @param {string}   [filters.order]           — 'newest' | 'oldest'. Omit = server default.
+ *                                                Forwarded as-is so the backend stays the
+ *                                                source of truth for sort semantics.
+ *
+ * @returns {Promise<{ success: boolean, products: any[], pagination: object }>}
+ *          Passed through unchanged from the backend so other callers keep context.
+ */
+async getPiecesPaginated(page = 1, limit = 20, filters = {}) {
+  const { search = '', categories = 'all', following = false, order } = filters;
+
+  const params = new URLSearchParams();
+  params.set('page',  String(page));
+  params.set('limit', String(limit));
+
+  if (search)                          params.set('search', search);
+  if (categories && categories !== 'all')  params.set('categories', categories);
+  if (following)                       params.set('followingOnly', 'true');
+  if (order)                           params.set('order', order);
+
+  const resp = await this._fetch(`/products?${params}`);
+
+  if (!resp?.success) {
+    throw new Error(resp?.message || 'Unable to load pieces');
+  }
+
+  // Pass through the whole envelope — products + pagination + anything else.
+  // Other routes consume .products and .pagination; do not flatten to resp.data.
+  return resp;
+},
   
   async searchProducts(query, page = 1, limit = 20, filters = {}) {
     const params = new URLSearchParams({
@@ -297,11 +329,11 @@ const API = {
     return response;
   },
 
-  async getFavourites(page = 1, limit = 20, search = '') {
+  async getSaved(page = 1, limit = 20, search = '') {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), search });
-    const resp = await this._fetch(`/user/favorites?${params}`);
+    const resp = await this._fetch(`/user/saved?${params}`);
 
-    return resp.data;
+    return resp;
   },
 
   // 2. CATEGORIES
@@ -351,20 +383,20 @@ const API = {
   }, 
   
   // 3. ACTIONS
-  async addToFavourites(productId) {
+  async addToSaved(productId) {
     return this._fetch('/user/favorites', {
       method: 'POST',
       body: JSON.stringify({ productId })
     });
   },
   
-  async removeFromFavourites(productId) {
+  async removeFromSaved(productId) {
     return this._fetch(`/user/favorites/${productId}`, {
       method: 'DELETE'
     });
   },
   
-  async clearAllFavourites() {
+  async clearAllSaved() {
     return this._fetch('/user/favorites', {
       method: 'DELETE'
     });

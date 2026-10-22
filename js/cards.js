@@ -118,10 +118,10 @@ export function FreshCard(item) {
   const a = el('a', 'fresh-card');
   a.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
   a.innerHTML = `
-    <div class="fresh-img" style="background-image:url('${item.image_url || ''}')"></div>
+    <div class="fresh-img" style="background-image:url('${item.cover_image || ''}')"></div>
     <div class="fresh-body">
-      <div class="fresh-title">${escapeHtml(item.title || '')}</div>
-      <div class="fresh-studio">${escapeHtml(item.studio_name || '')}</div>
+      <div class="fresh-title">${escapeHtml(item.name || '')}</div>
+      <div class="fresh-studio">${escapeHtml(item.seller.shop_name || '')}</div>
     </div>`;
   return a;
 }
@@ -134,11 +134,11 @@ export function StudioCard(studio) {
   const a = el('a', 'studio-card');
   a.href = `/studio.html?id=${encodeURIComponent(studio.id)}`;
   a.innerHTML = `
-    <div class="studio-thumb" style="background-image:url('${studio.cover_url || ''}')"></div>
+    <div class="studio-thumb" style="background-image:url('${studio.avatar_url || ''}')"></div>
     <div class="studio-body">
-      <div class="studio-name">${escapeHtml(studio.name || '')}</div>
-      <div class="studio-by">${escapeHtml(studio.designer_name || '')} · ${escapeHtml(studio.location || '')}</div>
-      ${studio.tag ? `<span class="studio-tag">${escapeHtml(studio.tag)}</span>` : ''}
+      <div class="studio-name">${escapeHtml(studio.shop_name || '')}</div>
+      <div class="studio-by">${escapeHtml(studio.designer.name || '')} · ${escapeHtml(studio.location || '')}</div>
+      ${studio.tag ? `<span class="studio-tag">${escapeHtml(studio.category.name)}</span>` : ''}
     </div>
     <i class="fas fa-chevron-right studio-arrow"></i>`;
   return a;

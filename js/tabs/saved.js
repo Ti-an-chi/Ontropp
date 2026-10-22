@@ -19,7 +19,7 @@
  *   - toasts                  → toast.js
  */
 
-import API from '../../api.mock.js';
+import API from '../../api.js';
 import { createWall } from '../utility/wall.js';
 import { SavedPieceCard } from '../cards.js';
 import { showToast } from '../toast.js';
@@ -79,10 +79,10 @@ async function refresh() {
     res = await API.getSaved();
   } catch (err) {
     console.error('getSaved failed:', err);
-    res = { pieces: [], studios: [], total: 0, lastAddedAt: null };
+    res = { saved: [], studios: [], total: 0, lastAddedAt: null };
   }
 
-  allSaved = res.pieces || [];
+  allSaved = res.saved || [];
   updateHeader(res);
   renderStudioStrip(res.studios || []);
 
@@ -100,7 +100,7 @@ async function fetchSavedPage() {
   }
 
   return {
-    data: items,
+    pieces: items,
     pagination: { hasNextPage: false },
   };
 }

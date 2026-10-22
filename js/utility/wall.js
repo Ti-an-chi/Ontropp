@@ -86,7 +86,7 @@ export function createWall(mountEl, {
     const nextPage = page + 1;
     try {
       const result = await fetchPage({ page: nextPage, pageSize });
-      const items = result?.data || [];
+      const items = result?.pieces || [];
       hasMore = !!result?.pagination?.hasNextPage;
 
       if (nextPage === 1) {
