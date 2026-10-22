@@ -333,7 +333,7 @@ async getPiecesPaginated(page = 1, limit = 20, filters = {}) {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), search });
     const resp = await this._fetch(`/user/saved?${params}`);
 
-    return resp;
+    return resp.data;
   },
 
   // 2. CATEGORIES

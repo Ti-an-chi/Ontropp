@@ -76,7 +76,7 @@ export async function initSavedTab() {
 async function refresh() {
   let res;
   try {
-    res = await API.getSaved();
+    res = await API.getSaved(1, 1000);
   } catch (err) {
     console.error('getSaved failed:', err);
     res = { saved: [], studios: [], total: 0, lastAddedAt: null };
