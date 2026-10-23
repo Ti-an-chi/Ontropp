@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ontropp — Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/pages/publicProfile.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a href="#" class="logo">ONTROPP</a>
+</header>
+
+<main class="profile">
+  <div class="cover">
+    <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1600&q=85" alt="Fashion editorial cover">
+  </div>
+
+  <section class="profile-header">
+    <div class="profile-top">
+      <img class="avatar" src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=500&q=85" alt="Amaka Okafor">
+
+      <div class="profile-main">
+        <div class="profile-name-row">
+          <h1 class="profile-name">Amaka Okafor</h1>
+          <span class="verified">✓</span>
+        </div>
+
+        <div class="profile-meta">
+          <span>Fashion Designer</span>
+          <span class="dot">•</span>
+          <span>Lagos, Nigeria</span>
+        </div>
+
+        <p class="bio">Contemporary womenswear designer creating timeless pieces with African roots. I blend tradition with modern silhouettes to tell stories through fabric, form and detail.</p>
+
+        <div class="socials">
+          <a href="#" aria-label="Instagram">Instagram</a>
+          <a href="#" aria-label="TikTok">TikTok</a>
+          <a href="#" aria-label="Website">🌐</a>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-message">💬 Message</button>
+          <button class="btn btn-follow" id="btn-follow">＋ Follow</button>
+          <button class="btn btn-share" aria-label="Share profile"><i class="fas fa-share-alt"></i></button>
+        </div>
+      </div>
+
+      <div class="availability"><span class="availability-dot"></span>Available</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><strong>12</strong><span>Works</span></div>
+      <div class="stat"><strong>—</strong><span>No reviews yet</span></div>
+      <div class="stat"><strong>2</strong><span>Services</span></div>
+      <div class="stat"><strong>&lt;24h</strong><span>Response time</span></div>
+    </div>
+
+    <nav class="tabs" id="profile-tab">
+      <button class="tab active" data-tab="work">Work</button>
+      <button class="tab" data-tab="services">Services</button>
+      <button class="tab" data-tab="about">About</button>
+      <button class="tab" data-tab="reviews">Reviews</button>
+    </nav>
+    
+    <section class="portfolio-container">
+      <div class="portfolio-section work" id="portfolio-work">
+        <div class="section-heading"><h2>Work</h2></div>
+    
+        <div class="masonry">
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=85" alt="Fashion design"><span class="likes">♡ 142</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=85" alt="Fashion portrait"><span class="likes">♡ 98</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=800&q=85" alt="Black fashion collection"><span class="likes">♡ 76</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=85" alt="Fashion editorial"><span class="likes">♡ 53</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=85" alt="Designer clothing"><span class="likes">♡ 64</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85" alt="Green fashion design"><span class="likes">♡ 89</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=800&q=85" alt="Red fashion collection"><span class="likes">♡ 41</span></article>
+          <article class="work-card"><img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=85" alt="Fashion portrait"><span class="likes">♡ 72</span></article>
+        </div>
+      </div>
+    
+      <div class="portfolio-section services" id="portfolio-services"></div>
+      <div class="portfolio-section about" id="portfolio-about"></div>
+      <div class="portfolio-section reviews" id="portfolio-reviews"></div>
+    </section>
+  </section>
+</main>
+  <div id="toast-root"></div>
+<script type="module" src="public-profile.js"></script>
+</body>
+</html>

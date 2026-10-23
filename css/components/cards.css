@@ -725,3 +725,9 @@
   font-size: 16px;
   padding: 2px;
 }
+
+.public-profile .fashion-grid .fashion-image { height: 280px; }
+
+@media (min-width: 900px) {
+  .public-profile .fashion-grid .fashion-image { height: 320px; }
+}
