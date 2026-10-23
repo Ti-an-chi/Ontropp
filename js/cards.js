@@ -336,14 +336,27 @@ export function AccountItem({ icon, label, action, danger }) {
 
 /* -------------------------------------------------------------
    14. Fashion card — piece page "More works" grid.
+   Also used by the public profile Work grid.
+
+   variant:
+     'fixed'  → image height 220px (piece page default, unchanged)
+     'ratio'  → image uses the piece's aspect_ratio, no fixed height
+                (profile grid; preserves varied shapes)
    ------------------------------------------------------------- */
 
-export function FashionCard(piece) {
-  const article = el('article', 'fashion-card');
+export function FashionCard(piece, { variant = 'fixed' } = {}) {
+  const article = el('article', 'fashion-card' + (variant === 'ratio' ? ' fashion-card--ratio' : ''));
+
+  const ar = (piece.width && piece.height)
+    ? `${piece.width} / ${piece.height}`
+    : '4 / 5';
+
+  const imageStyle = variant === 'ratio' ? ` style="aspect-ratio:${ar}"` : '';
+
   article.innerHTML = `
-    <a href="piece.html?id=${encodeURIComponent(piece.id)}" class="fashion-image">
+    <a href="piece.html?id=${encodeURIComponent(piece.id)}" class="fashion-image"${imageStyle}>
       <img src="${escapeHtml(piece.image_url || '')}"
-           alt="${escapeHtml(piece.title || '')}" loading="lazy">
+           alt="${escapeHtml(piece.title || '')}" loading="lazy" decoding="async">
     </a>
     <div class="card-information">
       <div>
