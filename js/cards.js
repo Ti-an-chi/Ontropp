@@ -335,6 +335,29 @@ export function AccountItem({ icon, label, action, danger }) {
 }
 
 /* -------------------------------------------------------------
+   14. Fashion card — piece page "More works" grid.
+   ------------------------------------------------------------- */
+
+export function FashionCard(piece) {
+  const article = el('article', 'fashion-card');
+  article.innerHTML = `
+    <a href="piece.html?id=${encodeURIComponent(piece.id)}" class="fashion-image">
+      <img src="${escapeHtml(piece.image_url || '')}"
+           alt="${escapeHtml(piece.title || '')}" loading="lazy">
+    </a>
+    <div class="card-information">
+      <div>
+        <h3>${escapeHtml(piece.title || '')}</h3>
+        <p>${escapeHtml(piece.category || '')}</p>
+      </div>
+      <button type="button" aria-label="Like ${escapeHtml(piece.title || '')}">
+        <i class="fa-regular fa-heart"></i>
+      </button>
+    </div>`;
+  return article;
+}
+
+/* -------------------------------------------------------------
    Long-press helper (module-private)
    ------------------------------------------------------------- */
 
