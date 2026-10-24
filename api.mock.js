@@ -20,12 +20,12 @@ const IMG = (id, w = 800) =>
    ============================================================= */
 
 const STUDIOS = [
-  { id: 's1', name: 'Atelier Nneka',   designer_name: 'Amara Okonkwo', location: 'Lagos',  tag: 'Textiles',  cover_url: IMG('photo-1558769132-cb1aea458c5e', 400) },
-  { id: 's2', name: 'Form Studio',     designer_name: 'Tunde Bakare',  location: 'Accra',  tag: 'Jewellery', cover_url: IMG('photo-1497366216548-37526070297c', 400) },
-  { id: 's3', name: 'Lóre Botanicals', designer_name: 'Zainab Bello',  location: 'Abuja',  tag: 'Beauty',    cover_url: IMG('photo-1596462502278-27bfdc403348', 400) },
-  { id: 's4', name: 'Kèkè Collective', designer_name: 'Kofi Mensah',   location: 'Lagos',  tag: 'Craft',     cover_url: IMG('photo-1567016432779-094069958ea5', 400) },
-  { id: 's5', name: 'Ink & Thread',    designer_name: 'Ngozi Adeyemi', location: 'Enugu',  tag: 'Print',     cover_url: IMG('photo-1490481651871-ab68de25d43d', 400) },
-  { id: 's6', name: 'Sahel Studio',    designer_name: 'Yara Diallo',   location: 'Dakar',  tag: 'Textiles',  cover_url: IMG('photo-1489987707025-afc232f7ea0f', 400) },
+  { id: 's1', name: 'Atelier Nneka',   designer_name: 'Amara Okonkwo', location: 'Lagos',  tag: 'Textiles',  cover_url: IMG('photo-1558769132-cb1aea458c5e', 400), whatsapp_number: '08031234567' },
+  { id: 's2', name: 'Form Studio',     designer_name: 'Tunde Bakare',  location: 'Accra',  tag: 'Jewellery', cover_url: IMG('photo-1497366216548-37526070297c', 400), whatsapp_number: '08039876543' },
+  { id: 's3', name: 'Lóre Botanicals', designer_name: 'Zainab Bello',  location: 'Abuja',  tag: 'Beauty',    cover_url: IMG('photo-1596462502278-27bfdc403348', 400), whatsapp_number: '08035554444' },
+  { id: 's4', name: 'Kèkè Collective', designer_name: 'Kofi Mensah',   location: 'Lagos',  tag: 'Craft',     cover_url: IMG('photo-1567016432779-094069958ea5', 400), whatsapp_number: '08039000111' },
+  { id: 's5', name: 'Ink & Thread',    designer_name: 'Ngozi Adeyemi', location: 'Enugu',  tag: 'Print',     cover_url: IMG('photo-1490481651871-ab68de25d43d', 400), whatsapp_number: '08037778888' },
+  { id: 's6', name: 'Sahel Studio',    designer_name: 'Yara Diallo',   location: 'Dakar',  tag: 'Textiles',  cover_url: IMG('photo-1489987707025-afc232f7ea0f', 400), whatsapp_number: '08036662222' },
 ];
 
 /* =============================================================
@@ -178,6 +178,21 @@ function paginate(items, page = 1, limit = 12) {
   };
 }
 
+/* ---------- Follow aliases for DesignerFollowButton ---------- *
+ * DesignerFollowButton in reconfig.js expects
+ *   { success: bool, message?: string }
+ * from onFollow/onUnfollow. The mock's native method returns
+ * { following: bool }. These adapt + accept designer OR studio id.
+ */
+function _resolveDesignerId(idOrStudioId) {
+  if (!idOrStudioId) return null;
+  const byDesigner = DESIGNERS.find(d => d.id === idOrStudioId);
+  if (byDesigner) return byDesigner.id;
+  const byStudio = DESIGNERS.find(d => d.studio_id === idOrStudioId);
+  if (byStudio) return byStudio.id;
+  return idOrStudioId;
+}
+
 /* =============================================================
    API
    ============================================================= */
@@ -234,6 +249,24 @@ const API = {
     if (i >= 0) f.designerIds.splice(i, 1);
     else f.designerIds.push(designerId);
     return { following: i < 0 };
+  },
+
+  async followSeller(idOrStudioId) {
+    try {
+      const { following } = await this.toggleFollowDesigner(_resolveDesignerId(idOrStudioId));
+      return { success: true, following, message: 'Following' };
+    } catch (err) {
+      return { success: false, message: err?.message || 'Could not follow' };
+    }
+  },
+  
+  async unfollowSeller(idOrStudioId) {
+    try {
+      const { following } = await this.toggleFollowDesigner(_resolveDesignerId(idOrStudioId));
+      return { success: true, following, message: 'Unfollowed' };
+    } catch (err) {
+      return { success: false, message: err?.message || 'Could not unfollow' };
+    }
   },
 
   /* ---------- Bootstrap ---------- */

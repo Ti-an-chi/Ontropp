@@ -1,118 +1,232 @@
 /**
- * public-profile.js
- * Public designer profile page. Renders the Work tab using the
- * shared FashionCard (same card as piece.html "More works").
+ * js/pages/publicProfile.js
+ * Public designer profile page.
  *
- * Depends on:
- *   - cards.js      (FashionCard)
- *   - api.mock.js   (API, default export)
- *   - toast.js      (showToast)
+ * Work tab:
+ *   - API.getDesignerPieces(designerId) in one call
+ *   - FashionCard tiles, aspect-ratio override so masonry reads
+ *   - shared masonry.js (same module explore uses) — no infinite scroll
  *
- * Page contract (see newprofilepage.html):
- *   #profile-tab                — tab nav
- *   .portfolio-section[.work]   — work section wrapper
- *   #portfolio-work .masonry    — work grid mount (we reuse this node,
- *                                 just rename the class in markup later)
- *   #btn-follow                 — follow toggle
- *   #toast-root                 — toast host (add near </body>)
+ * Header actions:
+ *   - Follow  → DesignerFollowButton (reconfig.js) → API.followSeller
+ *   - Message → WhatsApp deep link via orderHandler.flexibleHandle
+ *   - Share   → navigator.share, clipboard fallback, toast
+ *
+ * Paths assume the page lives at project root:
+ *   publicProfile.html
+ *   /js/pages/publicProfile.js
+ *   /js/utility/{masonry,cards,toast,reconfig,shared}.js
+ *   /js/api.mock.js
  */
 
-import API from './api.mock.js';
-import { FashionCard } from './cards.js';
-import { showToast } from './toast.js';
+import API from '../../api.mock.js';
+import { FashionCard } from '../cards.js';
+import { showToast } from '../toast.js';
+import { createMasonry } from '../utility/masonry.js';
+import { DesignerFollowButton, orderHandler } from '../utility/reconfig.js';
+import { relativeTime } from '../utility/shared.js';
 
 /* -------------------------------------------------------------
    Boot
    ------------------------------------------------------------- */
 
-// The piece page resolves ?id=<designerId>. For now the mock
-// has no "current" designer on the profile, so default to d1
-// (Amaka). Swap to a query param read when routing lands.
-const DESIGNER_ID = new URLSearchParams(location.search).get('id') || 'd1';
+const DESIGNER_ID =
+  new URLSearchParams(location.search).get('id') || 'd1';
 
 const state = {
   designer: null,
+  studio: null,
   pieces: [],
   followed: false,
-  workMounted: false,
+  masonry: null,
 };
 
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
   try {
-    state.designer = await API.getDesigner(DESIGNER_ID);
-    state.pieces = await API.getDesignerPieces(DESIGNER_ID, 50);
+    // Mock auth — required so DesignerFollowButton's token check
+    // passes and follow calls reach the mock. Replace with the
+    // real session bootstrap when auth lands.
+    API.setAuth({
+      id: 'u1',
+      username: 'Ada',
+      email: 'ada@ontropp.test',
+      avatar_url: 'https://i.pravatar.cc/150?img=47',
+      role: 'explorer',
+    });
+    localStorage.setItem('ontrop_token', 'mock-session');
 
-    renderHeader(state.designer);
-    renderWork(state.pieces);
+    state.designer = await API.getDesigner(DESIGNER_ID);
+    const [studio, pieces, viewer] = await Promise.all([
+      API.getStudio(state.designer.studio_id),
+      API.getDesignerPieces(DESIGNER_ID, 100),
+      API.getViewerContext(),
+    ]);
+    state.studio = studio;
+    state.pieces = pieces;
+    state.followed = viewer.followedDesignerIds.includes(state.designer.id);
+
+    renderHeader(state.designer, state.studio, state.pieces.length);
+    mountWork(state.pieces);
+    mountFollowButton();
+    mountMessageButton();
+    mountShareButton();
 
     bindTabs();
-    bindFollow();
   } catch (err) {
     console.error('profile init failed:', err);
-    showToast({ message: 'Could not load this profile', actionLabel: 'Retry', onAction: init });
+    showToast({
+      message: 'Could not load this profile',
+      actionLabel: 'Retry',
+      onAction: init,
+    });
   }
 }
 
 /* -------------------------------------------------------------
-   Header — name, meta, avatar, cover, stats
-   (HTML already has placeholders; we only fill what depends
-   on data. If you'd rather keep the header static for now,
-   delete renderHeader and this call.)
+   Header
    ------------------------------------------------------------- */
 
-function renderHeader(designer) {
-  const nameEl = document.querySelector('.profile-name');
-  if (nameEl && designer.name) nameEl.textContent = designer.name;
+function renderHeader(designer, studio, workCount) {
+  setText('.profile-name', designer.name);
+  setText('.profile-studio', designer.shop_name);
+  setText('.profile-location', studio.location);
 
-  const metaEl = document.querySelector('.profile-meta');
-  if (metaEl) {
-    // keep location span; just refresh the designer line
-    const first = metaEl.querySelector('span');
-    if (first && designer.shop_name) first.textContent = designer.shop_name;
-  }
+  const avatar = document.querySelector('.avatar');
+  if (avatar && designer.avatar_url) avatar.src = designer.avatar_url;
 
-  const avatarEl = document.querySelector('.avatar');
-  if (avatarEl && designer.avatar_url) avatarEl.src = designer.avatar_url;
+  const statWorks = document.getElementById('stat-works');
+  if (statWorks) statWorks.textContent = String(workCount);
 
-  // Work count in stats
-  const statWorks = document.querySelector('.stat:first-child strong');
-  if (statWorks) statWorks.textContent = String(state.pieces.length);
+  document.title = `Ontropp — ${designer.name}`;
+}
+
+function setText(sel, text) {
+  const el = document.querySelector(sel);
+  if (el && text != null) el.textContent = text;
 }
 
 /* -------------------------------------------------------------
-   Work tab — FashionCard grid
+   Work — FashionCard + shared masonry, one batch
    ------------------------------------------------------------- */
 
-function renderWork(pieces) {
-  const mount = document.querySelector('#portfolio-work .masonry')
-    || document.querySelector('#portfolio-work');
+function mountWork(pieces) {
+  const mount = document.getElementById('work-mount');
   if (!mount) return;
 
-  // Reuse the mount node as a plain grid. We add `.fashion-grid`
-  // and drop the old `.masonry` class so masonry.css no longer
-  // applies (public-profile.css owns the grid now).
-  mount.classList.remove('masonry');
-  mount.classList.add('fashion-grid');
+  mount.removeAttribute('aria-busy');
   mount.innerHTML = '';
 
   if (!pieces.length) {
     mount.innerHTML = `
-      <div class="fashion-grid-empty">
+      <div class="work-empty">
         <i class="fas fa-scroll"></i>
         <p>No work published yet.</p>
       </div>`;
-    state.workMounted = true;
     return;
   }
 
-  const frag = document.createDocumentFragment();
-  for (const piece of pieces) {
-    frag.appendChild(FashionCard(piece));
+  state.masonry = createMasonry(mount, { gap: 14 });
+
+  const cards = pieces.map(piece => {
+    const card = FashionCard(piece);
+    // Profile override: let the card carry the piece's natural
+    // aspect ratio so masonry columns interlock properly.
+    // Scoped by .public-profile in publicProfile.css.
+    const media = card.querySelector('.fashion-image');
+    if (media && piece.aspect_ratio) {
+      media.style.height = 'auto';
+      media.style.aspectRatio = String(piece.aspect_ratio);
+    }
+    return card;
+  });
+
+  state.masonry.append(cards);
+}
+
+/* -------------------------------------------------------------
+   Follow — reuses DesignerFollowButton from reconfig.js
+   ------------------------------------------------------------- */
+
+function mountFollowButton() {
+  const btn = document.getElementById('btn-follow');
+  if (!btn || !state.designer) return;
+
+  new DesignerFollowButton(
+    btn,
+    state.designer.id,
+    state.followed,
+    {
+      onChange: (isFollowing) => {
+        state.followed = isFollowing;
+        // DesignerFollowButton already shows its own toast —
+        // no second toast here.
+      },
+    }
+  );
+}
+
+/* -------------------------------------------------------------
+   Message — WhatsApp deep link via orderHandler.flexibleHandle
+   ------------------------------------------------------------- */
+
+function mountMessageButton() {
+  const btn = document.querySelector('.btn-message');
+  if (!btn || !state.studio) return;
+
+  btn.addEventListener('click', () => {
+    if (!state.studio.whatsapp_number) {
+      showToast({ message: 'This studio has no contact number yet' });
+      return;
+    }
+    orderHandler.flexibleHandle({
+      whatsappNumber: state.studio.whatsapp_number,
+      productName: state.designer.shop_name,
+      productId: state.designer.id,
+    });
+  });
+}
+
+/* -------------------------------------------------------------
+   Share — Web Share API with clipboard fallback
+   ------------------------------------------------------------- */
+
+async function mountShareButton() {
+  const btn = document.querySelector('.btn-share');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => shareProfile());
+}
+
+async function shareProfile() {
+  const designer = state.designer;
+  if (!designer) return;
+
+  const url = `${location.origin}${location.pathname}?id=${encodeURIComponent(designer.id)}`;
+  const shareData = {
+    title: `${designer.name} — ${designer.shop_name}`,
+    text: `Check out ${designer.name} on ONTROPP`,
+    url,
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (err) {
+      // user cancelled — not an error
+      if (err?.name === 'AbortError') return;
+      // fall through to clipboard
+    }
   }
-  mount.appendChild(frag);
-  state.workMounted = true;
+
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast({ message: 'Profile link copied' });
+  } catch {
+    showToast({ message: 'Could not copy link' });
+  }
 }
 
 /* -------------------------------------------------------------
@@ -124,9 +238,6 @@ function bindTabs() {
   if (!tabsEl) return;
 
   const sections = document.querySelectorAll('.portfolio-section');
-
-  // Show only Work on load. (Services/About/Reviews are empty
-  // for now; the original page did the same.)
   sections.forEach(s => {
     if (!s.classList.contains('work')) s.style.display = 'none';
   });
@@ -142,27 +253,5 @@ function bindTabs() {
     sections.forEach(s => {
       s.style.display = s.classList.contains(target) ? 'block' : 'none';
     });
-  });
-}
-
-/* -------------------------------------------------------------
-   Follow toggle
-   ------------------------------------------------------------- */
-
-function bindFollow() {
-  const btn = document.getElementById('btn-follow');
-  if (!btn) return;
-
-  btn.addEventListener('click', async () => {
-    try {
-      const res = await API.toggleFollowDesigner(state.designer.id);
-      state.followed = res.following;
-      btn.classList.toggle('active', state.followed);
-      btn.textContent = state.followed ? 'Following' : '＋ Follow';
-    } catch (err) {
-      // API throws if not signed in — surface as a toast, keep
-      // the button in its previous visual state.
-      showToast({ message: 'Sign in to follow designers', actionLabel: 'Retry', onAction: bindFollow });
-    }
   });
 }

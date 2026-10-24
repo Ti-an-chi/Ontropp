@@ -1,15 +1,16 @@
 /* ===== public-profile.css =====
-   Public designer profile page. Replaces the inline <style> in
-   newprofilepage.html.
+   Public designer profile page chrome + profile-scoped
+   FashionCard overrides.
 
-   Depends on (link these BEFORE this file):
-     - global tokens (--bg, --surface, --border, --text, --hash, etc.)
-     - font-awesome
-     - cards.css   (FashionCard visuals)
+   Reuses (link these BEFORE this file):
+     masonry.css  — .masonry-columns / .masonry-col
+     cards.css    — .fashion-card / .fashion-image / .card-information
 
-   This file owns:
-     - page chrome: topbar, cover, header, meta, stats, tabs, buttons
-     - the Work grid layout (.fashion-grid) that hosts FashionCard
+   We do NOT redefine masonry. We do NOT redefine FashionCard's
+   base visuals. We only:
+     - style the page chrome (topbar, cover, header, stats, tabs, buttons)
+     - override .fashion-image height -> aspect-ratio, scoped to
+       .public-profile so piece.html is untouched.
    ============================================================= */
 
 /* ---------- Page shell ---------- */
@@ -20,7 +21,6 @@ body {
   color: var(--text, #1a202c);
   min-height: 100vh;
 }
-
 button, a { font: inherit; }
 button { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
@@ -44,12 +44,6 @@ a { color: inherit; text-decoration: none; }
   font-weight: 700;
   letter-spacing: 6px;
   color: var(--brand, #3182ce);
-}
-.topbar-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 20px;
 }
 
 /* ---------- Profile shell ---------- */
@@ -101,10 +95,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--surface-light, #f3f4f8);
 }
 
-.profile-main {
-  flex: 1;
-  padding-top: 65px;
-}
+.profile-main { flex: 1; padding-top: 65px; }
 
 .profile-name-row {
   display: flex;
@@ -112,21 +103,14 @@ a { color: inherit; text-decoration: none; }
   gap: 8px;
   flex-wrap: wrap;
 }
-.profile-name {
-  font-size: 28px;
-  line-height: 1.1;
-  font-weight: 700;
-}
+.profile-name { font-size: 28px; line-height: 1.1; font-weight: 700; }
 .verified {
-  width: 20px;
-  height: 20px;
+  width: 20px; height: 20px;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
+  display: grid; place-items: center;
   background: var(--brand, #3182ce);
   color: #fff;
-  font-size: 12px;
-  font-weight: 900;
+  font-size: 12px; font-weight: 900;
 }
 
 .profile-meta {
@@ -155,38 +139,23 @@ a { color: inherit; text-decoration: none; }
   background: rgba(46, 204, 113, .1);
   padding: 8px 13px;
   border-radius: 999px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
+  display: flex; align-items: center; gap: 7px;
   white-space: nowrap;
   font-size: 13px;
 }
 .availability-dot {
-  width: 8px;
-  height: 8px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   background: var(--success, #27ae60);
 }
 
-.socials {
-  display: flex;
-  gap: 18px;
-  margin-top: 18px;
-}
-.socials a {
-  color: #4a5568;
-  font-size: 14px;
-  transition: color .2s;
-}
+.socials { display: flex; gap: 18px; margin-top: 18px; }
+.socials a { color: #4a5568; font-size: 14px; transition: color .2s; }
 .socials a:hover { color: var(--brand, #3182ce); }
 
 /* ---------- Buttons ---------- */
 
-.actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 22px;
-}
+.actions { display: flex; gap: 12px; margin-top: 22px; }
 .btn {
   min-height: 46px;
   padding: 0 24px;
@@ -194,9 +163,7 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border, #e8e8e8);
   background: transparent;
   color: var(--text, #1a202c);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   gap: 8px;
   font-weight: 600;
   transition: background .2s, border-color .2s, transform .2s;
@@ -222,10 +189,7 @@ a { color: inherit; text-decoration: none; }
   border: none;
 }
 
-.btn-share {
-  width: 46px;
-  padding: 0;
-}
+.btn-share { width: 46px; padding: 0; }
 
 /* ---------- Stats ---------- */
 
@@ -263,23 +227,18 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   white-space: nowrap;
 }
-.tab.active {
-  color: var(--text, #1a202c);
-  font-weight: 600;
-}
+.tab.active { color: var(--text, #1a202c); font-weight: 600; }
 .tab.active::after {
   content: "";
   position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
+  bottom: -1px; left: 0; right: 0;
   height: 2px;
   background: var(--accent, #2ecc71);
 }
 
-/* ---------- Work tab ---------- */
+/* ---------- Work ---------- */
 
-.work-section { padding-top: 28px; }
+.portfolio-section.work { padding-top: 28px; }
 
 .section-heading {
   display: flex;
@@ -288,19 +247,10 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 18px;
 }
 .section-heading h2 { font-size: 19px; }
-.section-heading span { color: var(--muted, #6b7280); font-size: 13px; }
 
-/* Grid that hosts FashionCard. The card itself owns its
-   internal look (see cards.css); we only decide the columns
-   and gap here. */
-.fashion-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-.fashion-grid-empty {
-  grid-column: 1 / -1;
+/* Loading / empty */
+.work-loading,
+.work-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -309,69 +259,63 @@ a { color: inherit; text-decoration: none; }
   color: var(--muted, #6b7280);
   gap: 12px;
   text-align: center;
+  font-size: 14px;
 }
-.fashion-grid-empty i { font-size: 28px; opacity: .5; }
-.fashion-grid-empty p { font-size: 14px; }
+.work-empty i { font-size: 28px; opacity: .5; }
+
+/* ---------- Profile-scoped FashionCard override ----------
+   masonry.css + masonry.js lay the columns out. FashionCard
+   ships with .fashion-image { height: 220px } (fixed) which
+   would defeat masonry — every column would be the same
+   height. We let the media box take the piece's natural
+   aspect ratio instead. Scoped to .public-profile so the
+   piece page keeps its 220px.
+
+   JS sets  style="aspect-ratio: W / H"  on the media node.
+   --------------------------------------------------------- */
+
+.public-profile .fashion-image {
+  height: auto;          /* override the 220px default */
+  aspect-ratio: 4 / 5;   /* fallback if JS didn't supply */
+}
+.public-profile .fashion-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 /* ---------- Responsive ---------- */
 
 @media (max-width: 700px) {
-  .topbar {
-    height: 60px;
-    padding: 0 18px;
-  }
-  .logo {
-    font-size: 19px;
-    letter-spacing: 5px;
-  }
-  .topbar-actions { gap: 5px; }
+  .topbar { height: 60px; padding: 0 18px; }
+  .logo { font-size: 19px; letter-spacing: 5px; }
 
   .profile { padding-bottom: 40px; }
 
-  .cover {
-    height: 190px;
-    margin: 0;
-    border-radius: 0;
-  }
+  .cover { height: 190px; margin: 0; border-radius: 0; }
   .profile-header { padding: 0 16px; }
 
-  .profile-top {
-    margin-top: -52px;
-    display: block;
-  }
-  .avatar {
-    width: 105px;
-    height: 105px;
-  }
+  .profile-top { margin-top: -52px; display: block; }
+  .avatar { width: 105px; height: 105px; }
   .profile-main { padding-top: 12px; }
   .profile-name { font-size: 24px; }
 
   .availability {
     position: absolute;
-    right: 0;
-    top: 65px;
+    right: 0; top: 65px;
     margin: 0;
     padding: 7px 10px;
     font-size: 12px;
   }
 
-  .bio {
-    font-size: 14px;
-    line-height: 1.55;
-  }
+  .bio { font-size: 14px; line-height: 1.55; }
 
-  .actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr 48px;
-  }
+  .actions { display: grid; grid-template-columns: 1fr 1fr 48px; }
   .btn { padding: 0 10px; min-width: 0; }
-  .btn-message,
-  .btn-follow { min-width: 0; }
+  .btn-message, .btn-follow { min-width: 0; }
 
-  .stats {
-    margin: 28px -16px 0;
-    overflow-x: auto;
-  }
+  .stats { margin: 28px -16px 0; overflow-x: auto; }
   .stat { padding: 0 8px; }
   .stat strong { font-size: 14px; }
   .stat span { font-size: 10px; }
@@ -383,11 +327,7 @@ a { color: inherit; text-decoration: none; }
     padding-left: 16px;
   }
 
-  .work-section { padding-top: 22px; }
-  .fashion-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
+  .portfolio-section.work { padding-top: 22px; }
 }
 
 @media (max-width: 380px) {
@@ -397,3 +337,25 @@ a { color: inherit; text-decoration: none; }
   .btn { font-size: 13px; }
   .stat span { font-size: 9px; }
 }
+
+/* ---------- Follow button internals (DesignerFollowButton injects its own HTML) ---------- */
+
+#btn-follow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+#btn-follow i {
+  font-size: 12px;
+}
+#btn-follow.following {
+  /* keep parity with the .active state we already styled */
+  background: var(--ink, #111);
+  color: #fff;
+  border-color: var(--ink, #111);
+}
+
+/* ---------- Share button ---------- */
+.btn-share { color: var(--text, #1a202c); }
+.btn-share:hover { border-color: var(--ink, #111); }
