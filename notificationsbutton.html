@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | ONTROPP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f7f9fc;
+            --surface: #ffffff;
+            --brand: #3483E0;
+            --brand-dark: #2467b8;
+            --brand-tint: #eaf2fd;
+            --brand-tint-2: #d6e6fb;
+            --text: #1d2733;
+            --muted: #6b7785;
+            --line: #e3e9f0;
+            --font-body: 'Inter', Arial, sans-serif;
+            --font-display: 'Fraunces', Georgia, serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        /* ---------- Top bar ---------- */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--brand);
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 64px;
+            padding: 0 24px;
+            z-index: 1000;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .topbar h1 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+
+        .topbar h2 { margin: 0; }
+
+        .acnt-btn {
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            background: #fff;
+            color: var(--brand);
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .acnt-btn:hover { transform: scale(1.06); }
+
+        button:focus-visible {
+            outline: 3px solid var(--brand-dark);
+            outline-offset: 2px;
+        }
+
+        .topbar .acnt-btn:focus-visible { outline-color: #fff; }
+
+        /* ---------- Page layout ---------- */
+        main {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 88px 16px 48px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--brand-tint);
+            padding: 4px;
+            border-radius: 999px;
+        }
+
+        .tab {
+            border: none;
+            background: transparent;
+            font: 500 0.9rem var(--font-body);
+            color: var(--muted);
+            padding: 7px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .tab[aria-selected="true"] {
+            background: #fff;
+            color: var(--brand-dark);
+            box-shadow: 0 1px 3px rgba(20, 50, 90, 0.12);
+        }
+
+        .tab .count {
+            display: inline-block;
+            min-width: 20px;
+            margin-left: 6px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: var(--brand);
+            color: #fff;
+            font-size: 0.75rem;
+            line-height: 20px;
+        }
+
+        .tab .count[hidden] { display: none; }
+
+        .mark-all {
+            border: none;
+            background: none;
+            color: var(--brand-dark);
+            font: 500 0.9rem var(--font-body);
+            padding: 8px 4px;
+            cursor: pointer;
+        }
+
+        .mark-all:hover { text-decoration: underline; }
+        .mark-all:disabled { color: var(--muted); cursor: default; text-decoration: none; }
+
+        /* ---------- Notification list ---------- */
+        .group-title {
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: 1.05rem;
+            color: var(--muted);
+            margin: 28px 4px 10px;
+        }
+
+        .notifications {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            overflow: hidden;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .notification {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px 14px 22px;
+            border-bottom: 1px solid var(--line);
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .notification:last-child { border-bottom: none; }
+        .notification:hover { background: #fafcff; }
+
+        .notification.unread { background: var(--brand-tint); }
+        .notification.unread:hover { background: var(--brand-tint-2); }
+
+        /* unread marker */
+        .notification.unread::before {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            width: 8px;
+            height: 8px;
+            margin-top: -4px;
+            border-radius: 50%;
+            background: var(--brand);
+        }
+
+        .btn {
+            flex: none;
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            background: #fff;
+            border: 1px solid var(--line);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .notification.unread .btn { border-color: var(--brand-tint-2); }
+
+        .content { flex: 1; min-width: 0; }
+
+        .content h3 {
+            margin: 0;
+            font-size: 0.97rem;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notification.unread .content h3 { font-weight: 600; }
+
+        .time {
+            display: block;
+            margin-top: 2px;
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+
+        .dismiss {
+            flex: none;
+            border: none;
+            background: none;
+            color: var(--muted);
+            font-size: 1.3rem;
+            line-height: 1;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.15s ease, background 0.15s ease;
+        }
+
+        .notification:hover .dismiss,
+        .dismiss:focus-visible { opacity: 1; }
+        .dismiss:hover { background: rgba(52, 131, 224, 0.12); color: var(--brand-dark); }
+
+        /* ---------- Empty state ---------- */
+        .empty {
+            text-align: center;
+            padding: 56px 20px;
+            color: var(--muted);
+        }
+
+        .empty h3 {
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: 1.25rem;
+            color: var(--text);
+            margin: 0 0 6px;
+        }
+
+        .empty p { margin: 0; }
+
+        /* ---------- Mobile ---------- */
+        @media (max-width: 520px) {
+            .topbar { padding: 0 16px; }
+            main { padding: 80px 12px 40px; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .tabs { justify-content: space-between; }
+            .tab { flex: 1; padding: 7px 8px; }
+            .mark-all { align-self: flex-end; }
+            .dismiss { opacity: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="topbar">
+    <h1>Notifications</h1>
+    <h2>
+        <button class="acnt-btn" aria-label="Your account">F</button>
+    </h2>
+</header>
+
+<main>
+    <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="Filter notifications">
+            <button class="tab" role="tab" aria-selected="true" data-filter="all">All</button>
+            <button class="tab" role="tab" aria-selected="false" data-filter="unread">Unread<span class="count" id="unreadCount" hidden>0</span></button>
+        </div>
+        <button class="mark-all" id="markAll">Mark all as read</button>
+    </div>
+
+    <section id="feed" aria-live="polite">
+
+        <div class="group" data-group="Today">
+            <h2 class="group-title">Today</h2>
+            <ul class="notifications">
+                <li class="notification first-notification unread">
+                    <button class="btn primary" aria-hidden="true" tabindex="-1">👤</button>
+                    <div class="content">
+                        <h3>Atelier started following you</h3>
+                        <span class="time">12 minutes ago</span>
+                    </div>
+                    <button class="dismiss" aria-label="Dismiss notification">&times;</button>
+                </li>
+                <li class="notification second-notification unread">
+                    <button class="btn primary" aria-hidden="true" tabindex="-1">❤️</button>
+                    <div class="content">
+                        <h3>You liked 3 designs</h3>
+                        <span class="time">2 hours ago</span>
+                    </div>
+                    <button class="dismiss" aria-label="Dismiss notification">&times;</button>
+                </li>
+                <li class="notification third-notification">
+                    <button class="btn primary" aria-hidden="true" tabindex="-1">💾</button>
+                    <div class="content">
+                        <h3>You saved 3 designs</h3>
+                        <span class="time">5 hours ago</span>
+                    </div>
+                    <button class="dismiss" aria-label="Dismiss notification">&times;</button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="group" data-group="Earlier">
+            <h2 class="group-title">Earlier</h2>
+            <ul class="notifications">
+                <li class="notification fourth-notification">
+                    <button class="btn primary" aria-hidden="true" tabindex="-1">👥</button>
+                    <div class="content">
+                        <h3>You started following 3 designers</h3>
+                        <span class="time">Yesterday</span>
+                    </div>
+                    <button class="dismiss" aria-label="Dismiss notification">&times;</button>
+                </li>
+                <li class="notification fifth-notification">
+                    <button class="btn primary" aria-hidden="true" tabindex="-1">📤</button>
+                    <div class="content">
+                        <h3>You shared 4 designs</h3>
+                        <span class="time">2 days ago</span>
+                    </div>
+                    <button class="dismiss" aria-label="Dismiss notification">&times;</button>
+                </li>
+            </ul>
+        </div>
+
+    </section>
+
+    <div class="empty" id="empty" hidden>
+        <h3>You're all caught up</h3>
+        <p>New likes, saves, follows and shares will show up here.</p>
+    </div>
+</main>
+
+<script>
+    const feed = document.getElementById('feed');
+    const empty = document.getElementById('empty');
+    const countEl = document.getElementById('unreadCount');
+    const markAll = document.getElementById('markAll');
+    const tabs = document.querySelectorAll('.tab');
+    let filter = 'all';
+
+    function refresh() {
+        const items = feed.querySelectorAll('.notification');
+        const unread = feed.querySelectorAll('.notification.unread').length;
+
+        countEl.textContent = unread;
+        countEl.hidden = unread === 0;
+        markAll.disabled = unread === 0;
+
+        let visibleTotal = 0;
+        feed.querySelectorAll('.group').forEach(group => {
+            let visible = 0;
+            group.querySelectorAll('.notification').forEach(item => {
+                const show = filter === 'all' || item.classList.contains('unread');
+                item.hidden = !show;
+                if (show) visible++;
+            });
+            group.hidden = visible === 0;
+            visibleTotal += visible;
+        });
+
+        empty.hidden = visibleTotal !== 0;
+        if (items.length === 0) {
+            empty.querySelector('p').textContent = 'New likes, saves, follows and shares will show up here.';
+        } else if (visibleTotal === 0) {
+            empty.querySelector('p').textContent = 'You have no unread notifications.';
+        }
+    }
+
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+        filter = tab.dataset.filter;
+        tabs.forEach(t => t.setAttribute('aria-selected', t === tab));
+        refresh();
+    }));
+
+    markAll.addEventListener('click', () => {
+        feed.querySelectorAll('.notification.unread').forEach(n => n.classList.remove('unread'));
+        refresh();
+    });
+
+    feed.addEventListener('click', e => {
+        const item = e.target.closest('.notification');
+        if (!item) return;
+        if (e.target.closest('.dismiss')) {
+            item.remove();
+        } else {
+            item.classList.remove('unread');
+        }
+        refresh();
+    });
+
+    refresh();
+</script>
+</body>
+</html>
