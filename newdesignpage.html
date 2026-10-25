@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ONTROPP | Fashion Design</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+          <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --cream: #f6f3ef;
+    --white: #ffffff;
+    --text: #171717;
+    --muted: #777777;
+    --border: #e3dfda;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    padding-bottom: 80px;
+    padding-top: 66px
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: #ece8e3;
+}
+
+img {
+    max-width: 100%;
+}
+
+
+/* ==================================
+   2. HEADER
+================================== */
+
+.header {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    min-height: 66px;
+    padding: 12px 4.5%;
+    background: var(--white);
+    color: var(--white);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    z-index:1000;
+}
+
+.logo {
+    color:  #3483E0;
+    font-size: 25px;
+    letter-spacing: 2px;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.search-box {
+    width: 48%;
+    max-width: 520px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 16px;
+    border-radius: 30px;
+    background: #282a2b;
+}
+
+.search-box i {
+    color: #c4c4c4;
+}
+
+.search-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 13px;
+}
+
+.search-box input::placeholder {
+    color: #d0d0d0;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.header-icons button {
+    background: transparent;
+    border: none;
+    color:  #3483E0;
+    font-size: 21px;
+}
+
+.profile-picture {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+/* ==================================
+   3. FEATURED IMAGE
+================================== */
+
+.featured-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--cream);
+}
+
+.featured-image {
+    width: 100%;
+    height: clamp(420px, 44vw, 680px);
+    position: relative;
+    overflow: hidden;
+    background: #171717;   
+}
+
+.featured-image > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;   
+    object-position: center;
+}
+.featured-image {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    background: var(--cream);
+}
+
+.featured-image > img {
+    height: auto;
+    object-fit: unset;
+}
+.image-search {
+    position: absolute;
+    right: 28px;
+    bottom: 25px;
+
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+
+    background: var(--dark);
+    color: white;
+    font-size: 17px;
+}
+
+
+/* ==================================
+   4. IMAGE ACTION BUTTONS
+================================== */
+
+.image-actions {
+    width: 100%;
+    padding: 20px 5% 10px;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.action-buttons button {
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 21px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-buttons .save-button {
+    margin-left: auto;
+    padding: 12px 31px;
+
+    border-radius: 30px;
+    background: var(--dark);
+    color: white;
+
+    font-size: 14px;
+}
+
+
+
+.design-details {
+    width: 100%;
+    padding: 8px 5% 32px;
+}
+
+.design-description h1 {
+    font-size: 27px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.design-description p {
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.collection {
+    margin-bottom: 4px;
+}
+
+.description {
+    max-width: 850px;
+}
+
+
+/* ==================================
+   6. DESIGNER PROFILE
+================================== */
+
+.designer-profile {
+    margin-top: 12px;
+    padding-top: 16px;
+
+    border-top: 1px solid var(--border);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.designer-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.designer-avatar {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    background:  #3483E0;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 19px;
+}
+
+.designer-text h3 {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.designer-text p {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.follow-button {
+    border: none;
+    border-radius: 30px;
+    background:   #3483E0;
+    padding: 11px 25px;
+    font-size: 13px;
+}
+
+
+/* ==================================
+   7. FASHION TAGS
+================================== */
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0 24px;
+}
+
+.tags span {
+    padding: 9px 16px;
+    background:  #C6CDD6;
+    border-radius: 30px;
+    font-size: 12px;
+}
+
+
+/* ==================================
+   8. GARMENT INFORMATION
+================================== */
+
+.garment-details {
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.garment-details h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 25px;
+}
+
+.garment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+}
+
+.garment-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.garment-item > i {
+    font-size: 23px;
+}
+
+.garment-item span {
+    font-size: 12px;
+}
+
+.garment-item p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+/* ==================================
+   8b. DESIGN NOTE
+================================== */
+
+.other-works {
+    background: var(--cream);
+    padding: 28px 5% 35px;
+}
+
+.gallery-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.gallery-heading h2 {
+    font-size: 21px;
+    font-weight: 600;
+}
+
+.view-all {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 17px;
+    border: 1px solid  #3483E0;
+    border-radius: 30px;
+    color: #3483E0;
+
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+
+/* ==================================
+   10. FASHION GALLERY
+================================== */
+
+.fashion-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px 16px;
+}
+
+.fashion-card {
+    min-width: 0;
+}
+
+.fashion-image {
+    display: block;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    border-radius: 9px;
+    background: #e4d9cc;
+}
+
+.fashion-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    transition: transform 0.3s ease;
+}
+
+.fashion-card:hover .fashion-image img {
+    transform: scale(1.04);
+}
+
+.card-information {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 3px 0;
+}
+
+.card-information h3 {
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.card-information p {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.card-information button {
+    border: none;
+    background: transparent;
+    color: #777;
+    font-size: 16px;
+    padding: 2px;
+}
+
+
+/* ==================================
+   11. BOTTOM NAVIGATION
+================================== */
+
+.bottom-navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    background: rgba(255, 255, 255, 0.97);
+    border-top: 1px solid var(--border);
+    z-index: 1000;
+
+    padding: 8px 3%;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+
+    color: #888;
+    font-size: 11px;
+}
+
+.nav-item i {
+    font-size: 20px;
+}
+
+.nav-item.active {
+    color: #111;
+}
+
+
+@media (max-width: 900px) {
+
+    .header {
+        gap: 18px;
+    }
+
+    .logo {
+        font-size: 21px;
+    }
+
+    .search-box {
+        width: 45%;
+    }
+
+    .featured-image {
+        height: 58vw;
+        min-height: 400px;
+        max-height: 570px;
+    }
+
+    .fashion-gallery {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .fashion-image {
+        height: 230px;
+    }
+
+    .other-works {
+        padding-left: 4%;
+        padding-right: 4%;
+    }
+}
+
+@media (max-width: 600px) {
+
+    body {
+        padding-bottom: 72px;
+        padding-top: 112px
+    }
+
+    
+
+    .header {
+        padding: 13px 5%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 13px;
+        min-height: 0;
+        
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .header-icons {
+        gap: 16px;
+    }
+
+    .header-icons button {
+        font-size: 18px;
+    }
+
+    .profile-picture {
+        width: 32px;
+        height: 32px;
+    }
+
+    .search-box {
+        order: 3;
+        width: 100%;
+        max-width: none;
+        padding: 11px 14px;
+    }
+
+    .search-box input {
+        font-size: 12px;
+    }
+
+
+
+    .featured-image {
+        height: 115vw;
+        min-height: 350px;
+        max-height: 520px;
+    }
+
+    .image-search {
+        right: 15px;
+        bottom: 15px;
+        width: 39px;
+        height: 39px;
+    }
+
+
+    .image-actions {
+        padding: 17px 5% 8px;
+    }
+
+    .action-buttons {
+        gap: 22px;
+    }
+
+    .action-buttons button {
+        font-size: 19px;
+    }
+
+    .action-buttons .save-button {
+        padding: 11px 25px;
+        font-size: 13px;
+    }
+
+    .design-details {
+        padding: 8px 5% 25px;
+    }
+
+    .design-description h1 {
+        font-size: 24px;
+    }
+
+    .design-description p {
+        font-size: 13px;
+    }
+
+    .designer-profile {
+        margin-top: 18px;
+        padding-top: 16px;
+    }
+
+    .designer-info {
+        gap: 11px;
+    }
+
+    .designer-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+    }
+
+    .designer-text h3 {
+        font-size: 13px;
+    }
+
+    .designer-text p {
+        font-size: 11px;
+    }
+
+    .follow-button {
+        padding: 10px 17px;
+        font-size: 12px;
+    }
+
+    .tags {
+        gap: 8px;
+        margin: 18px 0 22px;
+    }
+
+    .tags span {
+        padding: 8px 11px;
+        font-size: 10px;
+    }
+
+    .garment-details h2 {
+        font-size: 15px;
+        margin-bottom: 20px;
+    }
+
+    .garment-grid {
+        gap: 10px;
+    }
+
+    .garment-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 9px;
+    }
+
+    .garment-item > i {
+        font-size: 19px;
+    }
+
+    .garment-item span,
+    .garment-item p {
+        font-size: 11px;
+    }
+
+
+    .other-works {
+        padding: 25px 4% 30px;
+    }
+
+    .gallery-heading {
+        align-items: center;
+        gap: 8px;
+    }
+
+    .gallery-heading h2 {
+        font-size: 17px;
+        line-height: 1.4;
+    }
+
+    .view-all {
+        padding: 9px 11px;
+        font-size: 11px;
+        gap: 6px;
+    }
+
+    .fashion-gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 23px 12px;
+    }
+
+    .fashion-image {
+        height: 230px;
+        border-radius: 8px;
+    }
+
+    .card-information {
+        padding-top: 9px;
+    }
+
+    .card-information h3 {
+        font-size: 11px;
+    }
+
+    .card-information p {
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    .card-information button {
+        font-size: 15px;
+    }
+
+    .bottom-navigation {
+        min-height: 66px;
+        padding: 8px 2%;
+    }
+
+    .nav-item {
+        gap: 5px;
+        font-size: 10px;
+    }
+
+    .nav-item i {
+        font-size: 18px;
+    }
+
+}
+
+@media (max-width: 380px) {
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .featured-image {
+        height: 110vw;
+        min-height: 320px;
+    }
+
+    .action-buttons {
+        gap: 18px;
+    }
+
+    .action-buttons .save-button {
+        padding: 10px 19px;
+    }
+
+    .gallery-heading h2 {
+        font-size: 15px;
+    }
+
+    .view-all {
+        padding: 8px;
+    }
+
+    .fashion-image {
+        height: 185px;
+    }
+
+    .garment-grid {
+        gap: 7px;
+    }
+
+}
+
+
+@media (min-width: 1400px) {
+
+    .fashion-gallery {
+        gap: 30px 20px;
+    }
+
+    .fashion-image {
+        height: 280px;
+    }
+
+}
+
+    </style>
+
+</head>
+
+<body>
+
+    <header class="header">
+
+        <a href="#" class="logo">ONTROPP</a>
+
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="search"
+                placeholder="Search designers, styles, or collections..."
+                aria-label="Search designers and fashion">
+        </div>
+
+        <div class="header-icons">
+
+            <button aria-label="Notifications">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+
+            <img
+                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100"
+                alt="User profile"
+                class="profile-picture">
+
+        </div>
+
+    </header>
+
+    <main>
+
+        <section class="featured-section">
+
+            <div class="featured-image">
+
+                <img
+                    src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1800"
+                    alt="Olive Majesty fashion design">
+
+                <button class="image-search"
+                        aria-label="Find similar designs">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+
+            </div>
+
+            <div class="image-actions">
+
+                <div class="action-buttons">
+
+                    <button aria-label="Like design">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <button aria-label="Share design">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    </button>
+
+                    <button aria-label="More options">
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </button>
+
+                    <button class="save-button">
+                        Save
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="design-details">
+
+                <div class="design-description">
+
+                    <h1>Atelier Nneka</h1>
+
+                    <p class="collection">
+                      Hand-dyed silk wrap dress
+                        "Earth &amp; Elegance" collection.
+                    </p>
+
+                    <p class="description">
+                        This design blends traditional craftsmanship
+                        with modern silhouettes, celebrating culture,
+                        strength and femininity.
+                    </p>
+
+                </div>
+
+
+                <div class="designer-profile">
+
+                    <div class="designer-info">
+
+                        <div class="designer-avatar">
+                            AK
+                        </div>
+
+                        <div class="designer-text">
+                            <h3>AK Couture</h3>
+                            <p>Fashion Designer</p>
+                        </div>
+
+                    </div>
+
+                    <button class="follow-button">
+                        Follow
+                    </button>
+
+                </div>
+
+                <div class="tags">
+
+                    <span>Evening Wear</span>
+                    <span>Couture</span>
+                    <span>African Inspired</span>
+                    <span>Bespoke</span>
+
+                </div>
+
+                <div class="garment-details">
+
+                    <h2>More about this design</h2>
+
+                    <div class="garment-grid">
+
+                        <div class="garment-item">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            <div>
+                                <span>Fabric</span>
+                                <p>Silk Blend</p>
+                            </div>
+
+                        </div>
+
+                        <div class="garment-item">
+
+                            <i class="fa-solid fa-palette"></i>
+
+                            <div>
+                                <span>Colour</span>
+                                <p>Sky Blue</p>
+                            </div>
+
+                        </div>
+
+                        <div class="garment-item">
+
+                            <i class="fa-solid fa-shirt"></i>
+
+                            <div>
+                                <span>Fit</span>
+                                <p>Structured</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="other-works">
+
+            <div class="gallery-heading">
+
+                <h2>More Works by AK Couture</h2>
+
+                <a href="#" class="view-all">
+                    View All
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+            <div class="fashion-gallery">
+
+                <article class="fashion-card">
+
+                    <a href="#" class="fashion-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600"
+                            alt="Royal Crimson evening wear"
+                            loading="lazy">
+                    </a>
+
+                    <div class="card-information">
+
+                        <div>
+                            <h3>Royal Crimson</h3>
+                            <p>Evening Wear</p>
+                        </div>
+
+                        <button aria-label="Like Royal Crimson">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+
+                    </div>
+
+                </article>
+
+                <article class="fashion-card">
+
+                    <a href="#" class="fashion-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600"
+                            alt="The Grace bridal design"
+                            loading="lazy">
+                    </a>
+
+                    <div class="card-information">
+
+                        <div>
+                            <h3>The Grace</h3>
+                            <p>Bridal / Couture</p>
+                        </div>
+
+                        <button aria-label="Like The Grace">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+
+                    </div>
+
+                </article>
+
+                <article class="fashion-card">
+
+                    <a href="#" class="fashion-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=600"
+                            alt="Heritage Blue fashion"
+                            loading="lazy">
+                    </a>
+
+                    <div class="card-information">
+
+                        <div>
+                            <h3>Heritage Blue</h3>
+                            <p>Traditional Inspired</p>
+                        </div>
+
+                        <button aria-label="Like Heritage Blue">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+
+                    </div>
+
+                </article>
+
+                <article class="fashion-card">
+
+                    <a href="#" class="fashion-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600"
+                            alt="Golden Roots fashion"
+                            loading="lazy">
+                    </a>
+
+                    <div class="card-information">
+
+                        <div>
+                            <h3>Golden Roots</h3>
+                            <p>Couture</p>
+                        </div>
+
+                        <button aria-label="Like Golden Roots">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+
+                    </div>
+
+                </article>
+
+                <article class="fashion-card">
+
+                    <a href="#" class="fashion-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600"
+                            alt="The Nomad resort wear"
+                            loading="lazy">
+                    </a>
+
+                    <div class="card-information">
+
+                        <div>
+                            <h3>The Nomad</h3>
+                            <p>Resort Wear</p>
+                        </div>
+
+                        <button aria-label="Like The Nomad">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+
+                    </div>
+
+                </article>
+
+                <article class="fashion-card">
+
+                    <a href="#" class="fashion-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600"
+                            alt="Emerald Bloom fashion"
+                            loading="lazy">
+                    </a>
+
+                    <div class="card-information">
+
+                        <div>
+                            <h3>Emerald Bloom</h3>
+                            <p>Evening Wear</p>
+                        </div>
+
+                        <button aria-label="Like Emerald Bloom">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+
+                    </div>
+
+                </article>
+
+                <article class="fashion-card">
+
+                    <a href="#" class="fashion-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=600"
+                            alt="Desert Muse fashion"
+                            loading="lazy">
+                    </a>
+
+                    <div class="card-information">
+
+                        <div>
+                            <h3>Desert Muse</h3>
+                            <p>Ready to Wear</p>
+                        </div>
+
+                        <button aria-label="Like Desert Muse">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+
+                    </div>
+
+                </article>
+
+                <article class="fashion-card">
+
+                    <a href="#" class="fashion-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600"
+                            alt="Amethyst evening wear"
+                            loading="lazy">
+                    </a>
+
+                    <div class="card-information">
+
+                        <div>
+                            <h3>Amethyst</h3>
+                            <p>Evening Wear</p>
+                        </div>
+
+                        <button aria-label="Like Amethyst">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <nav class="bottom-navigation" aria-label="Main navigation">
+
+        <a href="#" class="nav-item active">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Explore</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-regular fa-gem"></i>
+            <span>Save</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-regular fa-user"></i>
+            <span>Profile</span>
+        </a>
+
+    </nav>
+
+</body>
+</html>

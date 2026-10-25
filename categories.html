@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textiles | ONTROPP</title>
+    <style>
+        :root { --brand: #3483E0; --text: #1d2733; --muted: #6b7785; --line: #e6eaf0; }
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; color: var(--text); background: #fff; margin: 0; }
+        svg { width: 22px; height: 22px; fill: currentColor; fill-rule: evenodd; }
+        .page { max-width: 100%; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; height: 60px; padding: 0 14px; border-bottom: 1px solid var(--line); }
+        .logo { color: var(--brand); font-size: 1.4rem; font-weight: bold; margin: 0; }
+        .actions { display: flex; gap: 10px; }
+        .icon-btn { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--text); }
+        .icon-btn.round { border-radius: 50%; background: #f3f5f8; color: var(--muted); font-weight: bold; }
+        .intro { padding: 22px 14px 14px; background: #f9fafb; }
+        .intro-top { display: flex; justify-content: space-between; align-items: center; }
+        h2 { margin: 0; font-size: 1.7rem; }
+        .sort { color: var(--muted); font-size: 0.85rem; font-weight: bold; }
+        .meta { margin: 14px 0 0; color: var(--muted); font-size: 0.85rem; }
+
+        /* Fabric categories */
+        .types { display: flex; gap: 16px; padding: 14px; overflow-x: auto; border-bottom: 1px solid var(--line); }
+        .type { flex: none; width: 56px; text-align: center; font-size: 0.7rem; font-weight: bold; }
+        .type span { display: block; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .swatch { width: 52px; height: 52px; margin: 0 auto; border-radius: 50%; }
+        .type.all .swatch { display: grid; place-items: center; background: #fff; border: 2px solid var(--text); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; padding: 16px 14px 32px; background: #f9fafb; }
+        .thumb { border-radius: 6px; }
+        .short { height: 190px; }
+        .tall { height: 220px; }
+        .card h3 { margin: 8px 0 6px; font-size: 0.9rem; font-weight: 600; }
+        .by { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); }
+        .by i { width: 16px; height: 16px; border-radius: 50%; background: #c9a98f; }
+
+        /* Fabric colors (used by swatches and thumbnails) */
+        .rust { background: #d9532b; }
+        .brown { background: #8c5a3c; }
+        .indigo { background: #3b4a7a; }
+        .cream { background: #efe6da; }
+        .rose { background: #e0577a; }
+        .stone { background: #cfc7b8; }
+        .tan { background: #c98f4e; }
+        .gold { background: #d4962a; }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <header>
+        <h1 class="logo">ONTROPP.</h1>
+        <div class="actions">
+            <a class="icon-btn" href="notificationbutton.html" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3-2-5-5-5.7V4a1 1 0 0 0-2 0v1.3C8 6 6 8 6 11v5l-2 2v1h16v-1z"/></svg></a>
+            <button class="icon-btn round" aria-label="More">•••</button>
+        </div>
+    </header>
+
+    <section class="intro">
+        <div class="intro-top">
+            <h2>Textiles</h2>
+            <span class="sort">Newest ⌄</span>
+        </div>
+        <p class="meta">8 fabrics · 6 studios · updated 3 days ago</p>
+    </section>
+
+    <section class="types">
+        <div class="type all"><div class="swatch"><svg viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5zm-8.5 8L2 12l10 5 10-5-1.5-1L12 14.5zm0 4L2 16l10 5 10-5-1.5-1L12 18.5z"/></svg></div><span>All</span></div>
+        <div class="type"><div class="swatch rust"></div><span>Ankara</span></div>
+        <div class="type"><div class="swatch brown"></div><span>Aso oke</span></div>
+        <div class="type"><div class="swatch indigo"></div><span>Adire</span></div>
+        <div class="type"><div class="swatch cream"></div><span>Lace</span></div>
+        <div class="type"><div class="swatch rose"></div><span>Silk</span></div>
+        <div class="type"><div class="swatch stone"></div><span>Linen</span></div>
+    </section>
+
+    <section class="grid">
+        <article class="card">
+            <div class="thumb tall brown"></div>
+            <h3>Hand-woven aso oke</h3>
+            <div class="by"><i></i>Atelier Nneka</div>
+        </article>
+        <article class="card">
+            <div class="thumb short indigo"></div>
+            <h3>Indigo adire cloth</h3>
+            <div class="by"><i></i>Ink &amp; Thread</div>
+        </article>
+        <article class="card">
+            <div class="thumb short rust"></div>
+            <h3>Ankara wax print</h3>
+            <div class="by"><i></i>Kèkè Collective</div>
+        </article>
+        <article class="card">
+            <div class="thumb tall rose"></div>
+            <h3>Silk charmeuse</h3>
+            <div class="by"><i></i>Sahel Studio</div>
+        </article>
+        <article class="card">
+            <div class="thumb tall stone"></div>
+            <h3>Washed linen blend</h3>
+            <div class="by"><i></i>Form Studio</div>
+        </article>
+        <article class="card">
+            <div class="thumb short cream"></div>
+            <h3>Cord lace</h3>
+            <div class="by"><i></i>Lore</div>
+        </article>
+        <article class="card">
+            <div class="thumb short tan"></div>
+            <h3>Woven raffia cloth</h3>
+            <div class="by"><i></i>Kèkè Collective</div>
+        </article>
+        <article class="card">
+            <div class="thumb tall gold"></div>
+            <h3>Guinea brocade</h3>
+            <div class="by"><i></i>Atelier Nneka</div>
+        </article>
+    </section>
+
+</div>
+</body>
+</html>
