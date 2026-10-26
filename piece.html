@@ -10,376 +10,136 @@
   <link rel="stylesheet" href="./css/CORE.css">
   <link rel="stylesheet" href="./css/components/buttons.css">
   <link rel="stylesheet" href="./css/components/cards.css">
+  <link rel="stylesheet" href="./css/tabs/dashboard.css">
   <link rel="stylesheet" href="./css/pages/piece.css">
 
 </head>
 
 <body>
 
-  <header class="header">
-
-    <a href="#" class="logo">ONTROPP</a>
-
-    <div class="header-icons">
-
-      <button type="button" aria-label="Notifications">
-        <i class="fa-regular fa-bell"></i>
-      </button>
-
-      <img
-        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100"
-        alt="User profile"
-        class="profile-picture">
-
+  <header class="dashboard-header">
+    <div class="header-container">
+      <a href="#" class="logo">ONTROPP</a>
+      <div class="header-actions">
+        <button class="icon-btn notification-btn" type="button" aria-label="Notifications">
+          <i class="fa-regular fa-bell"></i>
+        </button>
+        <span class"icon-btn">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100"
+             alt="User profile" class="profile-picture"
+        </span>
+      </div>
+      
     </div>
-
   </header>
 
   <main>
 
-    <section class="featured-section">
-
-      <div class="featured-image">
-
-        <img
-          src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1800"
-          alt="Olive Majesty fashion design">
-
-        <button type="button" class="image-search" aria-label="Find similar designs">
-          <i class="fa-solid fa-camera"></i>
-        </button>
-
+    <!-- HERO -->
+    <section class="featured-section" data-state-view="piece-hero">
+      <div class="sv-state" data-state="loading">
+        <div class="skeleton-line w-100 h-80 shimmer"></div>
       </div>
-
-      <div class="image-actions">
-
-        <div class="action-buttons">
-
-          <button type="button" aria-label="Like design">
-            <i class="fa-regular fa-heart"></i>
-          </button>
-
-          <button type="button" aria-label="Share design">
-            <i class="fa-solid fa-arrow-up-from-bracket"></i>
-          </button>
-
-          <button type="button" aria-label="More options">
-            <i class="fa-solid fa-ellipsis"></i>
-          </button>
-
-          <button type="button" class="btn btn-primary save-pill">Save</button>
-
+      <div class="sv-state" data-state="empty" hidden>
+        <div class="sv-empty">
+          <i class="fas fa-image"></i><p>This piece couldn't be loaded.</p>
         </div>
-
       </div>
-
-      <div class="design-details">
-
-        <div class="design-description">
-
-          <h1>Atelier Nneka</h1>
-
-          <p class="collection">
-            Hand-dyed silk wrap dress — "Earth &amp; Elegance" collection.
-          </p>
-
-          <p class="description">
-            This design blends traditional craftsmanship with modern silhouettes,
-            celebrating culture, strength and femininity.
-          </p>
-
+      <div class="sv-state" data-state="data" hidden>
+        <div class="featured-image">
+          <img class="js-hero-img" src="" alt="">
+          <!--<button type="button" class="image-search" aria-label="Find similar designs">
+            <i class="fa-solid fa-camera"></i>
+          </button>-->
         </div>
-
-
-        <div class="designer-profile">
-
-          <div class="designer-info">
-
-            <div class="initials-avatar">AK</div>
-
-            <div class="designer-text">
-              <h3>AK Couture</h3>
-              <p>Fashion Designer</p>
-            </div>
-
+        <div class="image-actions">
+          <div class="action-buttons">
+            <button type="button" aria-label="Like design"><i class="fa-regular fa-heart"></i></button>
+            <button type="button" aria-label="Share design"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+            <button type="button" aria-label="More options"><i class="fa-solid fa-ellipsis"></i></button>
+            <button type="button" class="btn btn-primary save-pill">Save</button>
           </div>
-
-          <button type="button" class="follow-btn">Follow</button>
-
         </div>
-
-        <div class="tags">
-          <span>Evening Wear</span>
-          <span>Couture</span>
-          <span>African Inspired</span>
-          <span>Bespoke</span>
-        </div>
-
-        <div class="garment-details">
-
-          <h2>More about this design</h2>
-
-          <div class="garment-grid">
-
-            <div class="garment-item">
-              <i class="fa-solid fa-layer-group"></i>
-              <div>
-                <span>Fabric</span>
-                <p>Silk Blend</p>
-              </div>
-            </div>
-
-            <div class="garment-item">
-              <i class="fa-solid fa-palette"></i>
-              <div>
-                <span>Colour</span>
-                <p>Sky Blue</p>
-              </div>
-            </div>
-
-            <div class="garment-item">
-              <i class="fa-solid fa-shirt"></i>
-              <div>
-                <span>Fit</span>
-                <p>Structured</p>
-              </div>
-            </div>
-
+        <div class="design-details">
+          <div class="design-description">
+            <h1 class="js-hero-studio"></h1>
+            <p class="collection js-hero-collection"></p>
+            <p class="description js-hero-description"></p>
           </div>
-
-        </div>
-
-      </div>
-
-      <div class="design-note">
-
-        <label for="designNote" class="note-label">
-          <i class="fa-regular fa-pen-to-square"></i>
-          Write a short note about your design
-        </label>
-
-        <textarea
-          id="designNote"
-          maxlength="300"
-          placeholder="Share the inspiration, the story behind it, or how it should be worn..."></textarea>
-
-        <div class="note-footer">
-          <span class="note-count" id="noteCount">0 / 300</span>
-          <button type="button" class="btn btn-primary note-save" id="noteSave" disabled>
-            Save note
-          </button>
-        </div>
-
-        <div class="saved-note" id="savedNote" hidden>
-          <div class="saved-note-head">
-            <h3>Your note</h3>
-            <div class="saved-note-actions">
-              <button type="button" id="noteEdit">Edit</button>
-              <button type="button" id="noteDelete">Delete</button>
-            </div>
+          <div class="tags">
+            <span>Evening Wear</span><span>Couture</span>
+            <span>African Inspired</span><span>Bespoke</span>
           </div>
-          <p id="savedNoteText"></p>
         </div>
-
       </div>
-
     </section>
 
+    <!-- MAKER -->
+    <section class="featured-section" data-state-view="piece-maker">
+      <div class="sv-state" data-state="loading">
+        <div class="skeleton-line w-60 h-14 shimmer"></div>
+      </div>
+      <div class="sv-state" data-state="empty" hidden>
+        <div class="sv-empty"><i class="fas fa-user"></i><p>Designer info unavailable.</p></div>
+      </div>
+      <div class="sv-state" data-state="data" hidden>
+        <div class="design-details">
+          <div class="designer-profile">
+            <div class="designer-info">
+              <div class="initials-avatar js-maker-initials"></div>
+              <div class="designer-text">
+                <h3 class="js-maker-name"></h3>
+                <p class="js-maker-role"></p>
+              </div>
+            </div>
+            <button type="button" class="follow-btn">Follow</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <section class="other-works">
+    <!-- GARMENT -->
+    <section class="featured-section" data-state-view="piece-garment">
+      <div class="sv-state" data-state="loading">
+        <div class="skeleton-line w-40 h-14 shimmer"></div>
+      </div>
+      <div class="sv-state" data-state="empty" hidden>
+        <div class="sv-empty"><i class="fas fa-shirt"></i><p>No details available.</p></div>
+      </div>
+      <div class="sv-state" data-state="data" hidden>
+        <div class="design-details">
+          <div class="garment-details">
+            <h2>More about this design</h2>
+            <div class="garment-grid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <!-- OTHER WORKS -->
+    <section class="other-works" data-state-view="piece-other">
       <div class="gallery-heading">
-
-        <h2>More Works by AK Couture</h2>
-
-        <a href="#" class="view-all">
-          View All
-          <i class="fa-solid fa-arrow-right"></i>
-        </a>
-
+        <h2>More works</h2>
+        <a href="#" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
       </div>
-
-      <div class="fashion-gallery">
-
-        <article class="fashion-card">
-          <a href="#" class="fashion-image">
-            <img src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600"
-                 alt="Royal Crimson evening wear" loading="lazy">
-          </a>
-          <div class="card-information">
-            <div>
-              <h3>Royal Crimson</h3>
-              <p>Evening Wear</p>
-            </div>
-            <button type="button" aria-label="Like Royal Crimson">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        </article>
-
-        <article class="fashion-card">
-          <a href="#" class="fashion-image">
-            <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600"
-                 alt="The Grace bridal design" loading="lazy">
-          </a>
-          <div class="card-information">
-            <div>
-              <h3>The Grace</h3>
-              <p>Bridal / Couture</p>
-            </div>
-            <button type="button" aria-label="Like The Grace">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        </article>
-
-        <article class="fashion-card">
-          <a href="#" class="fashion-image">
-            <img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=600"
-                 alt="Heritage Blue fashion" loading="lazy">
-          </a>
-          <div class="card-information">
-            <div>
-              <h3>Heritage Blue</h3>
-              <p>Traditional Inspired</p>
-            </div>
-            <button type="button" aria-label="Like Heritage Blue">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        </article>
-
-        <article class="fashion-card">
-          <a href="#" class="fashion-image">
-            <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600"
-                 alt="Golden Roots fashion" loading="lazy">
-          </a>
-          <div class="card-information">
-            <div>
-              <h3>Golden Roots</h3>
-              <p>Couture</p>
-            </div>
-            <button type="button" aria-label="Like Golden Roots">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        </article>
-
-        <article class="fashion-card">
-          <a href="#" class="fashion-image">
-            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600"
-                 alt="The Nomad resort wear" loading="lazy">
-          </a>
-          <div class="card-information">
-            <div>
-              <h3>The Nomad</h3>
-              <p>Resort Wear</p>
-            </div>
-            <button type="button" aria-label="Like The Nomad">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        </article>
-
-        <article class="fashion-card">
-          <a href="#" class="fashion-image">
-            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600"
-                 alt="Emerald Bloom fashion" loading="lazy">
-          </a>
-          <div class="card-information">
-            <div>
-              <h3>Emerald Bloom</h3>
-              <p>Evening Wear</p>
-            </div>
-            <button type="button" aria-label="Like Emerald Bloom">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        </article>
-
-        <article class="fashion-card">
-          <a href="#" class="fashion-image">
-            <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=600"
-                 alt="Desert Muse fashion" loading="lazy">
-          </a>
-          <div class="card-information">
-            <div>
-              <h3>Desert Muse</h3>
-              <p>Ready to Wear</p>
-            </div>
-            <button type="button" aria-label="Like Desert Muse">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        </article>
-
-        <article class="fashion-card">
-          <a href="#" class="fashion-image">
-            <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600"
-                 alt="Amethyst evening wear" loading="lazy">
-          </a>
-          <div class="card-information">
-            <div>
-              <h3>Amethyst</h3>
-              <p>Evening Wear</p>
-            </div>
-            <button type="button" aria-label="Like Amethyst">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        </article>
-
+      <div class="sv-state" data-state="loading">
+        <div class="skeleton-row">
+          <div class="skeleton-card shimmer"></div>
+          <div class="skeleton-card shimmer"></div>
+          <div class="skeleton-card shimmer"></div>
+        </div>
       </div>
-
+      <div class="sv-state" data-state="empty" hidden>
+        <div class="sv-empty"><i class="fas fa-images"></i><p>No other works yet.</p></div>
+      </div>
+      <div class="sv-state" data-state="data" hidden>
+        <div class="fashion-gallery"></div>
+      </div>
     </section>
 
   </main>
 
-  <script>
-    (() => {
-      const ta       = document.getElementById('designNote');
-      const count    = document.getElementById('noteCount');
-      const saveBtn  = document.getElementById('noteSave');
-      const savedBox = document.getElementById('savedNote');
-      const savedTxt = document.getElementById('savedNoteText');
-      const editBtn  = document.getElementById('noteEdit');
-      const delBtn   = document.getElementById('noteDelete');
-
-      const MAX = 300;
-
-      const update = () => {
-        const len = ta.value.length;
-        count.textContent = `${len} / ${MAX}`;
-        saveBtn.disabled = len === 0;
-      };
-
-      ta.addEventListener('input', update);
-
-      saveBtn.addEventListener('click', () => {
-        const text = ta.value.trim();
-        if (!text) return;
-        savedTxt.textContent = text;
-        savedBox.hidden = false;
-        ta.value = '';
-        update();
-      });
-
-      editBtn.addEventListener('click', () => {
-        ta.value = savedTxt.textContent;
-        savedBox.hidden = true;
-        update();
-        ta.focus();
-      });
-
-      delBtn.addEventListener('click', () => {
-        savedTxt.textContent = '';
-        savedBox.hidden = true;
-        update();
-      });
-
-      update();
-    })();
-  </script>
-
+  <div id="toast-root"></div>
+  <script type="module" src="./js/pages/piece.js"></script>
 </body>
 </html>

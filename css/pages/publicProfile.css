@@ -1,0 +1,361 @@
+/* ===== public-profile.css =====
+   Public designer profile page chrome + profile-scoped
+   FashionCard overrides.
+
+   Reuses (link these BEFORE this file):
+     masonry.css  — .masonry-columns / .masonry-col
+     cards.css    — .fashion-card / .fashion-image / .card-information
+
+   We do NOT redefine masonry. We do NOT redefine FashionCard's
+   base visuals. We only:
+     - style the page chrome (topbar, cover, header, stats, tabs, buttons)
+     - override .fashion-image height -> aspect-ratio, scoped to
+       .public-profile so piece.html is untouched.
+   ============================================================= */
+
+/* ---------- Page shell ---------- */
+
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg, #fafbfd);
+  color: var(--text, #1a202c);
+  min-height: 100vh;
+}
+button, a { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+/* ---------- Top bar ---------- */
+
+.topbar {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border, #e8e8e8);
+  background: rgba(255, 255, 255, .92);
+  backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--brand, #3182ce);
+}
+
+/* ---------- Profile shell ---------- */
+
+.profile {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+.cover {
+  height: 300px;
+  margin: 18px 18px 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e6f6ee, #e6eef9);
+  position: relative;
+}
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 55%, rgba(26, 32, 44, .2));
+}
+
+.profile-header { padding: 0 24px; }
+
+.profile-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: -60px;
+  position: relative;
+  z-index: 5;
+}
+
+.avatar {
+  width: 126px;
+  height: 126px;
+  border-radius: 50%;
+  border: 4px solid var(--bg, #fafbfd);
+  object-fit: cover;
+  background: var(--surface-light, #f3f4f8);
+}
+
+.profile-main { flex: 1; padding-top: 65px; }
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.profile-name { font-size: 28px; line-height: 1.1; font-weight: 700; }
+.verified {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--brand, #3182ce);
+  color: #fff;
+  font-size: 12px; font-weight: 900;
+}
+
+.profile-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+  color: var(--muted, #6b7280);
+  font-size: 14px;
+}
+.dot { opacity: .5; }
+
+.bio {
+  max-width: 600px;
+  margin-top: 16px;
+  color: #4a5568;
+  line-height: 1.65;
+  font-size: 15px;
+}
+
+.availability {
+  margin: 68px 0 0 auto;
+  border: 1px solid rgba(39, 174, 96, .45);
+  color: var(--success, #27ae60);
+  background: rgba(46, 204, 113, .1);
+  padding: 8px 13px;
+  border-radius: 999px;
+  display: flex; align-items: center; gap: 7px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.availability-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--success, #27ae60);
+}
+
+.socials { display: flex; gap: 18px; margin-top: 18px; }
+.socials a { color: #4a5568; font-size: 14px; transition: color .2s; }
+.socials a:hover { color: var(--brand, #3182ce); }
+
+/* ---------- Buttons ---------- */
+
+.actions { display: flex; gap: 12px; margin-top: 22px; }
+.btn {
+  min-height: 46px;
+  padding: 0 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border, #e8e8e8);
+  background: transparent;
+  color: var(--text, #1a202c);
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+.btn:hover { transform: translateY(-1px); }
+
+.btn-message {
+  background: var(--accent, #2ecc71);
+  border-color: var(--accent, #2ecc71);
+  color: #fff;
+  min-width: 180px;
+}
+.btn-message:hover { background: var(--accent-light, #58d68d); }
+
+.btn-follow { min-width: 150px; }
+.btn-follow:hover {
+  border-color: var(--accent, #2ecc71);
+  color: var(--accent, #2ecc71);
+}
+.btn-follow.active {
+  background: var(--ink, #111);
+  color: #fff;
+  border: none;
+}
+
+.btn-share { width: 46px; padding: 0; }
+
+/* ---------- Stats ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 28px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border, #e8e8e8);
+  border-bottom: 1px solid var(--border, #e8e8e8);
+}
+.stat {
+  text-align: center;
+  padding: 0 20px;
+  border-right: 1px solid var(--border, #e8e8e8);
+}
+.stat:last-child { border-right: none; }
+.stat strong { display: block; font-size: 16px; margin-bottom: 5px; }
+.stat span { color: var(--muted, #6b7280); font-size: 12px; }
+
+/* ---------- Tabs ---------- */
+
+.tabs {
+  display: flex;
+  gap: 34px;
+  margin-top: 20px;
+  border-bottom: 1px solid var(--border, #e8e8e8);
+  overflow-x: auto;
+}
+.tab {
+  padding: 14px 4px;
+  color: var(--muted, #6b7280);
+  background: none;
+  border: none;
+  position: relative;
+  white-space: nowrap;
+}
+.tab.active { color: var(--text, #1a202c); font-weight: 600; }
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent, #2ecc71);
+}
+
+/* ---------- Work ---------- */
+
+.portfolio-section.work { padding-top: 28px; }
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.section-heading h2 { font-size: 19px; }
+
+/* Loading / empty */
+.work-loading,
+.work-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--muted, #6b7280);
+  gap: 12px;
+  text-align: center;
+  font-size: 14px;
+}
+.work-empty i { font-size: 28px; opacity: .5; }
+
+/* ---------- Profile-scoped FashionCard override ----------
+   masonry.css + masonry.js lay the columns out. FashionCard
+   ships with .fashion-image { height: 220px } (fixed) which
+   would defeat masonry — every column would be the same
+   height. We let the media box take the piece's natural
+   aspect ratio instead. Scoped to .public-profile so the
+   piece page keeps its 220px.
+
+   JS sets  style="aspect-ratio: W / H"  on the media node.
+   --------------------------------------------------------- */
+
+.public-profile .fashion-image {
+  height: auto;          /* override the 220px default */
+  aspect-ratio: 4 / 5;   /* fallback if JS didn't supply */
+}
+.public-profile .fashion-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 700px) {
+  .topbar { height: 60px; padding: 0 18px; }
+  .logo { font-size: 19px; letter-spacing: 5px; }
+
+  .profile { padding-bottom: 40px; }
+
+  .cover { height: 190px; margin: 0; border-radius: 0; }
+  .profile-header { padding: 0 16px; }
+
+  .profile-top { margin-top: -52px; display: block; }
+  .avatar { width: 105px; height: 105px; }
+  .profile-main { padding-top: 12px; }
+  .profile-name { font-size: 24px; }
+
+  .availability {
+    position: absolute;
+    right: 0; top: 65px;
+    margin: 0;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .bio { font-size: 14px; line-height: 1.55; }
+
+  .actions { display: grid; grid-template-columns: 1fr 1fr 48px; }
+  .btn { padding: 0 10px; min-width: 0; }
+  .btn-message, .btn-follow { min-width: 0; }
+
+  .stats { margin: 28px -16px 0; overflow-x: auto; }
+  .stat { padding: 0 8px; }
+  .stat strong { font-size: 14px; }
+  .stat span { font-size: 10px; }
+
+  .tabs {
+    gap: 26px;
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+  }
+
+  .portfolio-section.work { padding-top: 22px; }
+}
+
+@media (max-width: 380px) {
+  .profile-name { font-size: 21px; }
+  .profile-meta { font-size: 12px; }
+  .bio { font-size: 13px; }
+  .btn { font-size: 13px; }
+  .stat span { font-size: 9px; }
+}
+
+/* ---------- Follow button internals (DesignerFollowButton injects its own HTML) ---------- */
+
+#btn-follow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+#btn-follow i {
+  font-size: 12px;
+}
+#btn-follow.following {
+  /* keep parity with the .active state we already styled */
+  background: var(--ink, #111);
+  color: #fff;
+  border-color: var(--ink, #111);
+}
+
+/* ---------- Share button ---------- */
+.btn-share { color: var(--text, #1a202c); }
+.btn-share:hover { border-color: var(--ink, #111); }
