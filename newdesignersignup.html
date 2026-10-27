@@ -17,7 +17,6 @@
 .eyebrow{display:flex;align-items:center;gap:7px;color:var(--blue);font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:850;margin-bottom:9px}
 .eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--blue)}
 h1{font-size:29px;line-height:1.2;letter-spacing:-.04em;margin:0 0 8px}.page-head p{color:var(--muted);margin:0;max-width:610px;font-size:13px}
-.head-status{white-space:nowrap;border:1px solid #e1e6ef;border-radius:999px;padding:7px 11px;color:#667085;background:#fff;font-size:11px;font-weight:750}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:22px;align-items:start}
 .panel{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(23,35,56,.025)}
 .panel-heading{padding:21px 24px 17px;border-bottom:1px solid var(--line)}.panel-heading h2{font-size:15px;margin:0 0 4px;letter-spacing:-.02em}.panel-heading p{margin:0;color:var(--muted);font-size:12px}
@@ -53,43 +52,42 @@ input::placeholder,textarea::placeholder{color:#a0a8b5}input:focus,textarea:focu
           <h1>Create your studio</h1>
           <p>Set up your studio profile so customers can understand your brand, discover your work, and find the right way to contact you.</p>
         </div>
-        <span class="head-status">Draft · Not published</span>
       </div>
 
       <div class="layout">
         <section class="panel" aria-labelledby="studioFormTitle">
           <div class="panel-heading">
-            <h2 id="studioFormTitle">Studio information</h2>
+            <h1 id="studioFormTitle">Studio information</h1>
             <p>Complete the required details. You can edit your studio later.</p>
           </div>
           <form id="studioForm">
             <div class="form-body">
-              <div class="section-label">Studio identity</div>
+              <div class="section-label"><h2>Brand Identity</h2></div>
               <div class="field">
-                <label for="studioName" class="required">Studio name</label>
+                <label for="studioName" class="required">Brand name</label>
                 <input id="studioName" name="studioName" type="text" maxlength="60" placeholder="e.g. Studio Ayo or Ayo Atelier" required>
                 <p class="help">Choose the name you want customers to recognise.</p>
               </div>
               <div class="field">
-                <label for="studioLogo">Studio logo</label>
+                <label for="studioLogo">Brand logo</label>
                 <div class="upload-box">
-                  <div class="logo-preview"><span id="logoSymbol">✳</span><img id="logoImage" alt="Studio logo preview"></div>
-                  <div class="upload-copy"><strong id="logoFileName">Upload your studio logo</strong><p>PNG, JPG or WebP · Up to 5 MB</p></div>
+                  <div class="logo-preview"><span id="logoSymbol">✳</span><img id="logoImage" alt="Brand logo preview"></div>
+                  <div class="upload-copy"><strong id="logoFileName">Upload your brand logo</strong><p>PNG, JPG or WebP · Up to 5 MB</p></div>
                   <label class="file-button" for="studioLogo">Choose file</label>
                   <input id="studioLogo" name="studioLogo" type="file" accept="image/png,image/jpeg,image/webp">
                 </div>
               </div>
               <div class="field">
-                <label for="studioCover">Studio cover image <span style="font-weight:500;color:#8992a3">(optional)</span></label>
+                <label for="studioCover">Brand cover image <span style="font-weight:500;color:#8992a3">(optional)</span></label>
                 <label class="cover-upload" for="studioCover" style="cursor:pointer">
-                  <img id="coverImage" alt="Studio cover preview">
+                  <img id="coverImage" alt="Brand cover preview">
                   <span class="cover-prompt" id="coverPrompt"><span class="cover-symbol">▧</span><b>Add a cover image</b><span>Design images work best · Up to 5 MB</span></span>
                 </label>
                 <input id="studioCover" name="studioCover" type="file" accept="image/png,image/jpeg,image/webp">
               </div>
               <div class="field">
-                <label for="description" class="required">Studio description</label>
-                <textarea id="description" name="description" maxlength="500" placeholder="Tell customers what your studio creates, your style, and what makes your work distinctive." required></textarea>
+                <label for="description" class="required">Brand description</label>
+                <textarea id="description" name="description" maxlength="500" placeholder="Tell customers what your brand creates, your style, and what makes your work distinctive." required></textarea>
                 <div class="counter"><span id="descriptionCount">0</span>/500 characters</div>
               </div>
 
@@ -123,11 +121,11 @@ input::placeholder,textarea::placeholder{color:#a0a8b5}input:focus,textarea:focu
               </div>
               <div class="grid-two">
                 <div class="field"><label for="whatsapp" class="required">Business WhatsApp</label><input id="whatsapp" name="whatsapp" type="tel" inputmode="tel" placeholder="+234 801 234 5678" required></div>
-                <div class="field"><label for="email">Business email <span style="font-weight:500;color:#8992a3">(optional)</span></label><input id="email" name="email" type="text" placeholder="studio@gmail.com"></div>
+                <div class="field"><label for="email">Business email <span style="font-weight:500;color:#8992a3">(optional)</span></label><input id="email" name="email" type="text" placeholder="e.g.yourbrand@gmail.com"></div>
               </div>
               <div class="grid-two">
-                <div class="field"><label for="website">Tiktok Handle <span style="font-weight:500;color:#8992a3">(optional)</span></label><input id="website" name="website" type="url" placeholder="@yourstudio"></div>
-                <div class="field"><label for="instagram">Instagram handle <span style="font-weight:500;color:#8992a3">(optional)</span></label><input id="instagram" name="instagram" type="text" placeholder="@yourstudio"></div>
+                <div class="field"><label for="website">Tiktok Handle <span style="font-weight:500;color:#8992a3">(optional)</span></label><input id="website" name="website" type="url" placeholder="e.g.@yourbrand"></div>
+                <div class="field"><label for="instagram">Instagram handle <span style="font-weight:500;color:#8992a3">(optional)</span></label><input id="instagram" name="instagram" type="text" placeholder="e.g. @yourbrand"></div>
               </div>
             </div>
             <div class="form-footer">
