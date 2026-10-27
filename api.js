@@ -7,9 +7,9 @@ const LocationsTTLMS =  7 * 24 * 60 * 60 * 1000;
 const API = {
   requestCount: 0,
   
-  baseURL: 'http://localhost:8787',
+  basURL: 'http://localhost:8787',
   basedURL: 'https://ontropp-backend.onrender.com/api',
-  basURL: 'https://ontrop-api.dsub.workers.dev',
+  baseURL: 'https://ontrop-api.dsub.workers.dev',
   
 	// Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {
