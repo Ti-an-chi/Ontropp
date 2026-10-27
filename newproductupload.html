@@ -66,6 +66,8 @@ input[type=number]::-webkit-inner-spin-button{display:none}input[type=number]{-m
             <span class="field-label required" style="margin-bottom:10px">Design photos</span>
             <div class="tiles" id="tiles"></div>
             <input id="designFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+            <label for="phone-picture">Choose a Picture</label>
+            <input type="file" id="phone-picture" name="phone-picture" accept="image/*">
             <p class="help">Up to 8 photos · PNG, JPG or WebP · 5 MB each. The first photo is your cover.</p>
           </div>
         </div>
@@ -99,7 +101,7 @@ input[type=number]::-webkit-inner-spin-button{display:none}input[type=number]{-m
               <span class="field-label">Availability</span>
               <div class="chips">
                 <div class="chip"><input id="a-ready" type="radio" name="availability" value="Ready-made" checked><label for="a-ready">Ready-made</label></div>
-                <div class="chip"><input id="a-order" type="radio" name="availability" value="Made to order"><label for="a-order">Made to order</label></div>
+                <div class="chip"><input id="a-order" type="radio" name="availability" value="Made to order"><label for="a-order">Custom-made</label></div>
               </div>
             </div>
             <div class="field">
