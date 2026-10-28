@@ -13,10 +13,10 @@ const StoreApi = {
   
   async _fetch(path, options) {
     try {
-      return await API._fetch(`${path}`, options, false, 'designer');
+      return await API._fetch(`${path}`, options);
     } catch (err) {
       if (err.code === 'SESSION_EXPIRED') {
-        this.clearShopTokens();
+        API.clearTokens();
         location.reload();
       }
     }

@@ -74,7 +74,7 @@ export function RecommendedCard(item) {
     <div class="rec-body">
       <div class="rec-title">${escapeHtml(item.title || item.name || '')}</div>
       <div class="rec-studio">
-        <i class="fas fa-circle"></i> ${escapeHtml(item.studio_name || item.seller.shop_name || '')}
+        <i class="fas fa-circle"></i> ${escapeHtml(item.studio_name || item.studio.brand_name || '')}
       </div>
     </div>`;
   return a;
@@ -91,9 +91,9 @@ export function DesignerCard(designer) {
   const a = el('a', 'designer-link');
   a.href = `/designer.html?id=${encodeURIComponent(designer.id)}`;
   a.innerHTML = `
-    <div class="designer-avatar" style="background-image:url('${designer.logo_url || ''}')"></div>
+    <div class="designer-avatar" style="background-image:url('${designer.avatar_url || ''}')"></div>
     <div class="designer-name">${escapeHtml(designer.name || '')}</div>
-    <div class="designer-studio">${escapeHtml(designer.shop_name || '')}</div>`;
+    <div class="designer-studio">${escapeHtml(designer.studio.brand_name || '')}</div>`;
 
   const btn = document.createElement('button');
   btn.type = 'button';
@@ -114,7 +114,7 @@ export function FreshCard(item) {
     <div class="fresh-img" style="background-image:url('${item.cover_image || ''}')"></div>
     <div class="fresh-body">
       <div class="fresh-title">${escapeHtml(item.name || '')}</div>
-      <div class="fresh-studio">${escapeHtml(item.seller.shop_name || '')}</div>
+      <div class="fresh-studio">${escapeHtml(item.studio.brand_name || '')}</div>
     </div>`;
   return a;
 }
@@ -129,7 +129,7 @@ export function StudioCard(studio) {
   a.innerHTML = `
     <div class="studio-thumb" style="background-image:url('${studio.avatar_url || ''}')"></div>
     <div class="studio-body">
-      <div class="studio-name">${escapeHtml(studio.shop_name || '')}</div>
+      <div class="studio-name">${escapeHtml(studio.brand_name || '')}</div>
       <div class="studio-by">${escapeHtml(studio.designer.username || '')} · ${escapeHtml(studio.location || '')}</div>
       ${studio.category.name ? `<span class="studio-tag">${escapeHtml(studio.category.name)}</span>` : ''}
     </div>
@@ -151,8 +151,8 @@ export function PieceCard(item) {
   a.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
 
   const title = escapeHtml(item.title || item.name || '');
-  const studio = escapeHtml(item.studio_name || item.seller_name || '');
-  const imgSrc = item.image_url || item.images?.[0] || item.cover_image || '';
+  const studio = escapeHtml(item.studio.brand_name || item.seller_name || '');
+  const imgSrc = item.cover_image || item.images?.[0] || item.image_url || '';
 
   // Reserve space: padding-top trick or aspect-ratio CSS
   const ar = (item.width && item.height)
@@ -187,8 +187,8 @@ export function SavedPieceCard(item, { onLongPress } = {}) {
   card.dataset.pieceId = item.id;
 
   const title  = escapeHtml(item.title || item.name || '');
-  const studio = escapeHtml(item.studio_name || '');
-  const imgSrc = item.image_url || item.images?.[0] || '';
+  const studio = escapeHtml(item.studio.brand_name || '');
+  const imgSrc = item.cover_image || item.images?.[0] || '';
   const avatar = item.studio_avatar_url || '';
 
   const ar = (item.width && item.height)

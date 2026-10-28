@@ -19,7 +19,7 @@
  *   /js/api.mock.js
  */
 
-import API from '../../api.mock.js';
+import API from '/api.js';
 import { FashionCard } from '../cards.js';
 import { showToast } from '../toast.js';
 import { createMasonry } from '../utility/masonry.js';
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
   try {
-    // Mock auth — required so DesignerFollowButton's token check
+    /*/ Mock auth — required so DesignerFollowButton's token check
     // passes and follow calls reach the mock. Replace with the
     // real session bootstrap when auth lands.
     API.setAuth({
@@ -55,9 +55,10 @@ async function init() {
       avatar_url: 'https://i.pravatar.cc/150?img=47',
       role: 'explorer',
     });
+    
     localStorage.setItem('ontrop_token', 'mock-session');
-
-    state.designer = await API.getDesigner(DESIGNER_ID);
+    */
+    state.designer = await API.getDesignerData(DESIGNER_ID);
     const [studio, pieces, viewer] = await Promise.all([
       API.getStudio(state.designer.studio_id),
       API.getDesignerPieces(DESIGNER_ID, 100),

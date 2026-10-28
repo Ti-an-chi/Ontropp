@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONTROPP — Open Your Shop</title>
+
+  <link rel="stylesheet" href="/css/CORE.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/component2.css">
+  <link rel="stylesheet" href="/css/pages/designerSignup.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="page-loader" id="pageLoader">
+    <div class="page-loader-spinner"></div>
+    <div class="page-loader-text">Preparing your shop…</div>
+  </div>
+
+  <header class="dashboard-header">
+    <div class="header-container">
+      <div class="logo">ONTROPP</div>
+      <div class="header-actions"></div>
+    </div>
+  </header>
+
+  <main class="designer-signup-container">
+
+    <div class="designer-signup-header">
+      <h1 id="pageTitle">Launch Your Brand On ONTROPP</h1>
+      <p id="pageSubtitle">
+        Set up your studio profile so customers can understand your brand,
+        discover your work, and find the right way to contact you.
+      </p>
+    </div>
+
+    <div class="designer-signup-card">
+      <form id="designerSignupForm" class="designer-signup-form" novalidate>
+
+        <!-- ============ Studio Identity ============ -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <div class="form-section-title">
+              <i class="fas fa-store"></i>
+              Studio Identity
+            </div>
+            <div class="form-section-subtitle">
+              How customers will recognise your brand on the marketplace.
+            </div>
+          </div>
+
+          <!-- Brand Name -->
+          <div class="form-group">
+            <label for="brand_name" class="required">
+              <i class="fas fa-store"></i>
+              Brand Name
+            </label>
+            <input
+              class="form-control"
+              type="text"
+              id="brand_name"
+              name="brand_name"
+              placeholder="e.g. Studio Ayo or Ayo Atelier"
+              required
+              maxlength="60"
+              autocomplete="organization">
+            <p class="form-help">Choose the name you want customers to recognise.</p>
+          </div>
+
+          <!-- Logo -->
+          <div class="form-group">
+            <label for="shopLogo">
+              <i class="fas fa-image"></i>
+              Studio Logo
+            </label>
+            <div class="logo-upload-section" id="logoUploadArea">
+              <div class="logo-upload-content" id="logoUploadContent">
+                <div class="logo-upload-icon">
+                  <i class="fas fa-camera"></i>
+                </div>
+                <div class="logo-upload-text">
+                  <h4>Upload your studio logo</h4>
+                  <p>PNG, JPG or WebP · Up to 5 MB</p>
+                </div>
+                <button type="button" class="logo-upload-btn" id="logoUploadBtn">
+                  <i class="fas fa-upload"></i>
+                  Choose File
+                </button>
+                <input type="file" id="logoFileInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+              </div>
+              <div class="logo-preview" id="logoPreview" style="display:none;">
+                <div class="logo-preview-image">
+                  <img id="logoPreviewImage" src="" alt="Logo Preview">
+                </div>
+                <button type="button" class="logo-change-btn" id="logoChangeBtn">
+                  <i class="fas fa-sync-alt"></i>
+                  Change Logo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label for="bio" class="required">
+              <i class="fas fa-pen"></i>
+              Brand Description
+            </label>
+            <textarea
+              class="form-control"
+              id="bio"
+              name="bio"
+              placeholder="Tell customers what your studio creates, your style, and what makes your work distinctive."
+              required
+              maxlength="500"></textarea>
+            <div class="form-help">
+              <i class="fas fa-lightbulb"></i>
+              <span id="bioCounter">0</span>/500 characters
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ What you create ============ -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <div class="form-section-title">
+              <i class="fas fa-tags"></i>
+              What You Create
+            </div>
+            <div class="form-section-subtitle">
+              Pick the category that best describes your work.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="required">
+              <i class="fas fa-tags"></i>
+              Primary Category
+            </label>
+            <div class="category-grid" id="categoryGrid">
+              <!-- populated by JS -->
+            </div>
+            <input type="hidden" id="selectedCategory" name="category" required>
+          </div>
+
+          <div class="form-group">
+            <label for="speciality">
+              <i class="fas fa-star"></i>
+              Services
+              <span class="label-optional">(optional)</span>
+            </label>
+            <input
+              class="form-control"
+              type="text"
+              id="speciality"
+              name="speciality"
+              placeholder="e.g. Bespoke tailoring, ready-to-wear, bridal"
+              maxlength="120"
+              autocomplete="off">
+            <p class="form-help">Separate multiple specialities with commas.</p>
+          </div>
+        </div>
+
+        <!-- ============ Location ============ -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <div class="form-section-title">
+              <i class="fas fa-location-dot"></i>
+              Location
+            </div>
+            <div class="form-section-subtitle">
+              Customers use this to find and trust you. You can update it anytime.
+            </div>
+          </div>
+
+          <div class="inline-info" id="locationEditInfo" style="display:none;">
+            <i class="fas fa-info-circle"></i>
+            <span id="locationEditInfoText"></span>
+          </div>
+
+          <div class="location-fields" id="locationFields">
+            <div class="form-group">
+              <label for="stateInput" class="required">
+                <i class="fas fa-map"></i>
+                State
+              </label>
+              <div class="combobox" id="stateCombobox">
+                <div class="input-with-status">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="stateInput"
+                    placeholder="Start typing your state…"
+                    autocomplete="off"
+                    spellcheck="false"
+                    required>
+                  <i class="fas fa-circle-notch fa-spin input-status-icon checking" id="stateStatus"></i>
+                </div>
+                <div class="combobox-menu" id="stateMenu"></div>
+              </div>
+              <input type="hidden" id="selectedState" name="state" required>
+            </div>
+
+            <div class="form-group">
+              <label for="cityInput" class="required">
+                <i class="fas fa-city"></i>
+                City / LGA
+              </label>
+              <div class="combobox" id="cityCombobox">
+                <div class="input-with-status">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="cityInput"
+                    placeholder="Select a state first"
+                    autocomplete="off"
+                    spellcheck="false"
+                    disabled
+                    required>
+                  <i class="fas fa-circle-notch fa-spin input-status-icon checking" id="cityStatus"></i>
+                </div>
+                <div class="combobox-menu" id="cityMenu"></div>
+              </div>
+              <input type="hidden" id="selectedCity" name="city" required>
+              <p class="form-help">Local Government Area you operate in.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="areaInput">
+                <i class="fas fa-map-pin"></i>
+                Area / Landmark
+                <span class="label-optional">(optional)</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="areaInput"
+                name="area"
+                placeholder="e.g. Yaba, near the main market"
+                maxlength="100"
+                autocomplete="off">
+              <p class="form-help">A general area is enough. Avoid private addresses unless you want them public.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Contact ============ -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <div class="form-section-title">
+              <i class="fas fa-address-book"></i>
+              Contact
+            </div>
+            <div class="form-section-subtitle">
+              How customers reach you.
+            </div>
+          </div>
+
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label for="whatsappNumber" class="required">
+                <i class="fab fa-whatsapp"></i>
+                Business WhatsApp
+              </label>
+              <input
+                class="form-control"
+                type="tel"
+                id="whatsappNumber"
+                name="whatsappNumber"
+                placeholder="e.g. 08012345678"
+                required
+                pattern="[0-9]{11}"
+                inputmode="numeric"
+                autocomplete="tel">
+              <div class="whatsapp-note">
+                <i class="fas fa-info-circle"></i>
+                Used for customer communication. Include country code if international.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">
+                <i class="fas fa-envelope"></i>
+                Business Email
+                <span class="label-optional">(optional)</span>
+              </label>
+              <input
+                class="form-control"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="studio@gmail.com"
+                autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label for="tiktok">
+                <i class="fab fa-tiktok"></i>
+                TikTok Handle
+                <span class="label-optional">(optional)</span>
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                id="tiktok"
+                name="tiktok"
+                placeholder="@yourstudio"
+                autocomplete="off">
+            </div>
+
+            <div class="form-group">
+              <label for="instagram">
+                <i class="fab fa-instagram"></i>
+                Instagram Handle
+                <span class="label-optional">(optional)</span>
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                id="instagram"
+                name="instagram"
+                placeholder="@yourstudio"
+                autocomplete="off">
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Actions ============ -->
+        <div class="form-actions">
+          <a href="dashboard.html" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+          </a>
+          <div class="form-actions-right">
+            <button type="submit" class="btn btn-success" id="submitBtn">
+              <i class="fas fa-check-circle"></i>
+              <span id="submitBtnText">Save Studio Details</span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="designer-benefits">
+      <h3>Why showcase on ONTROPP?</h3>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-users"></i></div>
+          <h4 class="benefit-title">Reach More Audience</h4>
+          <p class="benefit-description">Access an array of audience for your brand</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-chart-line"></i></div>
+          <h4 class="benefit-title">Grow Your Business</h4>
+          <p class="benefit-description">Tools and insights to help you succeed</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-headset"></i></div>
+          <h4 class="benefit-title">Designer Support</h4>
+          <p class="benefit-description">Dedicated support to help you grow</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
+          <h4 class="benefit-title">Safe &amp; Secure</h4>
+          <p class="benefit-description">Protected payments and secure transactions</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p class="footer-text">© 2026 ONTROPP. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Terms</a>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script type="module" src="/js/pages/studioSignup.js"></script>
+</body>
+</html>
