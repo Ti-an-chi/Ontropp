@@ -43,9 +43,6 @@ main{max-width:1500px;margin:auto;padding:24px 26px 30px}
 .status{position:absolute;left:6px;bottom:6px;border-radius:20px;padding:4px 8px;font-size:10px;font-weight:750;background:var(--green);color:white}.status.draft{background:#fff0d2;color:#b77908}
 .product-meta{padding:8px 2px 1px}.product-name{font-size:11px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .product-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px}.product-price{color:#435777}.more{width:25px;height:25px;border:1px solid var(--border);background:white;border-radius:8px;color:var(--muted)}
-.tips{background:linear-gradient(115deg,#f6f3ff,#f8faff);border-color:#eee8ff;position:relative;overflow:hidden}
-.tips-top{display:flex;align-items:center;gap:11px}.tip-bulb{width:38px;height:38px;border-radius:50%;background:#eadfff;color:var(--purple);display:grid;place-items:center;font-size:19px}
-.tip-chips{display:flex;flex-wrap:wrap;gap:8px;margin:17px 0}.tip-chip{background:white;border:1px solid #ececf5;border-radius:8px;padding:8px 10px;font-size:10px;color:#536580}.tip-chip b{color:var(--green-dark);margin-right:5px}
 .outline-btn{background:white;border:1px solid #c4a8ff;color:var(--purple);border-radius:22px;padding:9px 16px;font-size:11px;font-weight:700}
 .store-ready{background:linear-gradient(120deg,#effcf5,#f7fffb);border-color:#dff6e9}.store-ready-inner{display:flex;align-items:flex-start;gap:12px}
 .store-icon{width:37px;height:37px;border-radius:50%;display:grid;place-items:center;background:#d9f8e6;color:var(--green-dark);font-size:18px;flex:0 0 37px}
@@ -103,7 +100,7 @@ footer{border-top:1px solid var(--border);padding:18px 0 0;display:flex;justify-
   <section class="content-grid">
     <div>
       <section class="panel">
-        <div class="panel-head"><div><h2 class="panel-title"><span class="stat-icon blue" style="width:34px;height:34px;flex-basis:34px">⬡</span>Your Products</h2><p class="panel-subtitle">Manage, edit and update your products.</p></div><a href="#" class="link-btn">View all →</a></div>
+        <div class="panel-head"><div><h2 class="panel-title"><span class="stat-icon blue" style="width:34px;height:34px;flex-basis:34px">⬡</span>Your Products</h2><p class="panel-subtitle">Manage, edit and update your products.</p></div></div>
         <div class="products" id="products">
           <article class="product" data-name="Green Bloom Dress" data-category="dress"><div class="product-image-wrap"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=500&q=80" alt="Green Bloom Dress"><span class="status">Published</span></div><div class="product-meta"><div class="product-name">Green Bloom Dress</div><div class="product-bottom"></div></div></article>
           <article class="product" data-name="Leather Handbag" data-category="bag"><div class="product-image-wrap"><img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=500&q=80" alt="Leather Handbag"><span class="status draft">◆ Draft</span></div><div class="product-meta"><div class="product-name">Leather Handbag</div><div class="product-bottom"></div></div></article>
@@ -111,9 +108,6 @@ footer{border-top:1px solid var(--border);padding:18px 0 0;display:flex;justify-
           <article class="product" data-name="Statement Earrings" data-category="jewellery"><div class="product-image-wrap"><img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=500&q=80" alt="Statement Earrings"><span class="status">Published</span></div><div class="product-meta"><div class="product-name">Statement Earrings</div><div class="product-bottom"></div></div></article>
         </div>
         <div class="empty" id="noResults"><span style="font-size:26px">⌕</span><strong>No products found</strong>Try another product name or category.</div>
-      </section>
-      <section class="panel tips"><div class="tips-top"><span class="tip-bulb">♧</span><div><h2 class="panel-title">Tips for better sales</h2><p class="panel-subtitle">A few quick tips to help you grow your store.</p></div></div>
-        <div class="tip-chips"><span class="tip-chip"><b>✓</b>Use high-quality product images</span><span class="tip-chip"><b>✓</b>Add detailed descriptions</span><span class="tip-chip"><b>✓</b>Set competitive prices</span><span class="tip-chip"><b>✓</b>Share on social media</span></div><button class="outline-btn">View more tips →</button>
       </section>
     </div>
     <aside>
