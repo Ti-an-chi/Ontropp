@@ -379,3 +379,67 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* --- new bits for the single-step form --- */
+
+/* Side-by-side fields */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.form-row-2 {
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 640px) {
+  .form-row-2 { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* "(optional)" tag on labels */
+.label-optional {
+  font-weight: 500;
+  color: var(--hash);
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+/* Category cards — match the radio-grid look from newdesignersignup */
+.category-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 10px;
+  min-height: 80px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+  position: relative;
+}
+.category-option:hover {
+  border-color: var(--ink);
+  background: rgba(17, 17, 17, 0.02);
+}
+.category-option.selected {
+  border-color: var(--ink);
+  background: rgba(17, 17, 17, 0.04);
+  box-shadow: 0 0 0 1px var(--ink) inset;
+}
+.category-option .category-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--background);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--ink);
+}
+.category-option .category-name {
+  font-size: 13px; font-weight: 500; color: var(--text);
+  text-align: center; line-height: 1.3;
+}
+.category-option.selected .category-icon {
+  background: var(--ink); color: var(--white);
+}
