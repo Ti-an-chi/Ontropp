@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload a design | ONTROPP</title>
+<style>
+:root{--ink:#182230;--muted:#667085;--blue:#2864dc;--blue-dark:#1f4fb2;--pale:#f5f7fb;--line:#e6eaf0;--white:#fff;--nav:#172238;--green:#16845b}
+*{box-sizing:border-box}body{margin:0;background:var(--pale);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.5}button,input,textarea,select{font:inherit}button,a{-webkit-tap-highlight-color:transparent}
+.content{max-width:1100px;margin:0 auto;padding:30px 36px 44px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin-bottom:20px}
+.eyebrow{display:flex;align-items:center;gap:7px;color:var(--blue);font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:850;margin-bottom:8px}
+.eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--blue)}
+h1{font-size:27px;line-height:1.2;letter-spacing:-.04em;margin:0}.page-head p{color:var(--muted);margin:6px 0 0;font-size:13px}
+.hint{color:#8791a1;font-size:11px;white-space:nowrap}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(23,35,56,.025)}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+.pane{padding:22px 24px}.pane+.pane{border-left:1px solid var(--line)}
+.section-label{font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:#7b8494;margin:0 0 14px}
+.field{margin-bottom:16px}.field label,.field-label{display:block;font-size:12px;font-weight:750;margin-bottom:6px;color:#344054}.required:after{content:" *";color:#d14343}.opt{font-weight:500;color:#8992a3}
+input[type=text],input[type=number],textarea,select{width:100%;border:1px solid #dce2eb;border-radius:9px;background:#fff;color:var(--ink);padding:10px 12px;outline:none;transition:border .15s,box-shadow .15s}
+input::placeholder,textarea::placeholder{color:#a0a8b5}input:focus,textarea:focus,select:focus{border-color:#80a7ff;box-shadow:0 0 0 3px rgba(40,100,220,.1)}textarea{resize:vertical;min-height:70px}
+.invalid{border-color:#d14343 !important;box-shadow:0 0 0 3px rgba(209,67,67,.08) !important}
+.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* photos */
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{position:relative;aspect-ratio:1;border-radius:11px;overflow:hidden;border:1px solid #dce2eb;background:#eef3ff}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.add-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;aspect-ratio:1;border:1px dashed #cbd4e2;border-radius:11px;background:linear-gradient(120deg,#f2f5fb,#e8eef9);cursor:pointer;margin:0;transition:border .15s,background .15s;color:var(--muted);font-size:10px;padding:6px}
+.add-tile:hover,.add-tile.drag{border-color:var(--blue);background:#eef3ff}.add-tile .plus{font-size:24px;color:var(--blue);line-height:1}.add-tile b{font-size:11px;color:#344054}
+.add-tile.big{grid-column:1/-1;aspect-ratio:auto;min-height:190px}
+#designFiles{display:none}
+.badge{position:absolute;left:6px;top:6px;background:var(--blue);color:#fff;font-size:9px;font-weight:850;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:999px}
+.tile button{position:absolute;border:0;background:rgba(23,34,56,.78);color:#fff;cursor:pointer}
+.tile .rm{right:6px;top:6px;width:22px;height:22px;border-radius:7px;font-size:13px;line-height:1}
+.tile .mk{left:6px;bottom:6px;height:22px;padding:0 8px;border-radius:7px;font-size:10px;font-weight:750}
+.tile button:hover{background:var(--nav)}
+.help{font-size:11px;color:#8791a1;margin:8px 0 0}
+.tiles.invalid{outline:1px solid #d14343;outline-offset:6px;border-radius:11px}
+.chips.invalid{outline:1px solid #d14343;outline-offset:5px;border-radius:9px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.18);margin-right:6px;vertical-align:-1px}
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{position:relative}.chip input{position:absolute;opacity:0;pointer-events:none}.chip label{margin:0;border:1px solid #dce2eb;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:750;cursor:pointer;background:#fff;color:#344054;display:block}.chip input:checked+label{border-color:var(--blue);background:#f2f6ff;color:#214fa9}.chip input:focus-visible+label{box-shadow:0 0 0 3px rgba(40,100,220,.15)}
+.price-wrap{position:relative}.price-wrap .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#667085;font-weight:750}.price-wrap input{padding-left:28px}
+input[type=number]::-webkit-inner-spin-button{display:none}input[type=number]{-moz-appearance:textfield}
+.form-footer{padding:15px 24px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:15px;background:#fcfcfd}
+.save-note{font-size:10px;color:#8791a1}.button-row{display:flex;gap:9px}.btn{border:0;border-radius:9px;min-height:39px;padding:10px 16px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.btn-light{background:#fff;border:1px solid #dce2eb;color:#344054}.btn-light:hover{background:#f7f8fb}.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-dark)}
+.toast{position:fixed;right:24px;bottom:24px;background:#172238;color:#fff;border-radius:11px;padding:13px 17px;box-shadow:0 12px 32px #17223825;font-size:12px;display:none;z-index:5}.toast.show{display:block}
+@media(max-width:900px){.content{padding:24px 18px 36px}.split{grid-template-columns:1fr}.pane+.pane{border-left:0;border-top:1px solid var(--line)}.hint{display:none}}
+@media(max-width:560px){.content{padding:20px 12px 30px}.pane{padding:18px 16px}.grid-two{grid-template-columns:1fr;gap:0}.form-footer{padding:14px 16px;flex-direction:column;align-items:stretch}.save-note{display:none}.button-row .btn{flex:1}h1{font-size:24px}}
+</style>
+</head>
+<body>
+  <main class="content">
+    <div class="page-head">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span> Designer workspace</div>
+        <h1>Upload a new design</h1>
+        <p>Add photos, a name, category, price, colours and materials. Everything else is optional.</p>
+      </div>
+      <span class="hint">Tip: Ctrl/⌘ + Enter to publish</span>
+    </div>
+
+    <form id="designForm" class="panel" novalidate>
+      <div class="split">
+        <div class="pane">
+          <div class="section-label">Photos</div>
+          <div class="field" style="margin-bottom:0">
+            <span class="field-label required" style="margin-bottom:10px">Design photos</span>
+            <div class="tiles" id="tiles"></div>
+            <input id="designFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+            <p class="help">Up to 8 photos · PNG, JPG or WebP · 5 MB each. The first photo is your cover, so lead with a clear, well-lit shot in natural light that shows the true colour, then add close-ups of the fabric and finishing.</p>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div class="section-label">Details</div>
+          <div class="field">
+            <label for="title" class="required">Design name</label>
+            <input id="title" name="title" type="text" maxlength="80" placeholder="e.g. Ankara wrap dress with puff sleeves" autocomplete="off">
+          </div>
+          <div class="grid-two">
+            <div class="field">
+              <label for="category" class="required">Category</label>
+              <select id="category" name="category">
+                <option value="">Select a category</option>
+                <option>Fashion &amp; clothing</option>
+                <option>Accessories &amp; jewellery</option>
+                <option>Footwear &amp; bags</option>
+                <option>Textiles &amp; fabrics</option>
+                <option>Beauty &amp; lifestyle</option>
+                <option>Other creative work</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="price" class="required">Price</label>
+              <div class="price-wrap"><span class="prefix">₦</span><input id="price" name="price" type="number" min="0" step="100" inputmode="numeric" placeholder="25000"></div>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-label required">Colour <span class="opt">(select all that apply)</span></span>
+            <div class="chips" id="colours">
+              <div class="chip"><input id="c-black" type="checkbox" name="colour" value="Black"><label for="c-black"><span class="sw" style="background:#111"></span>Black</label></div>
+              <div class="chip"><input id="c-white" type="checkbox" name="colour" value="White"><label for="c-white"><span class="sw" style="background:#fff"></span>White</label></div>
+              <div class="chip"><input id="c-red" type="checkbox" name="colour" value="Red"><label for="c-red"><span class="sw" style="background:#d62f2f"></span>Red</label></div>
+              <div class="chip"><input id="c-orange" type="checkbox" name="colour" value="Orange"><label for="c-orange"><span class="sw" style="background:#f08a24"></span>Orange</label></div>
+              <div class="chip"><input id="c-yellow" type="checkbox" name="colour" value="Yellow"><label for="c-yellow"><span class="sw" style="background:#f4c430"></span>Yellow</label></div>
+              <div class="chip"><input id="c-green" type="checkbox" name="colour" value="Green"><label for="c-green"><span class="sw" style="background:#2e9d5b"></span>Green</label></div>
+              <div class="chip"><input id="c-blue" type="checkbox" name="colour" value="Blue"><label for="c-blue"><span class="sw" style="background:#2864dc"></span>Blue</label></div>
+              <div class="chip"><input id="c-purple" type="checkbox" name="colour" value="Purple"><label for="c-purple"><span class="sw" style="background:#7a45c2"></span>Purple</label></div>
+              <div class="chip"><input id="c-pink" type="checkbox" name="colour" value="Pink"><label for="c-pink"><span class="sw" style="background:#ec7fb0"></span>Pink</label></div>
+              <div class="chip"><input id="c-brown" type="checkbox" name="colour" value="Brown"><label for="c-brown"><span class="sw" style="background:#7b4f2e"></span>Brown</label></div>
+              <div class="chip"><input id="c-beige" type="checkbox" name="colour" value="Beige"><label for="c-beige"><span class="sw" style="background:#d9c3a0"></span>Beige</label></div>
+              <div class="chip"><input id="c-grey" type="checkbox" name="colour" value="Grey"><label for="c-grey"><span class="sw" style="background:#8b93a1"></span>Grey</label></div>
+              <div class="chip"><input id="c-gold" type="checkbox" name="colour" value="Gold"><label for="c-gold"><span class="sw" style="background:#c9a227"></span>Gold</label></div>
+              <div class="chip"><input id="c-multicolour" type="checkbox" name="colour" value="Multicolour"><label for="c-multicolour"><span class="sw" style="background:conic-gradient(#d62f2f,#f4c430,#2e9d5b,#2864dc,#7a45c2,#d62f2f)"></span>Multicolour</label></div>
+            </div>
+            <input id="colourNote" name="colourNote" type="text" maxlength="60" placeholder="Exact shade, e.g. burnt orange with navy trim" style="margin-top:8px" autocomplete="off">
+          </div>
+          <div class="field">
+            <span class="field-label required">Material <span class="opt">(select all that apply)</span></span>
+            <div class="chips" id="materials">
+              <div class="chip"><input id="m-cotton" type="checkbox" name="material" value="Cotton"><label for="m-cotton">Cotton</label></div>
+              <div class="chip"><input id="m-ankarawaxprint" type="checkbox" name="material" value="Ankara / wax print"><label for="m-ankarawaxprint">Ankara / wax print</label></div>
+              <div class="chip"><input id="m-lace" type="checkbox" name="material" value="Lace"><label for="m-lace">Lace</label></div>
+              <div class="chip"><input id="m-silk" type="checkbox" name="material" value="Silk"><label for="m-silk">Silk</label></div>
+              <div class="chip"><input id="m-satin" type="checkbox" name="material" value="Satin"><label for="m-satin">Satin</label></div>
+              <div class="chip"><input id="m-linen" type="checkbox" name="material" value="Linen"><label for="m-linen">Linen</label></div>
+              <div class="chip"><input id="m-denim" type="checkbox" name="material" value="Denim"><label for="m-denim">Denim</label></div>
+              <div class="chip"><input id="m-chiffon" type="checkbox" name="material" value="Chiffon"><label for="m-chiffon">Chiffon</label></div>
+              <div class="chip"><input id="m-velvet" type="checkbox" name="material" value="Velvet"><label for="m-velvet">Velvet</label></div>
+              <div class="chip"><input id="m-asooke" type="checkbox" name="material" value="Aso-oke"><label for="m-asooke">Aso-oke</label></div>
+              <div class="chip"><input id="m-adire" type="checkbox" name="material" value="Adire"><label for="m-adire">Adire</label></div>
+              <div class="chip"><input id="m-leather" type="checkbox" name="material" value="Leather"><label for="m-leather">Leather</label></div>
+              <div class="chip"><input id="m-polyester" type="checkbox" name="material" value="Polyester"><label for="m-polyester">Polyester</label></div>
+              <div class="chip"><input id="m-other" type="checkbox" name="material" value="Other"><label for="m-other">Other</label></div>
+            </div>
+            <input id="fabricNote" name="fabricNote" type="text" maxlength="80" placeholder="Composition, e.g. 100% cotton, fully lined" style="margin-top:8px" autocomplete="off">
+          </div>
+          <div class="grid-two">
+            <div class="field">
+              <label for="department">Suitable for <span class="opt">(optional)</span></label>
+              <select id="department" name="department"><option value="">Select</option><option>Women</option><option>Men</option><option>Unisex</option><option>Children</option></select>
+            </div>
+            <div class="field">
+              <label for="pattern">Pattern / print <span class="opt">(optional)</span></label>
+              <select id="pattern" name="pattern"><option value="">Select</option><option>Plain</option><option>Floral</option><option>Striped</option><option>Geometric</option><option>African print</option><option>Embroidered</option><option>Tie-dye</option><option>Other</option></select>
+            </div>
+          </div>
+          <div class="grid-two">
+            <div class="field">
+              <span class="field-label">Availability</span>
+              <div class="chips">
+                <div class="chip"><input id="a-ready" type="radio" name="availability" value="Ready-made" checked><label for="a-ready">Ready-made</label></div>
+                <div class="chip"><input id="a-order" type="radio" name="availability" value="Made to order"><label for="a-order">Made to order</label></div>
+              </div>
+            </div>
+            <div class="field" id="leadField">
+              <label for="leadTime">Production time</label>
+              <select id="leadTime" name="leadTime">
+                <option>Ready to ship</option>
+                <option>1–3 days</option>
+                <option>4–7 days</option>
+                <option>1–2 weeks</option>
+                <option>3–4 weeks</option>
+                <option>More than a month</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-label">Sizes <span class="opt">(optional)</span></span>
+            <div class="chips" id="sizes">
+              <div class="chip"><input id="s-xs" type="checkbox" name="size" value="XS"><label for="s-xs">XS</label></div>
+              <div class="chip"><input id="s-s" type="checkbox" name="size" value="S"><label for="s-s">S</label></div>
+              <div class="chip"><input id="s-m" type="checkbox" name="size" value="M"><label for="s-m">M</label></div>
+              <div class="chip"><input id="s-l" type="checkbox" name="size" value="L"><label for="s-l">L</label></div>
+              <div class="chip"><input id="s-xl" type="checkbox" name="size" value="XL"><label for="s-xl">XL</label></div>
+              <div class="chip"><input id="s-xxl" type="checkbox" name="size" value="XXL"><label for="s-xxl">XXL</label></div>
+              <div class="chip"><input id="s-one" type="checkbox" name="size" value="One size"><label for="s-one">One size</label></div>
+              <div class="chip"><input id="s-custom" type="checkbox" name="size" value="Custom"><label for="s-custom">Custom</label></div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="care">Care instructions <span class="opt">(optional)</span></label>
+            <select id="care" name="care"><option value="">Select</option><option>Hand wash only</option><option>Machine wash cold</option><option>Machine wash warm</option><option>Dry clean only</option><option>Wash separately, do not bleach</option></select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="description">Description <span class="opt">(optional)</span></label>
+            <textarea id="description" name="description" maxlength="400" placeholder="Fabric, fit, care instructions, or anything buyers should know."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <span class="save-note">Category, availability, production time and sizes are remembered, so your next upload is faster.</span>
+        <div class="button-row">
+          <button type="submit" class="btn btn-primary">Publish design <span>→</span></button>
+        </div>
+      </div>
+    </form>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var MAX_FILES = 8, MAX_MB = 5, TYPES = ['image/png','image/jpeg','image/webp'], KEY = 'ontropp_upload_defaults';
+  var photos = [];
+  var $ = function(id){ return document.getElementById(id); };
+  var form = $('designForm'), tiles = $('tiles'), input = $('designFiles');
+  var MADE = 'Made to order';
+  function isMade(){ return form.querySelector('input[name=availability]:checked').value === MADE; }
+  function syncLead(){
+    var sel = $('leadTime'), made = isMade();
+    $('leadField').style.display = made ? '' : 'none';
+    sel.options[0].disabled = made;
+    if (made && sel.value === 'Ready to ship') sel.value = '1–3 days';
+    if (!made) sel.value = 'Ready to ship';
+  }
+
+  function toast(msg){
+    var t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast.t); toast.t = setTimeout(function(){ t.classList.remove('show'); }, 2800);
+  }
+
+  /* ---- remembered defaults (saves time on repeat uploads) ---- */
+  function sizesChecked(){ return Array.prototype.map.call(form.querySelectorAll('input[name=size]:checked'), function(i){ return i.value; }); }
+  function saveDefaults(){
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        category: $('category').value,
+        availability: form.querySelector('input[name=availability]:checked').value,
+        leadTime: $('leadTime').value,
+        sizes: sizesChecked()
+      }));
+    } catch(e){}
+  }
+  function loadDefaults(){
+    try {
+      var d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!d) return;
+      if (d.category) $('category').value = d.category;
+      if (d.leadTime) $('leadTime').value = d.leadTime;
+      Array.prototype.forEach.call(form.querySelectorAll('input[name=availability]'), function(i){ i.checked = i.value === d.availability; });
+      Array.prototype.forEach.call(form.querySelectorAll('input[name=size]'), function(i){ i.checked = (d.sizes || []).indexOf(i.value) > -1; });
+    } catch(e){}
+    syncLead();
+  }
+
+  /* ---- photos ---- */
+  function addFiles(list){
+    Array.prototype.forEach.call(list, function(f){
+      if (photos.length >= MAX_FILES){ toast('You can upload up to ' + MAX_FILES + ' photos.'); return; }
+      if (TYPES.indexOf(f.type) === -1){ toast(f.name + ' is not a PNG, JPG or WebP image.'); return; }
+      if (f.size > MAX_MB * 1024 * 1024){ toast(f.name + ' is larger than ' + MAX_MB + ' MB.'); return; }
+      photos.push({file: f, url: URL.createObjectURL(f)});
+    });
+    input.value = '';
+    renderPhotos();
+  }
+
+  function renderPhotos(){
+    tiles.innerHTML = '';
+    photos.forEach(function(p, i){
+      var d = document.createElement('div'); d.className = 'tile';
+      var img = document.createElement('img'); img.src = p.url; img.alt = 'Design photo ' + (i + 1); d.appendChild(img);
+      if (i === 0){ var b = document.createElement('span'); b.className = 'badge'; b.textContent = 'Cover'; d.appendChild(b); }
+      else {
+        var m = document.createElement('button'); m.type = 'button'; m.className = 'mk'; m.textContent = 'Make cover';
+        m.onclick = function(){ photos.unshift(photos.splice(i, 1)[0]); renderPhotos(); }; d.appendChild(m);
+      }
+      var r = document.createElement('button'); r.type = 'button'; r.className = 'rm'; r.setAttribute('aria-label', 'Remove photo'); r.innerHTML = '&times;';
+      r.onclick = function(){ URL.revokeObjectURL(p.url); photos.splice(i, 1); renderPhotos(); };
+      d.appendChild(r); tiles.appendChild(d);
+    });
+    if (photos.length < MAX_FILES){
+      var a = document.createElement('label'); a.className = 'add-tile' + (photos.length ? '' : ' big'); a.setAttribute('for', 'designFiles');
+      a.innerHTML = photos.length ? '<span class="plus">+</span><span>Add more</span>' : '<span class="plus">+</span><b>Drag photos here or click to browse</b><span>Select several at once</span>';
+      ['dragenter','dragover'].forEach(function(e){ a.addEventListener(e, function(ev){ ev.preventDefault(); a.classList.add('drag'); }); });
+      ['dragleave','drop'].forEach(function(e){ a.addEventListener(e, function(ev){ ev.preventDefault(); a.classList.remove('drag'); }); });
+      a.addEventListener('drop', function(ev){ addFiles(ev.dataTransfer.files); });
+      tiles.appendChild(a);
+    }
+    tiles.classList.remove('invalid');
+  }
+  input.addEventListener('change', function(){ addFiles(input.files); });
+
+  /* paste images straight from the clipboard */
+  document.addEventListener('paste', function(ev){
+    var files = ev.clipboardData && ev.clipboardData.files;
+    if (files && files.length) addFiles(files);
+  });
+
+  /* ---- validation + submit ---- */
+  function validate(){
+    var price = parseFloat($('price').value), first = null;
+    var checks = [
+      [photos.length > 0, tiles, 'Add at least one photo.'],
+      [$('title').value.trim().length > 0, $('title'), 'Give your design a name.'],
+      [$('category').value !== '', $('category'), 'Choose a category.'],
+      [!isNaN(price) && price > 0, $('price'), 'Enter a price above zero.'],
+      [form.querySelectorAll('input[name=colour]:checked').length > 0, $('colours'), 'Select at least one colour.'],
+      [form.querySelectorAll('input[name=material]:checked').length > 0, $('materials'), 'Select at least one material.']
+    ];
+    checks.forEach(function(c){
+      c[1].classList.toggle('invalid', !c[0]);
+      if (!c[0] && !first) first = c;
+    });
+    return first;
+  }
+  ['title','category','price'].forEach(function(id){
+    $(id).addEventListener('input', function(){ this.classList.remove('invalid'); });
+  });
+
+  ['colours','materials'].forEach(function(id){
+    $(id).addEventListener('change', function(){ this.classList.remove('invalid'); });
+  });
+
+  function resetForNext(){
+    photos.forEach(function(p){ URL.revokeObjectURL(p.url); }); photos = [];
+    $('title').value = ''; $('price').value = ''; $('description').value = '';
+    $('colourNote').value = ''; $('fabricNote').value = ''; $('pattern').value = '';
+    Array.prototype.forEach.call(form.querySelectorAll('input[name=colour],input[name=material]'), function(i){ i.checked = false; });
+    renderPhotos(); $('title').focus();
+  }
+
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var bad = validate();
+    if (bad){ bad[1].scrollIntoView({behavior:'smooth', block:'center'}); toast(bad[2]); return; }
+    saveDefaults();
+    /* Hook up your backend here: build a FormData from the form fields and
+       append each photos[i].file, then POST it to your upload endpoint.
+       Call resetForNext() once the upload succeeds. */
+    toast('Published. Ready for your next design.');
+    resetForNext();
+  });
+
+  document.addEventListener('keydown', function(ev){
+    if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter'){ ev.preventDefault(); form.requestSubmit(); }
+  });
+
+  Array.prototype.forEach.call(form.querySelectorAll('input[name=availability]'), function(i){ i.addEventListener('change', syncLead); });
+
+  syncLead(); loadDefaults(); renderPhotos();
+})();
+</script>
+</body>
+</html>
