@@ -157,7 +157,7 @@ export function PieceCard(item) {
   // Reserve space: padding-top trick or aspect-ratio CSS
   const ar = (item.width && item.height)
     ? `${item.width} / ${item.height}`
-    : '4 / 5'; // sensible fallback for fashion/product
+    : (item.aspect_ratio ? `1 / ${1 / item.aspect_ratio}` : '4 / 5');
 
   a.innerHTML = `
     <div class="piece-card-media" style="aspect-ratio:${ar}">
@@ -181,13 +181,14 @@ export function PieceCard(item) {
    ------------------------------------------------------------- */
 
 export function SavedPieceCard(item, { onLongPress } = {}) {
+  console.log(item)
   const card = document.createElement('a');
   card.className = 'saved-piece';
   card.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
   card.dataset.pieceId = item.id;
 
-  const title  = escapeHtml(item.title || item.name || '');
-  const studio = escapeHtml(item.studio.brand_name || '');
+  const title  = escapeHtml(item.name || item.title || '');
+  const studio = escapeHtml(item.studio_name || '');
   const imgSrc = item.cover_image || item.images?.[0] || '';
   const avatar = item.studio_avatar_url || '';
 
