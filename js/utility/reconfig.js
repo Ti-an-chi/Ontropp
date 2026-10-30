@@ -1,5 +1,5 @@
 // ========== reconfig.js ==========
-import API from "../../api.mock.js";
+import API from "/api.mock.js";
 
 export function updateElement(id, value, property = 'textContent') {
   const el = document.getElementById(id);

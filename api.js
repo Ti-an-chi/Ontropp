@@ -254,9 +254,9 @@ const API = {
     return response.data;
   },
 
-  async getDesignerData(sellerId) {
-    const response = await this._fetch(`/seller/${sellerId}`);
-    return response;
+  async getDesignerData(designerId) {
+    const response = await this._fetch(`/seller/${designerId}`);
+    return response.designer;
   },
   
   async getSellerProducts(sellerId = undefined, page = 1, limit = 20) {

@@ -1,4 +1,4 @@
-import API from '../../api.js';
+import API from '/api.js';
 import {showNotification, updateElement} from '../utility/reconfig.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
