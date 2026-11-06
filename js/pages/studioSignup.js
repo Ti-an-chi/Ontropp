@@ -436,8 +436,8 @@ function setupLogoUpload() {
       showNotification('Please select an image file.', 'warning');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      showNotification('Image must be under 5MB.', 'warning');
+    if (file.size > 2 * 1024 * 1024) {
+      showNotification('Image must be under 2MB.', 'warning');
       return;
     }
     uploadLogo(file);

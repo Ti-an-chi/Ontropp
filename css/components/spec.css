@@ -1,0 +1,231 @@
+/* ===== components/spec.css ===== */
+/* Specifications Section */
+
+.spec-group {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  animation: slideIn 0.2s ease;
+  position: relative;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.spec-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.spec-field-input {
+  flex: 1;
+  font-weight: 600;
+  position: relative;
+}
+
+.spec-values-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.spec-values-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.spec-value-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 5px 10px;
+  font-size: 13px;
+  color: var(--text);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.spec-value-chip .remove-value {
+  background: none;
+  border: none;
+  color: var(--hash);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  font-size: 11px;
+  transition: color 0.15s;
+}
+
+.spec-value-chip .remove-value:hover {
+  color: var(--error);
+}
+
+.spec-value-input-wrapper {
+  display: flex;
+  gap: 8px;
+  position: relative;
+}
+
+.spec-value-input {
+  flex: 1;
+}
+
+.spec-value-input:disabled {
+  background: var(--background);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.add-value-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Remove Spec Button */
+.remove-spec-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--danger, #e74c3c);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.remove-spec-btn:hover {
+  background: var(--danger, #e74c3c);
+  color: white;
+  border-color: var(--danger, #e74c3c);
+}
+
+/* Add Spec Button */
+.add-spec-btn {
+  width: 100%;
+  padding: 12px;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--hash);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.add-spec-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(52, 131, 224, 0.05);
+}
+
+.add-spec-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.add-spec-btn.hidden {
+  display: none !important;
+}
+
+/* =========================================
+   SUGGESTION DROPDOWNS
+   ========================================= */
+.suggestion-box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 4px;
+  display: none;
+}
+
+.suggestion-box.active {
+  display: block;
+}
+
+.suggestion-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  transition: background 0.1s;
+}
+
+.suggestion-item:hover {
+  background: var(--background);
+  color: var(--primary);
+}
+
+.suggestion-empty {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--hash);
+  font-style: italic;
+}
+
+/* Value suggestions positioned differently */
+.value-suggestions {
+  position: relative;
+  margin-top: 4px;
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+/* Responsive specs */
+@media (max-width: 480px) {
+  .spec-group {
+    padding: 12px;
+  }
+  
+  .spec-header {
+    flex-wrap: wrap;
+  }
+  
+  .spec-field-input {
+    width: calc(100% - 46px);
+  }
+  
+  .remove-spec-btn {
+    width: 36px;
+    height: 36px;
+  }
+}

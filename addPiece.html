@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product - ONTROPP</title>
+  <link rel="stylesheet" href="/css/CORE.css">
+  <link rel="stylesheet" href="/css/components/forms.css">
+  <link rel="stylesheet" href="/css/components/buttons.css">
+  <link rel="stylesheet" href="/css/components/spec.css">
+  <link rel="stylesheet" href="/css/tabs/dashboard.css">
+  <link rel="stylesheet" href="/css/pages/upload.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="dashboard-header">
+      <div class="header-container">
+        <a href="dashboard.html" class="logo">ONTROPP</a>
+        <div class="header-actions">
+          <a href="dashboard.html" class="btn btn-secondary btn-small">Cancel</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container upload-container">
+      <div class="upload-header">
+        <h1>Add New Product</h1>
+        <p>Quickly list your product to start selling. Add photos, a name, category, price, and key details.</p>
+      </div>
+
+      <form id="uploadForm" class="upload-card">
+        <!-- Product Name -->
+        <div class="form-group">
+          <label for="productName" class="required">Product Name</label>
+          <input type="text" id="productName" name="productName" class="form-control" placeholder="e.g., Handwoven Ankara Dress" required>
+          <span class="form-help"><i class="fas fa-info-circle"></i> Be specific and clear. Buyers search by product names.</span>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="productDesc" class="required">Description</label>
+          <textarea id="productDesc" name="productDesc" class="form-control" placeholder="Include key details that help explorers decide. Mention any flaws if used." required></textarea>
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <!-- Price -->
+          <div class="form-group">
+            <label for="productPrice" class="required">Price (₦)</label>
+            <input type="number" id="productPrice" name="productPrice" class="form-control" placeholder="0.00" required>
+            <span class="form-help">Consider similar products when pricing.</span>
+          </div>
+
+          <!-- Condition -->
+          <div class="form-group">
+            <label class="required">Condition</label>
+            <select id="productCondition" name="productCondition" class="form-control" required>
+              <option value="" disabled selected>Select condition</option>
+              <option value="brand_new">Brand New</option>
+              <option value="lightly_used">Lightly Used</option>
+              <option value="used">Used</option>
+              <option value="damaged">Damaged</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label class="required">Category</label>
+          <div class="category-grid" id="categoryGrid">
+            <!-- Populated by JS -->
+          </div>
+          <input type="hidden" id="selectedCategory" name="category" required>
+        </div>
+
+        <!-- Availability (Survived from improved) -->
+        <div class="form-group">
+          <label class="required">Availability</label>
+          <select id="productAvailability" name="availability" class="form-control" required>
+            <option value="" disabled selected>Select availability</option>
+            <option value="ready_made">Ready-made</option>
+            <option value="made_to_order">Made to order</option>
+          </select>
+        </div>
+
+        <!-- Product Images -->
+        <div class="form-group">
+          <label class="required">Product Images</label>
+            <label for="imageFileInput" class="image-upload-section" id="imageUploadArea">
+              <div class="image-upload-content" id="imageUploadContent">
+                <div class="image-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <div class="image-upload-text">
+                  <h4>Upload Product Images</h4>
+                  <p>Click to upload or drag and drop</p>
+                  <p style="font-size: 12px; margin-top: 4px;">5 images max. First image will be the cover.</p>
+                </div>
+                <span class="image-upload-btn" id="imageUploadBtn">Choose Files</span>
+                <input type="file" id="imageFileInput" accept="image/*" hidden>
+              </div>
+            </label>
+          <div class="image-preview-grid" id="imagePreviewGrid"></div>
+        </div>
+
+        <!-- Dynamic Specifications -->
+        <div class="form-group">
+          <label>Specifications <span class="optional-badge">Optional</span></label>
+          <span class="form-help" style="margin-bottom: 12px;">Add details like size, color, material. You can add multiple values per field (max 8 values per field, max 5 fields).</span>
+          
+          <div id="specificationsContainer">
+            <!-- Spec groups will be injected here -->
+          </div>
+
+          <button type="button" id="addSpecBtn" class="add-spec-btn">
+            <i class="fas fa-plus"></i> Add Specification Field
+          </button>
+        </div>
+
+        <!-- Quick Selling Tips -->
+        <div class="quick-tips">
+          <h4><i class="fas fa-lightbulb"></i> Quick Selling Tips</h4>
+          <ul>
+            <li><i class="fas fa-check"></i> Use clear, well-lit photos from multiple angles</li>
+            <li><i class="fas fa-check"></i> Price competitively by checking similar products</li>
+            <li><i class="fas fa-check"></i> Be honest about product condition</li>
+            <li><i class="fas fa-check"></i> Include measurements/sizes when applicable</li>
+          </ul>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <a href="dashboard.html" class="upload-btn upload-btn-secondary">Cancel</a>
+          <button type="submit" class="upload-btn upload-btn-primary">
+            <i class="fas fa-check"></i> List Product
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <footer class="dashboard-footer">
+      <div class="footer-content">
+        <span class="footer-text">© 2026 ONTROPP. All rights reserved.</span>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Terms</a>
+          <a href="#" class="footer-link">Privacy</a>
+          <a href="#" class="footer-link">Help</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div id="toast-root"></div>
+  <script type="module" src="/js/pages/upload.js"></script>
+</body>
+</html>

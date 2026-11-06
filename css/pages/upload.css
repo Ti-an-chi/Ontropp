@@ -1,6 +1,4 @@
 /* ===== pages/upload.css ===== */
-/* Upload Product Page Specific Styles */
-
 .upload-container {
   max-width: 600px;
   margin: 0 auto;
@@ -33,7 +31,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Quick Tips (upload page specific) */
+/* Quick Tips */
 .quick-tips {
   background-color: rgba(46, 204, 113, 0.1);
   border: 1px solid var(--secondary);
@@ -81,7 +79,7 @@
   flex-shrink: 0;
 }
 
-/* Form Actions (upload page specific) */
+/* Form Actions */
 .form-actions {
   display: flex;
   gap: 16px;
@@ -125,7 +123,7 @@
   background-color: rgba(229, 231, 235, 0.8);
 }
 
-/* Image Preview Grid (upload page specific sizes) */
+/* Image Preview Grid */
 .image-preview-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -133,8 +131,7 @@
   margin-top: 16px;
 }
 
-/* Condition & Spec Styles */
-
+/* Optional Badge */
 .optional-badge {
   font-size: 12px;
   font-weight: 500;
@@ -145,121 +142,62 @@
   border-radius: 4px;
 }
 
-.spec-item {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 12px;
-  animation: slideIn 0.2s ease;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.spec-item input {
-  padding: 12px 16px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 14px;
-  background: var(--white);
-  transition: all 0.2s;
-}
-
-.spec-item input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(52, 131, 224, 0.1);
-}
-
-.spec-item input::placeholder {
-  color: var(--hash);
-}
-
-.spec-item .spec-name {
-  flex: 0.8;
-}
-
-.spec-item .spec-value {
-  flex: 1.2;
-}
-
-.remove-spec-btn {
-  width: 6px;
-  height: 6px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--white);
-  color: var(--danger, #e74c3c);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.remove-spec-btn:hover {
-  background: var(--danger, #e74c3c);
-  color: white;
-  border-color: var(--danger, #e74c3c);
-}
-
-.add-spec-btn {
-  width: 100%;
-  padding: 12px;
-  border: 2px dashed var(--border);
-  border-radius: 8px;
-  background: var(--background);
-  color: var(--hash);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* =========================================
+   CATEGORY GRID - COMPACT DESIGN
+   ========================================= */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  transition: all 0.2s;
   margin-top: 8px;
 }
 
-.add-spec-btn:hover:not(:disabled) {
+.category-option {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 8px;
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-option:hover {
   border-color: var(--primary);
+  background: rgba(52, 131, 224, 0.03);
+}
+
+.category-option.selected {
+  border-color: var(--secondary);
+  background: rgba(46, 204, 113, 0.08);
+}
+
+.category-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
   color: var(--primary);
-  background: rgba(52, 131, 224, 0.05);
 }
 
-.add-spec-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.category-option.selected .category-icon {
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--secondary);
 }
 
-.add-spec-btn.hidden {
-  display: none !important;
-}
-
-/* Responsive specs */
-@media (max-width: 480px) {
-  .spec-item {
-    flex-wrap: wrap;
-  }
-  
-  .spec-item input {
-    width: calc(50% - 6px);
-    flex: none;
-  }
-  
-  .remove-spec-btn {
-    width: 100%;
-    height: 40px;
-  }
+.category-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.2;
 }
 
 /* Responsive */
@@ -273,6 +211,10 @@
   }
   
   .image-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .category-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
