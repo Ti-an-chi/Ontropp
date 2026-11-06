@@ -13,14 +13,16 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Store uploaded image URLs
 let mode = 'creating';
 let productId = null;
-let productImageUrls = [];
+let productImageUrls = [];   // [{ id, url, width, height, aspect_ratio, status }]
 let specifications = [];
 let currentCategoryId = null;
 
 const engine = new SpecEngine();
 const MAX_SPECS = 5;
 const MAX_VALUES_PER_SPEC = 8;
+const MAX_IMAGES = 5;
 
+// ========== ROUTE ==========
 async function setupRoute() {
   const urlParams = new URLSearchParams(window.location.search);
   productId = urlParams.get('productId');
@@ -69,32 +71,69 @@ function autofillProductData(data) {
   );
   renderSpecifications();
 
-  // Images
-  productImageUrls = (data.images || []).map(url => ({
-    id: crypto.randomUUID(),
-    url,
-    status: 'complete'
-  }));
+  // Images — handles both the new object shape and legacy URL-string rows
+  productImageUrls = (data.images || []).map(img => {
+    if (typeof img === 'string') {
+      return {
+        id: crypto.randomUUID(),
+        url: img,
+        width: null,
+        height: null,
+        aspect_ratio: null,
+        status: 'complete'
+      };
+    }
+    return {
+      id: img.id ?? crypto.randomUUID(),
+      url: img.url,
+      width: img.width ?? null,
+      height: img.height ?? null,
+      aspect_ratio: img.aspect_ratio ?? null,
+      status: 'complete'
+    };
+  });
   updateImagePreview();
 }
 
-// ========== IMAGE UPLOAD (unchanged) ==========
+// ========== IMAGE DIMENSIONS ==========
+async function getImageDimensions(file) {
+  if ('createImageBitmap' in window) {
+    const bmp = await createImageBitmap(file);
+    const dims = {
+      width: bmp.width,
+      height: bmp.height,
+      aspect_ratio: bmp.width / bmp.height
+    };
+    bmp.close?.();
+    return dims;
+  }
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const dims = {
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+        aspect_ratio: img.naturalWidth / img.naturalHeight
+      };
+      URL.revokeObjectURL(url);
+      resolve(dims);
+    };
+    img.onerror = (e) => { URL.revokeObjectURL(url); reject(e); };
+    img.src = url;
+  });
+}
+
+// ========== IMAGE UPLOAD ==========
 function setupImageUpload() {
-  console.log("setting up image upload...");
   const imageUploadArea = document.getElementById('imageUploadArea');
-  const imageUploadBtn = document.getElementById('imageUploadBtn');
   const imageFileInput = document.getElementById('imageFileInput');
   if (!imageUploadArea || !imageFileInput) return;
 
-  const maxImages = 5;
-  
-  console.log('inputs:', document.querySelectorAll('#imageFileInput').length);
-  
   imageFileInput.addEventListener('change', function(e) {
-    console.log("CHANGE FIRED", this.files);
     const files = Array.from(this.files);
-    if (productImageUrls.length + files.length > maxImages) {
-      showToast({ message: `You can only upload up to ${maxImages} images.` });
+    if (productImageUrls.length + files.length > MAX_IMAGES) {
+      showToast({ message: `You can only upload up to ${MAX_IMAGES} images.` });
       this.value = '';
       return;
     }
@@ -130,22 +169,26 @@ function setupImageUpload() {
       file.type.startsWith('image/')
     );
     if (files.length > 0) {
-      if (productImageUrls.length + files.length > maxImages) {
-        showToast({ message: `You can only upload up to ${maxImages} images.` });
+      if (productImageUrls.length + files.length > MAX_IMAGES) {
+        showToast({ message: `You can only upload up to ${MAX_IMAGES} images.` });
         return;
       }
       files.forEach(file => uploadProductImage(file));
     }
   });
-  console.log("image upload setup complete");
 }
 
 async function uploadProductImage(file) {
   const tempId = crypto.randomUUID();
-  let meta = { width: null, height: null, aspectRatio: null };
-  try { meta = await getImageDimensions(file); } catch {}
 
-  // push placeholder with meta already known
+  // Decode dimensions BEFORE hitting the network
+  let meta = { width: null, height: null, aspect_ratio: null };
+  try {
+    meta = await getImageDimensions(file);
+  } catch (err) {
+    console.warn('Could not read image dimensions', err);
+  }
+
   productImageUrls.push({
     id: tempId,
     url: 'https://i.gifer.com/ZZ5H.gif',
@@ -161,10 +204,10 @@ async function uploadProductImage(file) {
 
   try {
     const res = await API.uploadImage(formData);
-    const idx = productImageUrls.findIndex(i => i.id === tempId);
-    if (idx !== -1) {
-      productImageUrls[idx] = {
-        ...productImageUrls[idx],
+    const index = productImageUrls.findIndex(img => img.id === tempId);
+    if (index !== -1) {
+      productImageUrls[index] = {
+        ...productImageUrls[index],
         url: res.secure_url,
         status: 'complete'
       };
@@ -176,36 +219,6 @@ async function uploadProductImage(file) {
     productImageUrls = productImageUrls.filter(img => img.id !== tempId);
     updateImagePreview();
   }
-}
-
-async function getImageDimensions(file) {
-  // Modern, works directly on File/Blob
-  if ('createImageBitmap' in window) {
-    const bmp = await createImageBitmap(file);
-    const dims = {
-      width: bmp.width,
-      height: bmp.height,
-      aspectRatio: bmp.width / bmp.height
-    };
-    bmp.close?.();
-    return dims;
-  }
-  // Fallback
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      const dims = {
-        width: img.naturalWidth,
-        height: img.naturalHeight,
-        aspectRatio: img.naturalWidth / img.naturalHeight
-      };
-      URL.revokeObjectURL(url);
-      resolve(dims);
-    };
-    img.onerror = (e) => { URL.revokeObjectURL(url); reject(e); };
-    img.src = url;
-  });
 }
 
 function updateImagePreview() {
@@ -229,6 +242,7 @@ function updateImagePreview() {
     previewItem.innerHTML = `
       <img src="${image.url}" alt="Product image ${index + 1}"
            style="${image.status === 'uploading' ? 'opacity: 0.7;' : ''}">
+      ${index === 0 ? '<span class="cover-badge">Cover</span>' : ''}
       <button type="button" class="image-remove-btn" data-index="${index}">
         <i class="fas fa-times"></i>
       </button>
@@ -360,13 +374,12 @@ function bindSpecGroupEvents(specEl, spec, index) {
 
   renderValueChips(valuesList, spec);
 
-  // Field input: enable value input when field name is entered
   fieldInput.addEventListener('input', (e) => {
     spec.name = e.target.value.trim();
     const hasName = spec.name.length > 0;
     valueInput.disabled = !hasName;
     addValueBtn.disabled = !hasName;
-    
+
     const suggestions = engine.suggestFields(currentCategoryId, spec.name);
     renderSuggestions(fieldSugg, suggestions, (selected) => {
       fieldInput.value = selected;
@@ -389,7 +402,6 @@ function bindSpecGroupEvents(specEl, spec, index) {
     });
   });
 
-  // Value input
   valueInput.addEventListener('input', (e) => {
     const val = e.target.value;
     const suggestions = engine.suggestValues(spec.name, currentCategoryId, val);
@@ -488,19 +500,31 @@ async function setupFormSubmission() {
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const completedImages = productImageUrls
-      .filter(img => img.status === 'complete')
-      .map(img => img.url);
+    // Guard 1: no image mid-upload
+    if (productImageUrls.some(img => img.status === 'uploading')) {
+      showToast({ message: 'Please wait for all images to finish uploading.' });
+      return;
+    }
 
-    if (completedImages.length === 0) {
+    // Guard 2: at least one image
+    if (productImageUrls.length === 0) {
       showToast({ message: 'Please upload at least one product image.' });
       return;
     }
 
+    // Build image objects; images[0] is the cover.
+    const imageObjects = productImageUrls.map(img => ({
+      id: img.id,
+      url: img.url,
+      width: img.width,
+      height: img.height,
+      aspect_ratio: img.aspect_ratio
+    }));
+
     const specsObject = {};
     specifications.forEach(spec => {
       if (spec.name.trim() && spec.values.length > 0) {
-        specsObject[spec.name.trim()] = spec.values.join(' | ');
+        specsObject[spec.name.trim()] = spec.values;
       }
     });
 
@@ -510,8 +534,8 @@ async function setupFormSubmission() {
       price: parseFloat(document.getElementById('productPrice').value),
       condition: document.getElementById('productCondition').value,
       category: currentCategoryId || document.getElementById('productCategory')?.value,
-      cover_image: completedImages[0],
-      images: completedImages,
+      images: imageObjects,
+      cover_image: imageObjects[0],
       specifications: Object.keys(specsObject).length > 0 ? specsObject : null
     };
 
