@@ -10,10 +10,9 @@ document.addEventListener('DOMContentLoaded', async function() {
   setupFormSubmission();
 });
 
-// Store uploaded image URLs
 let mode = 'creating';
 let productId = null;
-let productImageUrls = [];   // [{ id, url, width, height, aspect_ratio, status }]
+let productImageUrls = [];
 let specifications = [];
 let currentCategoryId = null;
 
@@ -30,7 +29,7 @@ async function setupRoute() {
     mode = 'editing';
     updateElement('productName', 'loading...', 'placeholder');
     updateElement('productPrice', 'loading...', 'placeholder');
-    updateElement('productDescription', 'loading...', 'placeholder');
+    updateElement('productDesc', 'loading...', 'placeholder');
     await loadProductData(productId);
   }
 }
@@ -38,9 +37,7 @@ async function setupRoute() {
 async function loadProductData(productId) {
   try {
     const response = await API.getProductById(productId);
-    const productData = response.product;
-    console.log(productData);
-    autofillProductData(productData);
+    autofillProductData(response.product);
   } catch (err) {
     console.error('Failed to load product data', err);
     showToast({ message: `Failed to load product data: ${err.message}` });
@@ -51,17 +48,16 @@ function autofillProductData(data) {
   updateElement('productName', data.name, 'value');
   updateElement('productPrice', data.price, 'value');
   updateElement('productCondition', data.condition, 'value');
-  updateElement('productCategory', data.category, 'value');
-  updateElement('productDescription', data.description);
+  updateElement('productDesc', data.description, 'value');
 
-  // Category selection
   if (data.category) {
     currentCategoryId = data.category;
+    const hidden = document.getElementById('selectedCategory');
+    if (hidden) hidden.value = data.category;
     const tile = document.querySelector(`.category-option[data-id="${data.category}"]`);
     if (tile) tile.classList.add('selected');
   }
 
-  // Specifications
   specifications = Object.entries(data.specifications || {}).map(
     ([name, value]) => ({
       id: crypto.randomUUID(),
@@ -71,17 +67,9 @@ function autofillProductData(data) {
   );
   renderSpecifications();
 
-  // Images — handles both the new object shape and legacy URL-string rows
   productImageUrls = (data.images || []).map(img => {
     if (typeof img === 'string') {
-      return {
-        id: crypto.randomUUID(),
-        url: img,
-        width: null,
-        height: null,
-        aspect_ratio: null,
-        status: 'complete'
-      };
+      return { id: crypto.randomUUID(), url: img, width: null, height: null, aspect_ratio: null, status: 'complete' };
     }
     return {
       id: img.id ?? crypto.randomUUID(),
@@ -99,11 +87,7 @@ function autofillProductData(data) {
 async function getImageDimensions(file) {
   if ('createImageBitmap' in window) {
     const bmp = await createImageBitmap(file);
-    const dims = {
-      width: bmp.width,
-      height: bmp.height,
-      aspect_ratio: bmp.width / bmp.height
-    };
+    const dims = { width: bmp.width, height: bmp.height, aspect_ratio: bmp.width / bmp.height };
     bmp.close?.();
     return dims;
   }
@@ -111,11 +95,7 @@ async function getImageDimensions(file) {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
-      const dims = {
-        width: img.naturalWidth,
-        height: img.naturalHeight,
-        aspect_ratio: img.naturalWidth / img.naturalHeight
-      };
+      const dims = { width: img.naturalWidth, height: img.naturalHeight, aspect_ratio: img.naturalWidth / img.naturalHeight };
       URL.revokeObjectURL(url);
       resolve(dims);
     };
@@ -130,7 +110,7 @@ function setupImageUpload() {
   const imageFileInput = document.getElementById('imageFileInput');
   if (!imageUploadArea || !imageFileInput) return;
 
-  imageFileInput.addEventListener('change', function(e) {
+  imageFileInput.addEventListener('change', function() {
     const files = Array.from(this.files);
     if (productImageUrls.length + files.length > MAX_IMAGES) {
       showToast({ message: `You can only upload up to ${MAX_IMAGES} images.` });
@@ -165,36 +145,23 @@ function setupImageUpload() {
     e.preventDefault();
     imageUploadArea.style.borderColor = '';
     imageUploadArea.style.backgroundColor = '';
-    const files = Array.from(e.dataTransfer.files).filter(file =>
-      file.type.startsWith('image/')
-    );
-    if (files.length > 0) {
-      if (productImageUrls.length + files.length > MAX_IMAGES) {
-        showToast({ message: `You can only upload up to ${MAX_IMAGES} images.` });
-        return;
-      }
-      files.forEach(file => uploadProductImage(file));
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if (!files.length) return;
+    if (productImageUrls.length + files.length > MAX_IMAGES) {
+      showToast({ message: `You can only upload up to ${MAX_IMAGES} images.` });
+      return;
     }
+    files.forEach(file => uploadProductImage(file));
   });
 }
 
 async function uploadProductImage(file) {
   const tempId = crypto.randomUUID();
 
-  // Decode dimensions BEFORE hitting the network
-  let meta = { width: null, height: null, aspect_ratio: null };
-  try {
-    meta = await getImageDimensions(file);
-  } catch (err) {
-    console.warn('Could not read image dimensions', err);
-  }
+  let meta = { width: null, height: null, aspect_ratio: 0.8 };
+  try { meta = await getImageDimensions(file); } catch {}
 
-  productImageUrls.push({
-    id: tempId,
-    url: 'https://i.gifer.com/ZZ5H.gif',
-    status: 'uploading',
-    ...meta
-  });
+  productImageUrls.push({ id: tempId, url: 'https://i.gifer.com/ZZ5H.gif', status: 'uploading', ...meta });
   updateImagePreview();
 
   const formData = new FormData();
@@ -204,19 +171,15 @@ async function uploadProductImage(file) {
 
   try {
     const res = await API.uploadImage(formData);
-    const index = productImageUrls.findIndex(img => img.id === tempId);
-    if (index !== -1) {
-      productImageUrls[index] = {
-        ...productImageUrls[index],
-        url: res.secure_url,
-        status: 'complete'
-      };
+    const idx = productImageUrls.findIndex(i => i.id === tempId);
+    if (idx !== -1) {
+      productImageUrls[idx] = { ...productImageUrls[idx], url: res.secure_url, status: 'complete' };
       updateImagePreview();
     }
   } catch (err) {
     showToast({ message: `Failed to upload "${file.name}". Please try again.` });
     console.error(err);
-    productImageUrls = productImageUrls.filter(img => img.id !== tempId);
+    productImageUrls = productImageUrls.filter(i => i.id !== tempId);
     updateImagePreview();
   }
 }
@@ -253,8 +216,7 @@ function updateImagePreview() {
   document.querySelectorAll('.image-remove-btn').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      const index = parseInt(this.dataset.index);
-      productImageUrls.splice(index, 1);
+      productImageUrls.splice(parseInt(this.dataset.index), 1);
       updateImagePreview();
     });
   });
@@ -287,6 +249,8 @@ function setupCategoryGrid() {
       document.querySelectorAll('.category-option').forEach(el => el.classList.remove('selected'));
       div.classList.add('selected');
       currentCategoryId = cat.id;
+      const hidden = document.getElementById('selectedCategory');
+      if (hidden) hidden.value = cat.id;
     });
     grid.appendChild(div);
   });
@@ -305,14 +269,11 @@ function setupSpecifications() {
       showToast({ message: `Maximum of ${MAX_SPECS} specification fields allowed.` });
       return;
     }
-    const specId = crypto.randomUUID();
-    specifications.push({ id: specId, name: '', values: [] });
+    specifications.push({ id: crypto.randomUUID(), name: '', values: [] });
     renderSpecifications();
   });
 
-  if (specifications.length > 0) {
-    renderSpecifications();
-  }
+  if (specifications.length > 0) renderSpecifications();
 }
 
 function renderSpecifications() {
@@ -356,11 +317,8 @@ function renderSpecifications() {
     bindSpecGroupEvents(specEl, spec, index);
   });
 
-  if (specifications.length >= MAX_SPECS) {
-    addSpecBtn.classList.add('hidden');
-  } else {
-    addSpecBtn.classList.remove('hidden');
-  }
+  if (specifications.length >= MAX_SPECS) addSpecBtn.classList.add('hidden');
+  else addSpecBtn.classList.remove('hidden');
 }
 
 function bindSpecGroupEvents(specEl, spec, index) {
@@ -403,8 +361,7 @@ function bindSpecGroupEvents(specEl, spec, index) {
   });
 
   valueInput.addEventListener('input', (e) => {
-    const val = e.target.value;
-    const suggestions = engine.suggestValues(spec.name, currentCategoryId, val);
+    const suggestions = engine.suggestValues(spec.name, currentCategoryId, e.target.value);
     renderSuggestions(valueSugg, suggestions, (selected) => {
       addValueToSpec(spec, selected, valuesList);
       valueInput.value = '';
@@ -450,12 +407,8 @@ function renderValueChips(valuesList, spec) {
   spec.values.forEach((val, valIndex) => {
     const chip = document.createElement('div');
     chip.className = 'spec-value-chip';
-    chip.innerHTML = `
-      <span>${val}</span>
-      <button type="button" class="remove-value" aria-label="Remove value">
-        <i class="fas fa-times"></i>
-      </button>
-    `;
+    chip.innerHTML = `<span>${val}</span>
+      <button type="button" class="remove-value" aria-label="Remove value"><i class="fas fa-times"></i></button>`;
     chip.querySelector('.remove-value').addEventListener('click', () => {
       spec.values.splice(valIndex, 1);
       renderValueChips(valuesList, spec);
@@ -470,7 +423,6 @@ function addValueToSpec(spec, value, valuesList) {
     return;
   }
   if (spec.values.includes(value)) return;
-
   spec.values.push(value);
   renderValueChips(valuesList, spec);
 }
@@ -493,32 +445,24 @@ function renderSuggestions(box, items, onSelect) {
 
 // ========== FORM SUBMISSION ==========
 async function setupFormSubmission() {
-  const form = document.getElementById('productForm');
-  const submitBtn = document.getElementById('submitBtn');
+  const form = document.getElementById('uploadForm');           // ✅ matches HTML
+  const submitBtn = form?.querySelector('button[type="submit"]');
   if (!form || !submitBtn) return;
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    // Guard 1: no image mid-upload
     if (productImageUrls.some(img => img.status === 'uploading')) {
       showToast({ message: 'Please wait for all images to finish uploading.' });
       return;
     }
-
-    // Guard 2: at least one image
     if (productImageUrls.length === 0) {
       showToast({ message: 'Please upload at least one product image.' });
       return;
     }
 
-    // Build image objects; images[0] is the cover.
     const imageObjects = productImageUrls.map(img => ({
-      id: img.id,
-      url: img.url,
-      width: img.width,
-      height: img.height,
-      aspect_ratio: img.aspect_ratio
+      id: img.id, url: img.url, width: img.width, height: img.height, aspect_ratio: img.aspect_ratio
     }));
 
     const specsObject = {};
@@ -530,10 +474,11 @@ async function setupFormSubmission() {
 
     const formData = {
       name: document.getElementById('productName').value.trim(),
-      description: document.getElementById('productDescription').value.trim(),
+      description: document.getElementById('productDesc').value.trim(),      // ✅
       price: parseFloat(document.getElementById('productPrice').value),
       condition: document.getElementById('productCondition').value,
-      category: currentCategoryId || document.getElementById('productCategory')?.value,
+      availability: document.getElementById('productAvailability')?.value, // HTML has it
+      category: currentCategoryId || document.getElementById('selectedCategory')?.value,
       images: imageObjects,
       cover_image: imageObjects[0],
       specifications: Object.keys(specsObject).length > 0 ? specsObject : null
@@ -553,18 +498,13 @@ async function setupFormSubmission() {
     submitBtn.disabled = true;
 
     try {
-      let response = null;
-      if (mode === 'editing') {
-        response = await API.updateProduct(productId, formData);
-      } else {
-        response = await API.createProduct(formData);
-      }
+      const response = mode === 'editing'
+        ? await API.updateProduct(productId, formData)
+        : await API.createProduct(formData);
 
       if (response.success) {
         showToast({ message: 'Product listed successfully!', duration: 3000 });
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 1500);
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
       }
     } catch (error) {
       console.error('Failed to add product:', error);

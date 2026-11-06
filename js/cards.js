@@ -28,13 +28,52 @@ export function escapeHtml(str) {
 }
 
 /* -------------------------------------------------------------
+   Image helpers — new shape
+   Each product image is now { id, url, width, height, aspect_ratio }.
+   Legacy rows might still be strings; be lenient.
+   ------------------------------------------------------------- */
+
+// Pull the cover URL from a piece-like object. Prefers cover_image.url,
+// falls back to cover_image (string legacy), then images[0].
+function coverUrl(item) {
+  const c = item?.cover_image;
+  if (c && typeof c === 'object' && c.url) return c.url;
+  if (typeof c === 'string' && c) return c;
+  const first = item?.images?.[0];
+  if (first && typeof first === 'object' && first.url) return first.url;
+  if (typeof first === 'string' && first) return first;
+  return '';
+}
+
+// CSS aspect-ratio string from a piece-like object. Order of preference:
+//   cover_image {width, height}  →  cover_image.aspect_ratio  →  4/5
+function coverAspectRatio(item) {
+  const c = item?.cover_image;
+  const first = item?.images?.[0];
+  const src = (c && typeof c === 'object') ? c : (first && typeof first === 'object') ? first : null;
+
+  if (src?.width && src?.height) return `${src.width} / ${src.height}`;
+  if (src?.aspect_ratio)         return `1 / ${1 / src.aspect_ratio}`;
+  return '4 / 5';
+}
+
+// Same idea but for an arbitrary image object (used by FashionCard which
+// receives its own { image_url } or image object).
+function imageAspectRatio(img, fallback = '4 / 5') {
+  if (!img || typeof img !== 'object') return fallback;
+  if (img.width && img.height) return `${img.width} / ${img.height}`;
+  if (img.aspect_ratio)        return `1 / ${1 / img.aspect_ratio}`;
+  return fallback;
+}
+
+/* -------------------------------------------------------------
    1. Trending slide
    ------------------------------------------------------------- */
 
 export function TrendingSlide(item) {
   const a = el('a', 'trending-slide');
   a.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
-  a.style.backgroundImage = `url('${item.cover_image || ''}')`;
+  a.style.backgroundImage = `url('${coverUrl(item)}')`;
   a.style.backgroundPosition = item.focal_point || 'center';
   a.innerHTML = `
     <div class="trending-meta">
@@ -67,14 +106,16 @@ export function CategoryTile(cat, layout = '') {
 export function RecommendedCard(item) {
   const a = el('a', 'rec-card');
   a.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
+
+  const img = coverUrl(item) || item.image_url || '';
   a.innerHTML = `
-    <div class="rec-img" style="background-image:url('${item.image_url || item.images?.[0] || ''}')">
+    <div class="rec-img" style="background-image:url('${img}')">
       ${item.badge ? `<span class="rec-badge">${escapeHtml(item.badge)}</span>` : ''}
     </div>
     <div class="rec-body">
       <div class="rec-title">${escapeHtml(item.title || item.name || '')}</div>
       <div class="rec-studio">
-        <i class="fas fa-circle"></i> ${escapeHtml(item.studio_name || item.studio.brand_name || '')}
+        <i class="fas fa-circle"></i> ${escapeHtml(item.studio_name || item.studio?.brand_name || '')}
       </div>
     </div>`;
   return a;
@@ -82,7 +123,6 @@ export function RecommendedCard(item) {
 
 /* -------------------------------------------------------------
    4. Designer card
-   onFollow: (btnEl, designer) => void
    ------------------------------------------------------------- */
 
 export function DesignerCard(designer) {
@@ -111,10 +151,10 @@ export function FreshCard(item) {
   const a = el('a', 'fresh-card');
   a.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
   a.innerHTML = `
-    <div class="fresh-img" style="background-image:url('${item.cover_image || ''}')"></div>
+    <div class="fresh-img" style="background-image:url('${coverUrl(item)}')"></div>
     <div class="fresh-body">
       <div class="fresh-title">${escapeHtml(item.name || '')}</div>
-      <div class="fresh-studio">${escapeHtml(item.studio.brand_name || '')}</div>
+      <div class="fresh-studio">${escapeHtml(item.studio?.brand_name || '')}</div>
     </div>`;
   return a;
 }
@@ -139,11 +179,6 @@ export function StudioCard(studio) {
 
 /* -------------------------------------------------------------
    7. Explore piece card
-   Same content hierarchy & visual language as RecommendedCard,
-   but:
-     - uses a real <img> so natural aspect ratio is preserved
-     - overlays title/studio on a bottom gradient
-     - no price, rating, seller avatar, badge, or actions
    ------------------------------------------------------------- */
 
 export function PieceCard(item) {
@@ -151,13 +186,9 @@ export function PieceCard(item) {
   a.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
 
   const title = escapeHtml(item.title || item.name || '');
-  const studio = escapeHtml(item.studio.brand_name || item.seller_name || '');
-  const imgSrc = item.cover_image || item.images?.[0] || item.image_url || '';
-
-  // Reserve space: padding-top trick or aspect-ratio CSS
-  const ar = (item.width && item.height)
-    ? `${item.width} / ${item.height}`
-    : (item.aspect_ratio ? `1 / ${1 / item.aspect_ratio}` : '4 / 5');
+  const studio = escapeHtml(item.studio?.brand_name || item.studio_name || item.seller_name || '');
+  const imgSrc = coverUrl(item) || item.image_url || '';
+  const ar = coverAspectRatio(item);
 
   a.innerHTML = `
     <div class="piece-card-media" style="aspect-ratio:${ar}">
@@ -173,15 +204,9 @@ export function PieceCard(item) {
 
 /* -------------------------------------------------------------
    8. Saved piece card
-   Image, quiet caption, studio mini-avatar. No overlay, no price,
-   no CTA. Space reserved via aspect-ratio.
-
-   Long-press fires onLongPress(item, cardEl). Click is delegated
-   by the Saved tab (see saved.js) so the card itself stays dumb.
    ------------------------------------------------------------- */
 
 export function SavedPieceCard(item, { onLongPress } = {}) {
-  console.log(item)
   const card = document.createElement('a');
   card.className = 'saved-piece';
   card.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
@@ -189,12 +214,9 @@ export function SavedPieceCard(item, { onLongPress } = {}) {
 
   const title  = escapeHtml(item.name || item.title || '');
   const studio = escapeHtml(item.studio_name || '');
-  const imgSrc = item.cover_image || item.images?.[0] || '';
+  const imgSrc = coverUrl(item);
   const avatar = item.studio_avatar_url || '';
-
-  const ar = (item.width && item.height)
-    ? `${item.width} / ${item.height}`
-    : (item.aspect_ratio ? `1 / ${1 / item.aspect_ratio}` : '4 / 5');
+  const ar = coverAspectRatio(item);
 
   card.innerHTML = `
     <div class="saved-piece-media" style="aspect-ratio:${ar}">
@@ -254,7 +276,6 @@ export function CollectionCard(item) {
 
 /* -------------------------------------------------------------
    10. Trail item — one row in the Profile "Trail" list.
-   Returns an <li>. Caller appends to a <ul>.
    ------------------------------------------------------------- */
 
 const TRAIL_ICONS = {
@@ -320,7 +341,6 @@ export function SignalCard({ icon, value, text, label }) {
 
 /* -------------------------------------------------------------
    13. Account row — used by Profile Account list.
-   Orchestrator binds clicks via [data-action] delegation.
    ------------------------------------------------------------- */
 
 export function AccountItem({ icon, label, action, danger }) {
@@ -342,29 +362,32 @@ export function AccountItem({ icon, label, action, danger }) {
    variant:
      'fixed'  → image height 220px (piece page default, unchanged)
      'ratio'  → image uses the piece's aspect_ratio, no fixed height
-                (profile grid; preserves varied shapes)
    ------------------------------------------------------------- */
 
 export function FashionCard(piece, { variant = 'fixed' } = {}) {
   const article = el('article', 'fashion-card' + (variant === 'ratio' ? ' fashion-card--ratio' : ''));
 
-  const ar = (piece.width && piece.height)
-    ? `${piece.width} / ${piece.height}`
-    : '4 / 5';
-
+  const ar = coverAspectRatio(piece);
   const imageStyle = variant === 'ratio' ? ` style="aspect-ratio:${ar}"` : '';
+
+  // Accept either the new cover_image object or a legacy image_url string.
+  const imgSrc =
+    (piece.cover_image && typeof piece.cover_image === 'object' && piece.cover_image.url) ||
+    (typeof piece.cover_image === 'string' && piece.cover_image) ||
+    piece.image_url ||
+    '';
 
   article.innerHTML = `
     <a href="piece.html?id=${encodeURIComponent(piece.id)}" class="fashion-image"${imageStyle}>
-      <img src="${escapeHtml(piece.image_url || '')}"
-           alt="${escapeHtml(piece.title || '')}" loading="lazy" decoding="async">
+      <img src="${escapeHtml(imgSrc)}"
+           alt="${escapeHtml(piece.name || piece.title || '')}" loading="lazy" decoding="async">
     </a>
     <div class="card-information">
       <div>
-        <h3>${escapeHtml(piece.title || '')}</h3>
+        <h3>${escapeHtml(piece.name || piece.title || '')}</h3>
         <p>${escapeHtml(piece.category || '')}</p>
       </div>
-      <button type="button" aria-label="Like ${escapeHtml(piece.title || '')}">
+      <button type="button" aria-label="Like ${escapeHtml(piece.name || piece.title || '')}">
         <i class="fa-regular fa-heart"></i>
       </button>
     </div>`;
