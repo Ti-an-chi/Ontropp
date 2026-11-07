@@ -157,6 +157,20 @@ button {
   align-items: center;
 }
 
+/* Fix header right-side icon to be a perfect circle */
+.header-actions img,
+.header-actions .header-icon,
+.header-actions .profile-icon,
+.header-actions .studio-logo {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--background);
+  flex-shrink: 0;
+}
+
 /* Footer - from dashboard.css */
 .dashboard-footer {
   background-color: var(--white);

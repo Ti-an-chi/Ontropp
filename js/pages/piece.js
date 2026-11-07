@@ -1,93 +1,177 @@
 /**
  * piece.js — Piece detail orchestrator.
- * Mirrors home.js: state views + cards from cards.js + mock API.
- * Errors surface via toast.js.
+ * Matches piece.html structure and uses real API + SpecEngine.
  */
-
-import API from '../../api.mock.js';
+import API from '../../api.js';
+import { SpecEngine } from '../lab/specEngine.js';
 import { createStateView } from '../state.js';
 import { showToast } from '../toast.js';
 import { FashionCard, escapeHtml } from '../cards.js';
 
-const params  = new URLSearchParams(location.search);
-const pieceId = params.get('id') || 'p1';
+const params = new URLSearchParams(location.search);
+const productId = params.get('id') || params.get('productId') || 'bd130930-e09f-4f82-a1e0-09d031cfe6fb';
+const engine = new SpecEngine();
 
-let piece    = null;
-let designer = null;
+let piece = null;
+let studio = null;
+let designer = null; // The user behind the studio
 
 init();
 
 async function init() {
-  await Promise.all([loadHero(), loadMaker(), loadGarment()]);
-  loadOtherWorks();
-  wireSave();
-}
+  const heroSv = createStateView(document.querySelector('[data-state-view="piece-hero"]'));
+  const makerSv = createStateView(document.querySelector('[data-state-view="piece-maker"]'));
+  const garmentSv = createStateView(document.querySelector('[data-state-view="piece-garment"]'));
+  const otherSv = createStateView(document.querySelector('[data-state-view="piece-other"]'));
 
-/* =========================================================
-   HERO — image, title, description
-   ========================================================= */
-
-async function loadHero() {
-  const sv = createStateView(document.querySelector('[data-state-view="piece-hero"]'));
-  if (!sv) return;
-  sv.loading();
+  [heroSv, makerSv, garmentSv, otherSv].forEach(sv => sv?.loading());
 
   try {
-    piece = await API.getPiece(pieceId);
-    document.title = `${piece.title} · ONTROPP`;
+    // REQUEST 1: Get piece + studio + user
+    const response = await API.getProductById(productId);
+    piece = response.product || response;
+    studio = piece.studio || {};
+    designer = studio.user || {}; // Extract the user object
+    
+    document.title = `${piece.name} · ONTROPP`;
 
-    const data = sv.dataEl;
-    const img  = data.querySelector('.js-hero-img');
-    img.src = (piece.image_url || '').replace('w=600', 'w=1800');
-    img.alt = piece.title || '';
+    if (heroSv) renderHero(heroSv.dataEl);
+    if (makerSv) renderStudio(makerSv.dataEl);
+    if (garmentSv) renderSpecifications(garmentSv.dataEl);
+    
+    [heroSv, makerSv, garmentSv].forEach(sv => sv?.data());
 
-    data.querySelector('.js-hero-studio').textContent       = piece.studio_name || '';
-    data.querySelector('.js-hero-collection').textContent   =
-      `${piece.title} — ${piece.collection || ''} collection.`.trim();
-    data.querySelector('.js-hero-description').textContent  = piece.description || '';
+    wireSave();
+    wireFollow(document.querySelector('.follow-btn'), studio.id);
 
-    sv.data();
+    // REQUEST 2: Get other works
+    if (otherSv && piece.studio_id) {
+      loadOtherWorks(otherSv, piece.studio_id);
+    } else {
+      otherSv?.empty();
+    }
+
   } catch (err) {
-    console.error('Hero failed:', err);
-    sv.empty();
-    showToast({
-      message: 'Could not load this piece.',
-      actionLabel: 'Try again',
-      onAction: loadHero,
-    });
+    console.error('Failed to load piece:', err);
+    [heroSv, makerSv, garmentSv, otherSv].forEach(sv => sv?.empty());
+    showToast({ message: 'Could not load this piece.' });
   }
 }
 
 /* =========================================================
-   MAKER — designer block + follow
-   ========================================================= */
+ * HERO — Handles image dimensions and description
+ * ========================================================= */
+function renderHero(container) {
+  const img = container.querySelector('.js-hero-img');
+  img.src = piece.cover_image?.url || '';
+  img.alt = piece.name || '';
 
-async function loadMaker() {
-  const sv = createStateView(document.querySelector('[data-state-view="piece-maker"]'));
-  if (!sv) return;
-  sv.loading();
+  // Fix for square images: use aspect-ratio or min-height
+  if (piece.cover_image?.aspect_ratio) {
+    img.parentElement.style.aspectRatio = piece.cover_image.aspect_ratio;
+  } else {
+    img.parentElement.style.minHeight = '400px'; // Fallback for tall images
+  }
 
+  container.querySelector('.js-hero-studio').textContent = studio.brand_name || '';
+  
+  const collectionName = piece.category || 'Collection';
+  container.querySelector('.js-hero-collection').textContent = 
+    `${piece.name} — ${collectionName}.`;
+    
+  container.querySelector('.js-hero-description').textContent = piece.description || '';
+}
+
+/* =========================================================
+ * STUDIO/DESIGNER — Shows the user behind the brand
+ * ========================================================= */
+function renderStudio(container) {
+  // Use designer avatar if available, otherwise fall back to studio logo or initials
+  const avatarUrl = designer.avatar_url || studio.logo_url;
+  const avatarEl = container.querySelector('.initials-avatar');
+  
+  if (avatarUrl) {
+    avatarEl.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    const initials = (designer.username || studio.brand_name || '')
+      .split(' ')
+      .map(w => w[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || '—';
+    avatarEl.textContent = initials;
+  }
+
+  container.querySelector('.js-maker-name').textContent = designer.username || 'Unknown Designer';
+  container.querySelector('.js-maker-role').textContent = studio.speciality || 'Designer';
+}
+
+/* =========================================================
+ * SPECIFICATIONS — Robust mapping using SpecEngine
+ * ========================================================= */
+function renderSpecifications(container) {
+  const grid = container.querySelector('.garment-grid');
+  if (!grid) return;
+
+  const specs = piece.specifications || {};
+  const entries = Object.entries(specs).slice(0, 6); // Limit to 6
+
+  if (entries.length === 0) {
+    grid.innerHTML = '<p class="text-muted" style="grid-column: 1/-1;">No details available.</p>';
+    return;
+  }
+
+  grid.innerHTML = entries.map(([key, values]) => {
+    const iconClass = engine.getFieldIcon(key);
+    const displayValue = Array.isArray(values) ? values.join(', ') : values;
+    
+    return `
+      <div class="garment-item">
+        <i class="fa-solid ${iconClass}"></i>
+        <div>
+          <span>${escapeHtml(key)}</span>
+          <p>${escapeHtml(displayValue || '—')}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* =========================================================
+ * OTHER WORKS
+ * ========================================================= */
+async function loadOtherWorks(sv, studioId) {
   try {
-    if (!piece) piece = await API.getPiece(pieceId);
-    designer = await API.getDesigner(piece.designer_id);
+    const items = await API.getStudioPieces(studioId, 1, 12);
+    const filteredItems = items.filter(p => p.id !== piece.id);
 
-    const data = sv.dataEl;
-    data.querySelector('.js-maker-name').textContent = designer.name || '';
-    data.querySelector('.js-maker-role').textContent = designer.studio_name || 'Designer';
-    data.querySelector('.js-maker-initials').textContent =
-      (designer.name || '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || '—';
+    if (!filteredItems.length) {
+      sv.empty();
+      return;
+    }
 
-    wireFollow(data.querySelector('.follow-btn'), designer.id);
+    const gallery = sv.dataEl.querySelector('.fashion-gallery');
+    gallery.innerHTML = '';
+    
+    filteredItems.forEach(p => gallery.appendChild(FashionCard(p)));
+
+    const h2 = sv.dataEl.querySelector('.gallery-heading h2');
+    if (h2 && studio) {
+      h2.textContent = `More works by ${studio.brand_name || 'this studio'}`;
+    }
+
     sv.data();
   } catch (err) {
-    console.error('Maker failed:', err);
+    console.error('Other works failed:', err);
     sv.empty();
-    showToast({ message: 'Could not load the designer.' });
   }
 }
 
-function wireFollow(btn, designerId) {
-  if (!btn) return;
+/* =========================================================
+ * FOLLOW & SAVE ACTIONS
+ * ========================================================= */
+function wireFollow(btn, studioId) {
+  if (!btn || !studioId) return;
   let following = false;
   let pending = false;
 
@@ -100,101 +184,23 @@ function wireFollow(btn, designerId) {
   btn.addEventListener('click', async () => {
     if (pending) return;
     pending = true;
-
     const willFollow = !following;
     following = willFollow;
     paint();
 
     try {
-      await API.toggleFollowDesigner(designerId);
+      if (willFollow) await API.followSeller(studioId);
+      else await API.unfollowSeller(studioId);
       showToast({ message: willFollow ? 'Following' : 'Unfollowed' });
     } catch {
       following = !willFollow;
       paint();
-      const next = encodeURIComponent(location.pathname + location.search);
-      showToast({
-        message: 'Sign in to follow designers',
-        actionLabel: 'Sign in',
-        onAction: () => { location.href = `/login.html?next=${next}&follow=${designerId}`; },
-      });
+      showToast({ message: 'Sign in to follow studios' });
     } finally {
       pending = false;
     }
   });
 }
-
-/* =========================================================
-   GARMENT — fabric / colour / fit
-   ========================================================= */
-
-async function loadGarment() {
-  const sv = createStateView(document.querySelector('[data-state-view="piece-garment"]'));
-  if (!sv) return;
-  sv.loading();
-
-  try {
-    if (!piece) piece = await API.getPiece(pieceId);
-    const d = piece.details || {};
-
-    const rows = [
-      ['fa-layer-group', 'Fabric', d.fabric],
-      ['fa-palette',     'Colour', d.colour],
-      ['fa-shirt',       'Fit',    d.fit],
-    ];
-
-    sv.dataEl.querySelector('.garment-grid').innerHTML = rows.map(([icon, label, value]) => `
-      <div class="garment-item">
-        <i class="fa-solid ${icon}"></i>
-        <div>
-          <span>${label}</span>
-          <p>${escapeHtml(value || '—')}</p>
-        </div>
-      </div>`).join('');
-
-    sv.data();
-  } catch (err) {
-    console.error('Garment failed:', err);
-    sv.empty();
-  }
-}
-
-/* =========================================================
-   OTHER WORKS
-   ========================================================= */
-
-async function loadOtherWorks() {
-  const sv = createStateView(document.querySelector('[data-state-view="piece-other"]'));
-  if (!sv) return;
-  sv.loading();
-
-  try {
-    if (!piece) piece = await API.getPiece(pieceId);
-
-    const items = (await API.getDesignerPieces(piece.designer_id, 8))
-      .filter(p => p.id !== piece.id);
-
-    if (!items.length) { sv.empty(); return; }
-
-    const gallery = sv.dataEl.querySelector('.fashion-gallery');
-    gallery.innerHTML = '';
-    items.forEach(p => gallery.appendChild(FashionCard(p)));
-
-    if (designer) {
-      const h2 = sv.dataEl.querySelector('.gallery-heading h2');
-      if (h2) h2.textContent = `More works by ${designer.name}`;
-    }
-
-    sv.data();
-  } catch (err) {
-    console.error('Other works failed:', err);
-    sv.empty();
-    showToast({ message: 'Could not load other works.' });
-  }
-}
-
-/* =========================================================
-   SAVE
-   ========================================================= */
 
 function wireSave() {
   const btn = document.querySelector('.save-pill');
@@ -204,16 +210,18 @@ function wireSave() {
     const prev = btn.textContent;
     btn.disabled = true;
     try {
-      const { saved } = await API.toggleSaved(pieceId);
-      btn.textContent = saved ? 'Saved' : 'Save';
-      showToast({ message: saved ? 'Saved' : 'Removed' });
+      await API.addToSaved(piece.id); 
+      btn.textContent = 'Saved';
+      showToast({ message: 'Saved' });
     } catch {
-      btn.textContent = prev;
-      showToast({
-        message: 'Sign in to save pieces',
-        actionLabel: 'Sign in',
-        onAction: () => { location.href = `/login.html?next=${encodeURIComponent(location.pathname + location.search)}`; },
-      });
+      try {
+        await API.removeFromSaved(piece.id);
+        btn.textContent = 'Save';
+        showToast({ message: 'Removed' });
+      } catch {
+        btn.textContent = prev;
+        showToast({ message: 'Sign in to save pieces' });
+      }
     } finally {
       btn.disabled = false;
     }
