@@ -187,7 +187,7 @@ function setupGlobalEventListeners() {
       dropdown.style.display = 'none';
       
       if (confirm('Ready to start your seller journey? You\'ll be able to list products and grow your business.')) {
-          location.href = 'designerSignup.html';
+          location.href = 'openStudio.html';
       }
     });
   }
