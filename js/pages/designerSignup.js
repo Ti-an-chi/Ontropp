@@ -163,7 +163,7 @@ function setupUi() {
    ============================================================ */
 async function setupCategories() {
   try {
-    const categories = await API.getCategories();
+    const categories = await API.getCategories('designers');
     const grid = document.getElementById('categoryGrid');
     if (!grid) return;
     grid.innerHTML = '';

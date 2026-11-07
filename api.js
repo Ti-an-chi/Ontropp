@@ -336,54 +336,88 @@ async getPiecesPaginated(page = 1, limit = 20, filters = {}) {
     return resp.data;
   },
 
-  // 1. HARD CODED CATEGORIES 
-  _hardcodedCategories() {
-    const IMG = (id, w = 800) =>
-      `https://images.unsplash.com/${id}?w=${w}&q=70&auto=format&fit=crop`;
-  
-    return [
-      { id: 'textiles',  name: 'Textiles',  icon: 'scroll', image_url: IMG('photo-1490481651871-ab68de25d43d') },
-      { id: 'tailoring', name: 'Tailoring', icon: 'cut',    image_url: IMG('photo-1516257984-b1b4d707412e') },
-      { id: 'jewellery', name: 'Jewellery', icon: 'gem',    image_url: IMG('photo-1523170335258-f5ed11844a49') },
-      { id: 'objects',   name: 'Objects',   icon: 'shapes', image_url: IMG('photo-1567016432779-094069958ea5') },
-      { id: 'beauty',    name: 'Beauty',    icon: 'spa',    image_url: IMG('photo-1522335789203-aabd1fc54bc9') },
-      { id: 'print',     name: 'Print',     icon: 'stamp',  image_url: IMG('photo-1606760227091-3dd870d97f1d') },
-    ];
-  },
-  
-  // 2. CATEGORIES
-  async getCategories() {
-    // ── Cache check (unchanged) ──────────────────────────────
-    const cacheKey = 'ontrop_categories';
-    const cached = sessionStorage.getItem(cacheKey);
-  
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        if (Date.now() < parsed.expires_at) {
-          return parsed.data;
-        }
-        sessionStorage.removeItem(cacheKey);
-      } catch {
+// 1. HARD CODED CATEGORIES
+_hardcodedCategories(type = 'products') {
+  const IMG = (id, w = 800) =>
+    `https://images.unsplash.com/${id}?w=${w}&q=70&auto=format&fit=crop`;
+
+  const categories = {
+    designers: [
+      { id: 'textiles', name: 'Textiles', icon: 'scroll', image_url: IMG('photo-1490481651871-ab68de25d43d'), type: 'designers' },
+      { id: 'tailoring', name: 'Tailoring & Fashion', icon: 'cut', image_url: IMG('photo-1516257984-b1b4d707412e'), type: 'designers' },
+      { id: 'jewellery', name: 'Jewellery & Accessories', icon: 'gem', image_url: IMG('photo-1523170335258-f5ed11844a49'), type: 'designers' },
+      { id: 'designer_bags', name: 'Bags & Leatherwork', icon: 'shopping-bag', image_url: IMG('photo-1548036328-c9fa89d128fa'), type: 'designers' },
+      { id: 'beauty', name: 'Beauty & Personal Care', icon: 'spa', image_url: IMG('photo-1522335789203-aabd1fc54bc9'), type: 'designers' },
+      { id: 'objects', name: 'Art & Crafts', icon: 'shapes', image_url: IMG('photo-1567016432779-094069958ea5'), type: 'designers' },
+      { id: 'print', name: 'Print & Graphics', icon: 'stamp', image_url: IMG('photo-1606760227091-3dd870d97f1d'), type: 'designers' },
+      { id: 'designer_footwear', name: 'Footwear Design', icon: 'footprints', image_url: IMG('photo-1543163521-1bf539c55dd2'), type: 'designers' }
+    ],
+
+    products: [
+      { id: 'product_clothing', name: 'Clothing', icon: 'shirt', image_url: IMG('photo-1483985988355-763728e1935b'), type: 'products' },
+      { id: 'product_bags', name: 'Bags', icon: 'shopping-bag', image_url: IMG('photo-1548036328-c9fa89d128fa'), type: 'products' },
+      { id: 'product_footwear', name: 'Footwear', icon: 'footprints', image_url: IMG('photo-1543163521-1bf539c55dd2'), type: 'products' },
+      { id: 'product_jewellery', name: 'Jewellery', icon: 'gem', image_url: IMG('photo-1515562141207-7a88fb7ce338'), type: 'products' },
+      { id: 'product_accessories', name: 'Accessories', icon: 'glasses', image_url: IMG('photo-1511499767150-a48a237f0083'), type: 'products' },
+      { id: 'product_beauty', name: 'Beauty & Skincare', icon: 'sparkles', image_url: IMG('photo-1522335789203-aabd1fc54bc9'), type: 'products' },
+      { id: 'product_textiles', name: 'Fabrics & Textiles', icon: 'scroll', image_url: IMG('photo-1490481651871-ab68de25d43d'), type: 'products' },
+      { id: 'product_home_decor', name: 'Home & Decor', icon: 'lamp', image_url: IMG('photo-1600210492486-724fe5c67fb0'), type: 'products' },
+      { id: 'product_art', name: 'Art & Crafts', icon: 'palette', image_url: IMG('photo-1579783902614-a3fb3927b6a5'), type: 'products' },
+      { id: 'product_prints', name: 'Prints & Artwork', icon: 'image', image_url: IMG('photo-1541961017774-22349e4a1262'), type: 'products' }
+    ]
+  };
+
+  return categories[type] || [];
+},
+
+// 2. GET CATEGORIES
+async getCategories(type = 'products', count) {
+  const validTypes = ['products', 'designers'];
+
+  if (!validTypes.includes(type)) {
+    return [];
+  }
+
+  const cacheKey = `ontrop_categories_v2_${type}`;
+  let data;
+
+  // Cache check
+  const cached = sessionStorage.getItem(cacheKey);
+
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached);
+
+      if (Date.now() < parsed.expires_at) {
+        data = parsed.data;
+      } else {
         sessionStorage.removeItem(cacheKey);
       }
+    } catch {
+      sessionStorage.removeItem(cacheKey);
     }
-  
-    // ── Hardcoded source (swap for _fetch later) ─────────────
-    const data = this._hardcodedCategories();
-  
-    // ── Cache write (unchanged) ──────────────────────────────
+  }
+
+  // Hardcoded source
+  if (!data) {
+    data = this._hardcodedCategories(type);
+
     sessionStorage.setItem(
       cacheKey,
       JSON.stringify({
         data,
-        expires_at: Date.now() + 15 * 60 * 1000,
+        expires_at: Date.now() + 15 * 60 * 1000
       })
     );
-  
-    return data;
-  },
+  }
 
+  // Optional count limit
+  if (Number.isInteger(count) && count >= 0) {
+    return data.slice(0, count);
+  }
+
+  return data;
+},
   async getProductsByCategory(category, page = 1, limit = 20) {
     // Using search param to filter by category
     return this.searchProducts('', page, limit, { categories: category });

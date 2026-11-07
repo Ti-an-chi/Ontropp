@@ -14,21 +14,16 @@
  *   - error UI                        → toast
  */
 
-import API from '../../api.js';
+import API from '/api.js';
 import { showToast } from '../toast.js';
 import { PieceCard } from '../cards.js';
 import { createWall } from '../utility/wall.js';
 
 const PAGE_SIZE = 12;
 
-const CATEGORY_LABELS = {
+// We'll keep a default map for fallback, but we'll update this dynamically
+let CATEGORY_LABELS = {
   all: 'All',
-  textiles: 'Textiles',
-  tailoring: 'Tailoring',
-  jewellery: 'Jewellery',
-  objects: 'Objects',
-  beauty: 'Beauty',
-  print: 'Print',
 };
 
 let viewer = {
@@ -49,9 +44,8 @@ let wall = null;
 let echoEl = null;
 
 /* =========================================================
-   BOOT
-   ========================================================= */
-
+ BOOT
+ ========================================================= */
 export async function initExploreTab() {
   // 1. Viewer context (once)
   viewer.signedIn = !!localStorage.getItem('ontrop_token');
@@ -61,8 +55,6 @@ export async function initExploreTab() {
     ? document.getElementById('explore-wall')
     : null;
 
-  // The HTML provides #explore-wall as the mount point.
-  // createWall replaces its innerHTML with the state wrapper.
   wall = createWall(mount, {
     renderItem: PieceCard,
     fetchPage: fetchPage,
@@ -76,30 +68,72 @@ export async function initExploreTab() {
       });
     },
   });
-
   wall.setEmptyStateResolver(emptyStateFor);
-
   echoEl = document.getElementById('explore-echo');
 
-  // 3. UI wiring
+  // 3. Load Categories & Render Chips
+  await loadAndRenderCategories('products');
+
+  // 4. UI wiring
   applyViewerContextToUI();
   setupExploreInteractions();
 
-  // 4. First load
+  // 5. First load
   await wall.reload();
 }
 
 /* =========================================================
-   DATA
-   ========================================================= */
+ CATEGORIES & UI RENDERING
+ ========================================================= */
+async function loadAndRenderCategories(type = 'products') {
+  const bar = document.getElementById('explore-filter-bar');
+  if (!bar) return;
 
+  try {
+    // Fetch categories using your existing API method
+    // Note: Ensure API.getCategories exists or use the hardcoded one if API isn't ready
+    const categories = await API.getCategories(type, 10); 
+    
+    // Update our label map for empty states/echo
+    categories.forEach(cat => {
+      CATEGORY_LABELS[cat.id] = cat.name;
+    });
+
+    // Clear existing chips except "All" and "Filters" button
+    // We'll rebuild the middle section
+    const allChip = bar.querySelector('[data-category="all"]');
+    const toggleBtn = bar.querySelector('#explore-filter-toggle');
+    
+    // Remove old category chips
+    Array.from(bar.querySelectorAll('.filters-chip:not([data-category="all"]):not(#explore-filter-toggle)'))
+      .forEach(el => el.remove());
+
+    // Create new chips
+    categories.forEach(cat => {
+      const chip = document.createElement('button');
+      chip.className = 'filters-chip';
+      chip.dataset.category = cat.id;
+      chip.textContent = cat.name;
+      
+      // Insert before the toggle button
+      bar.insertBefore(chip, toggleBtn);
+    });
+
+  } catch (error) {
+    console.warn('Failed to load categories, using defaults:', error);
+  }
+}
+
+/* =========================================================
+ DATA
+ ========================================================= */
 async function fetchPage({ page, pageSize }) {
   return API.getPiecesPaginated(page, pageSize, {
     search: filters.search,
     categories: filters.category,
     followingOnly: filters.following,
-   // recentOnly: filters.recent,
-   // location: filters.location
+    // recentOnly: filters.recent,
+    // location: filters.location
   });
 }
 
@@ -141,9 +175,8 @@ function emptyStateFor() {
 }
 
 /* =========================================================
-   UI
-   ========================================================= */
-
+ UI
+ ========================================================= */
 function updateFilterEcho() {
   if (!echoEl) return;
   const parts = [];
@@ -152,7 +185,6 @@ function updateFilterEcho() {
   if (filters.following) parts.push('Following');
   if (filters.recent) parts.push('Recently visited');
   if (filters.location) parts.push('Near you');
-
   echoEl.textContent = parts.join(' · ');
   echoEl.hidden = parts.length === 0;
 }
@@ -162,7 +194,6 @@ function applyViewerContextToUI() {
   const followingGroup = document.getElementById('filter-group-following');
   const recentGroup    = document.getElementById('filter-group-recent');
   const hint           = document.getElementById('explore-signedout-hint');
-
   const show = viewer.signedIn;
   if (locationGroup)  locationGroup.hidden  = !show;
   if (followingGroup) followingGroup.hidden = !show;
@@ -185,17 +216,23 @@ function setupExploreInteractions() {
     });
   }
 
-  // Category chips
-  const chips = document.querySelectorAll('#explore-filter-bar .filters-chip[data-category]');
-  chips.forEach(chip => {
-    chip.addEventListener('click', function () {
-      chips.forEach(c => c.classList.remove('active'));
-      this.classList.add('active');
-      filters.category = this.dataset.category;
+  // Category chips (Delegated event listener for dynamic chips)
+  const bar = document.getElementById('explore-filter-bar');
+  if (bar) {
+    bar.addEventListener('click', (e) => {
+      const chip = e.target.closest('.filters-chip[data-category]');
+      if (!chip || chip.id === 'explore-filter-toggle') return;
+
+      // Update active state
+      bar.querySelectorAll('.filters-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+
+      // Update filter
+      filters.category = chip.dataset.category;
       updateFilterEcho();
       wall.reload();
     });
-  });
+  }
 
   // Filters panel toggle
   const toggle = document.getElementById('explore-filter-toggle');

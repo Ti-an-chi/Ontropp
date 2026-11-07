@@ -227,14 +227,7 @@ function setupCategoryGrid() {
   const grid = document.getElementById('categoryGrid');
   if (!grid) return;
 
-  const categories = [
-    { id: 'textiles', name: 'Textiles', icon: 'scroll' },
-    { id: 'tailoring', name: 'Tailoring', icon: 'cut' },
-    { id: 'jewellery', name: 'Jewellery', icon: 'gem' },
-    { id: 'objects', name: 'Objects', icon: 'shapes' },
-    { id: 'beauty', name: 'Beauty', icon: 'spa' },
-    { id: 'crafts', name: 'Arts & Crafts', icon: 'stamp' }
-  ];
+  const categories = API.getCategories('products')
 
   grid.innerHTML = '';
   categories.forEach(cat => {

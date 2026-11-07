@@ -15,7 +15,7 @@
  *   - error UI (toast.js)
  */
 
-import API from '../../api.js';
+import API from '/api.js';
 import { PublicApi } from '../network/public.js';
 import { DesignerFollowButton } from '../utility/reconfig.js';
 import { createStateView } from '../state.js';
@@ -138,7 +138,7 @@ async function loadCategories() {
   sv.loading();
 
   try {
-    const cats = ((await API.getCategories()) || []).slice(0, 5);
+    const cats = ((await API.getCategories('products', 5)) || []).slice(0, 5);
 
     if (cats.length === 0) { sv.empty(); return; }
 
