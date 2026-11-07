@@ -259,13 +259,13 @@ const API = {
     return response.designer;
   },
   
-  async getSellerProducts(sellerId = undefined, page = 1, limit = 20) {
-    const params = new URLSearchParams({ 
-      page: page.toString(), 
+  async getStudioPieces(studioId, page = 1, limit = 12) {
+    const params = new URLSearchParams({
+      page: page.toString(),
       limit: limit.toString()
     });
-    if (sellerId) return await this._fetch(`/products/seller/${sellerId}?${params}`);
-    return await this._fetch(`/seller/products?${params}`);
+    const response = await this._fetch(`/products/studio/${studioId}?${params}`);
+    return response.pieces || [];
   },
   
   /* ---------------- PRODUCT DATA --------------- */

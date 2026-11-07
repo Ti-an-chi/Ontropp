@@ -165,7 +165,7 @@ export function FreshCard(item) {
 
 export function StudioCard(studio) {
   const a = el('a', 'studio-card');
-  a.href = `/studio.html?id=${encodeURIComponent(studio.id)}`;
+  a.href = `/publicProfle.html?id=${encodeURIComponent(studio.id)}`;
   a.innerHTML = `
     <div class="studio-thumb" style="background-image:url('${studio.avatar_url || ''}')"></div>
     <div class="studio-body">

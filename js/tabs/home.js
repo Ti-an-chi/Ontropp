@@ -92,7 +92,6 @@ async function loadTrending() {
 
   try {
     const items = window.bootstrap?.trending ??  (await PublicApi.getTrendingPieces(4));
-    console.log(items);
 
     if (!items || items.length === 0) {
       sv.empty();
@@ -219,6 +218,7 @@ async function loadDesigners() {
     const designers = window.bootstrap?.designers || (await PublicApi.getTrendingDesigners(6));
     if (!designers || designers.length === 0) { sv.empty(); return; }
 
+    console.log('designers', designers)
     const wrap = sv.dataEl.querySelector('.designer-scroll');
     wrap.innerHTML = '';
     designers.forEach(d => {
@@ -270,7 +270,6 @@ async function loadFresh() {
 
   try {
     const resp = window.bootstrap?.fresh || (await API.getPiecesPaginated(1, 10, { order: 'newest' }));
-    console.log('fresh response', resp);
     const items = resp.pieces;
     if (!items || items.length === 0) { sv.empty(); return; }
 
@@ -306,7 +305,6 @@ async function loadStudios() {
 
     const wrap = sv.dataEl.querySelector('.studio-grid');
     wrap.innerHTML = '';
-    console.log(studios[0]);
     studios.forEach(s => wrap.appendChild(StudioCard(s)));
 
     sv.data();

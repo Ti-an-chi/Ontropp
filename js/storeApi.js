@@ -160,8 +160,7 @@ const StoreApi = {
 			const response = await API._fetch(
 				'/brand/info', { 
 					method: 'GET' 
-				}, true , 
-				'designer'
+				}
 			);
 
 			if (!response.success) {
