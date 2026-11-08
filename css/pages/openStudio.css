@@ -1,0 +1,147 @@
+/* ============================================================
+   pages/openStudio.css
+   Page layout only. All primitives live in components/*.
+   ============================================================ */
+
+.open-studio {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+/* ---------- Page header ---------- */
+.open-studio-head {
+  margin: 8px 0 24px;
+}
+.open-studio-head h1 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.open-studio-head p {
+  font-size: 14px;
+  color: var(--hash);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+/* ---------- Form shell ---------- */
+.open-studio-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ---------- Sections ---------- */
+.open-studio-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.open-studio-section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.open-studio-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.open-studio-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.open-studio-section-title i {
+  font-size: 13px;
+  color: var(--hash);
+}
+.open-studio-section-sub {
+  font-size: 13px;
+  color: var(--hash);
+  line-height: 1.5;
+  padding-left: 21px; /* aligns under the title text, past the icon */
+}
+
+/* ---------- Actions ---------- */
+.open-studio-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.open-studio-actions .btn-success {
+  background: var(--ink);
+  color: var(--white);
+}
+.open-studio-actions .btn-success:hover { opacity: .88; }
+.open-studio-actions .btn-success:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .open-studio { padding: 16px 14px 48px; }
+  .open-studio-head h1 { font-size: 22px; }
+  .open-studio-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .open-studio-actions .btn { width: 100%; justify-content: center; }
+}
+
+/* ---------- Benefits footer ---------- */
+.open-studio-benefits {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.open-studio-benefits h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hash);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 16px;
+}
+.open-studio-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 20px;
+}
+@media (min-width: 640px) {
+  .open-studio-benefits-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.open-studio-benefit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.open-studio-benefit i {
+  font-size: 16px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.open-studio-benefit h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.open-studio-benefit p {
+  font-size: 12px;
+  color: var(--hash);
+  line-height: 1.4;
+}

@@ -223,11 +223,11 @@ function updateImagePreview() {
 }
 
 // ========== CATEGORY GRID ==========
-function setupCategoryGrid() {
+async function setupCategoryGrid() {
   const grid = document.getElementById('categoryGrid');
   if (!grid) return;
 
-  const categories = API.getCategories('products')
+  const categories = await API.getCategories('products')
 
   grid.innerHTML = '';
   categories.forEach(cat => {
