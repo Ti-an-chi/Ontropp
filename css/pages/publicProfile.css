@@ -359,3 +359,105 @@ a { color: inherit; text-decoration: none; }
 /* ---------- Share button ---------- */
 .btn-share { color: var(--text, #1a202c); }
 .btn-share:hover { border-color: var(--ink, #111); }
+
+/* ---------- State view: fade between loading / empty / data ---------- */
+/* Matches the contract in state.js + the visual language already
+   established in dashboard.css (.sv-state). */
+[data-state-view] > [data-state] {
+  animation: svFadeIn .28s ease;
+}
+[data-state-view] > [data-state][hidden] {
+  display: none;
+}
+@keyframes svFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton primitives the header loading state uses.
+   These duplicate a few names from dashboard.css intentionally —
+   publicProfile doesn't import that file, so it needs its own. */
+.skeleton-line {
+  display: block;
+  background: linear-gradient(
+    90deg, var(--border, #e8e8e8) 25%,
+    rgba(255,255,255,.55) 50%,
+    var(--border, #e8e8e8) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+.skeleton-line.h-12 { height: 12px; }
+.skeleton-line.h-14 { height: 14px; }
+.skeleton-line.h-16 { height: 16px; }
+.skeleton-line.h-20 { height: 20px; }
+.skeleton-line.w-20 { width: 20%; }
+.skeleton-line.w-30 { width: 30%; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-60 { width: 60%; }
+.skeleton-line.w-85 { width: 85%; }
+.skeleton-line.w-95 { width: 95%; }
+.mt-2 { margin-top: 8px; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+.shimmer {
+  background: linear-gradient(
+    90deg, var(--border, #e8e8e8) 25%,
+    rgba(255,255,255,.55) 50%,
+    var(--border, #e8e8e8) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-btn {
+  display: inline-block;
+  width: 100px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--border, #e8e8e8);
+}
+
+/* Loading avatar: keep the ring visible, replace the image with shimmer */
+.avatar.shimmer {
+  display: block;
+  background: var(--border, #e8e8e8);
+}
+
+/* The cover no longer contains a hardcoded <img>; if the backend
+   supplies one later it gets dropped in by JS. */
+.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---------- Below-header chrome: tabs + tab panels ----------
+   Sits as a sibling of the .profile-header state view so it
+   is NOT toggled by state.js. Carries the same horizontal
+   padding so tabs and content line up with the header. */
+.profile-body {
+  padding: 0 24px;
+  min-width: 0; /* allow tab strip to scroll instead of pushing page wider */
+}
+
+/* ---------- Tabs: keep the strip inside the viewport ----------
+   The overflow-x:auto on .tabs is what makes the 4 tabs usable
+   on narrow screens. The bug was the container, not the strip. */
+.tabs {
+  min-width: 0;          /* flex/grid children can't shrink below content without this */
+  scrollbar-width: none; /* Firefox: hide, it's a nav not a content area */
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+/* ---------- Responsive: drop the extra padding on mobile ---------- */
+@media (max-width: 700px) {
+  .profile-body { padding: 0 16px; }
+
+  /* Existing mobile override sets .tabs margin-left/right: -16px
+     and padding-left: 16px to let tabs bleed to the edge. With
+     .profile-body now providing the 16px, that math still works —
+     the negative margins pull the strip back out to the viewport
+     edge, which is the intended "tabs kiss the screen edge" look. */
+}
