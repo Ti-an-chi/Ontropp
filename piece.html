@@ -24,10 +24,11 @@
         <button class="icon-btn notification-btn" type="button" aria-label="Notifications">
           <i class="fa-regular fa-bell"></i>
         </button>
-        <span class"icon-btn">
-          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100"
-             alt="User profile" class="profile-picture"
-        </span>
+        <img 
+          class="studio-logo profile-icon" 
+          alt="Studio Logo" 
+          style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);"
+        />
       </div>
       
     </div>
@@ -37,20 +38,41 @@
 
     <!-- HERO -->
     <section class="featured-section" data-state-view="piece-hero">
+      <!-- Loading State -->
       <div class="sv-state" data-state="loading">
-        <div class="skeleton-line w-100 h-80 shimmer"></div>
+        <div class="featured-image skeleton-image-4-5 shimmer"></div>
+        <div class="image-actions">
+          <div class="action-buttons">
+            <button type="button" aria-label="Like design" disabled><i class="fa-regular fa-heart"></i></button>
+            <button type="button" aria-label="Share design" disabled><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+            <button type="button" aria-label="More options" disabled><i class="fa-solid fa-ellipsis"></i></button>
+            <button type="button" class="btn btn-primary save-pill" disabled>Save</button>
+          </div>
+        </div>
+        <div class="design-details">
+          <div class="design-description">
+            <h1 class="skeleton-line w-60 h-32 shimmer"></h1>
+            <p class="collection skeleton-line w-40 h-14 mt-2 shimmer"></p>
+            <div class="description">
+              <div class="skeleton-line w-100 h-14 mt-2 shimmer"></div>
+              <div class="skeleton-line w-95 h-14 mt-2 shimmer"></div>
+              <div class="skeleton-line w-85 h-14 mt-2 shimmer"></div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- Empty State -->
       <div class="sv-state" data-state="empty" hidden>
         <div class="sv-empty">
           <i class="fas fa-image"></i><p>This piece couldn't be loaded.</p>
         </div>
       </div>
+
+      <!-- Data State -->
       <div class="sv-state" data-state="data" hidden>
         <div class="featured-image">
           <img class="js-hero-img" src="" alt="">
-          <!--<button type="button" class="image-search" aria-label="Find similar designs">
-            <i class="fa-solid fa-camera"></i>
-          </button>-->
         </div>
         <div class="image-actions">
           <div class="action-buttons">
@@ -72,12 +94,28 @@
 
     <!-- MAKER -->
     <section class="featured-section" data-state-view="piece-maker">
+      <!-- Loading State -->
       <div class="sv-state" data-state="loading">
-        <div class="skeleton-line w-60 h-14 shimmer"></div>
+        <div class="design-details">
+          <div class="designer-profile">
+            <div class="designer-info">
+              <div class="initials-avatar skeleton-avatar shimmer"></div>
+              <div class="designer-text">
+                <h3 class="skeleton-line w-30 h-16 shimmer"></h3>
+                <p class="skeleton-line w-20 h-12 mt-2 shimmer"></p>
+              </div>
+            </div>
+            <button type="button" class="follow-btn skeleton-btn shimmer"></button>
+          </div>
+        </div>
       </div>
+
+      <!-- Empty State -->
       <div class="sv-state" data-state="empty" hidden>
         <div class="sv-empty"><i class="fas fa-user"></i><p>Designer info unavailable.</p></div>
       </div>
+
+      <!-- Data State -->
       <div class="sv-state" data-state="data" hidden>
         <div class="design-details">
           <div class="designer-profile">
@@ -94,14 +132,46 @@
       </div>
     </section>
 
-    <!-- GARMENT -->
+    <!-- GARMENT SPECIFICATIONS -->
     <section class="featured-section" data-state-view="piece-garment">
+      <!-- Loading State -->
       <div class="sv-state" data-state="loading">
-        <div class="skeleton-line w-40 h-14 shimmer"></div>
+        <div class="design-details">
+          <div class="garment-details">
+            <h2 class="skeleton-line w-40 h-20 shimmer"></h2>
+            <div class="garment-grid">
+              <div class="garment-item">
+                <div class="skeleton-icon shimmer"></div>
+                <div>
+                  <span class="skeleton-line w-20 h-12 shimmer"></span>
+                  <p class="skeleton-line w-40 h-12 mt-2 shimmer"></p>
+                </div>
+              </div>
+              <div class="garment-item">
+                <div class="skeleton-icon shimmer"></div>
+                <div>
+                  <span class="skeleton-line w-20 h-12 shimmer"></span>
+                  <p class="skeleton-line w-40 h-12 mt-2 shimmer"></p>
+                </div>
+              </div>
+              <div class="garment-item">
+                <div class="skeleton-icon shimmer"></div>
+                <div>
+                  <span class="skeleton-line w-20 h-12 shimmer"></span>
+                  <p class="skeleton-line w-40 h-12 mt-2 shimmer"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- Empty State -->
       <div class="sv-state" data-state="empty" hidden>
         <div class="sv-empty"><i class="fas fa-shirt"></i><p>No details available.</p></div>
       </div>
+
+      <!-- Data State -->
       <div class="sv-state" data-state="data" hidden>
         <div class="design-details">
           <div class="garment-details">
@@ -118,6 +188,8 @@
         <h2>More works</h2>
         <a href="#" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
       </div>
+      
+      <!-- Loading State -->
       <div class="sv-state" data-state="loading">
         <div class="skeleton-row">
           <div class="skeleton-card shimmer"></div>
@@ -125,9 +197,13 @@
           <div class="skeleton-card shimmer"></div>
         </div>
       </div>
+
+      <!-- Empty State -->
       <div class="sv-state" data-state="empty" hidden>
         <div class="sv-empty"><i class="fas fa-images"></i><p>No other works yet.</p></div>
       </div>
+
+      <!-- Data State -->
       <div class="sv-state" data-state="data" hidden>
         <div class="fashion-gallery"></div>
       </div>

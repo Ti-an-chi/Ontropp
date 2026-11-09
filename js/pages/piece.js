@@ -2,7 +2,7 @@
  * piece.js — Piece detail orchestrator.
  * Matches piece.html structure and uses real API + SpecEngine.
  */
-import API from '../../api.js';
+import API from '/api.js';
 import { SpecEngine } from '../lab/specEngine.js';
 import { createStateView } from '../state.js';
 import { showToast } from '../toast.js';
@@ -32,6 +32,12 @@ async function init() {
     piece = response.product || response;
     studio = piece.studio || {};
     designer = studio.user || {}; // Extract the user object
+
+    // UPDATE HEADER LOGO
+    const headerLogo = document.querySelector('.header-actions .studio-logo, .header-actions img, .header-actions .profile-icon');
+    if (headerLogo && studio.logo_url) {
+      headerLogo.src = studio.logo_url;
+    }
     
     document.title = `${piece.name} · ONTROPP`;
 
@@ -88,7 +94,7 @@ function renderHero(container) {
 function renderStudio(container) {
   // Use designer avatar if available, otherwise fall back to studio logo or initials
   const avatarUrl = designer.avatar_url || studio.logo_url;
-  const avatarEl = container.querySelector('.initials-avatar');
+  const avatarEl = container.querySelector('.js-maker-initials');
   
   if (avatarUrl) {
     avatarEl.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;

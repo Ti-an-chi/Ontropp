@@ -1,20 +1,13 @@
 /* ============================================================
-   PIECE PAGE
-   Page-specific styles only. Header comes from CORE/dashboard,
-   buttons from buttons.css, cards from cards.css, state views
-   from dashboard.css. Nothing is hardcoded.
-   ============================================================ */
-
-/* Fixed header takes space out of the scroll flow. */
-body {
-  padding-top: 66px;
-}
-
+PIECE PAGE
+Page-specific styles only. Header comes from CORE/dashboard,
+buttons from buttons.css, cards from cards.css, state views
+from dashboard.css. Nothing is hardcoded.
+============================================================ */
 
 /* ============================================================
-   HERO — image + description block
-   ============================================================ */
-
+HERO — image + description block
+============================================================ */
 .featured-section {
   display: flex;
   flex-direction: column;
@@ -25,20 +18,21 @@ body {
   position: relative;
   overflow: hidden;
   background: var(--background);
+  width: 100%;
+  min-height: 300px; /* Prevents collapse if image fails */
 }
 
 .featured-image > img {
   display: block;
   width: 100%;
   height: auto;
+  object-fit: cover;
 }
 
-
 /* ============================================================
-   IMAGE ACTIONS
-   Icons are bespoke; Save reuses .btn.btn-primary.
-   ============================================================ */
-
+IMAGE ACTIONS
+Icons are bespoke; Save reuses .btn.btn-primary.
+============================================================ */
 .image-actions {
   padding: 20px 5% 10px;
 }
@@ -66,11 +60,9 @@ body {
   padding: 12px 31px;
 }
 
-
 /* ============================================================
-   DESCRIPTION
-   ============================================================ */
-
+DESCRIPTION
+============================================================ */
 .design-details {
   padding: 8px 5% 32px;
 }
@@ -89,18 +81,15 @@ body {
 .collection { margin-bottom: 4px; }
 .description { max-width: 850px; }
 
-
 /* ============================================================
-   DESIGNER PROFILE
-   Follow button shape override only; fill/hover/following
-   come from buttons.css .follow-btn.
-   ============================================================ */
-
+DESIGNER PROFILE
+Follow button shape override only; fill/hover/following
+come from buttons.css .follow-btn.
+============================================================ */
 .designer-profile {
   margin-top: 12px;
   padding-top: 16px;
   border-top: 1px solid var(--border);
-
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -117,17 +106,15 @@ body {
   width: 52px;
   height: 52px;
   flex-shrink: 0;
-
   border-radius: 50%;
   background: var(--primary);
   color: var(--white);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-size: 19px;
   font-weight: 500;
+  overflow: hidden;
 }
 
 .designer-text h3 {
@@ -147,11 +134,9 @@ body {
   font-size: 13px;
 }
 
-
 /* ============================================================
-   TAGS
-   ============================================================ */
-
+TAGS
+============================================================ */
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -167,11 +152,9 @@ body {
   font-size: 12px;
 }
 
-
 /* ============================================================
-   GARMENT INFORMATION
-   ============================================================ */
-
+GARMENT INFORMATION
+============================================================ */
 .garment-details {
   padding-top: 16px;
   border-top: 1px solid var(--border);
@@ -210,13 +193,11 @@ body {
   margin-top: 5px;
 }
 
-
 /* ============================================================
-   MORE WORKS
-   Grid itself is page layout; cards (FashionCard) live in
-   cards.css.
-   ============================================================ */
-
+MORE WORKS
+Grid itself is page layout; cards (FashionCard) live in
+cards.css.
+============================================================ */
 .other-works {
   background: var(--background);
   padding: 28px 5% 35px;
@@ -239,7 +220,6 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-
   padding: 10px 17px;
   border: 1px solid var(--primary);
   border-radius: var(--radius-pill);
@@ -254,12 +234,201 @@ body {
   gap: 28px 16px;
 }
 
+/* ============================================================
+SKELETONS — Page-specific overrides to match data shapes
+============================================================ */
+
+/* Hero Image Skeleton: Guessing 4/5 aspect ratio */
+[data-state-view="piece-hero"] [data-state="loading"] .skeleton-line.h-80 {
+  height: auto;
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+[data-state-view="piece-hero"] [data-state="loading"] .skeleton-line.h-80::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,.55) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Hero Text Skeletons */
+[data-state-view="piece-hero"] [data-state="loading"] .design-description h1 {
+  height: 32px;
+  width: 60%;
+  background: var(--border);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+[data-state-view="piece-hero"] [data-state="loading"] .design-description h1::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,.55) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Designer Profile Skeleton */
+[data-state-view="piece-maker"] [data-state="loading"] .initials-avatar {
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+[data-state-view="piece-maker"] [data-state="loading"] .initials-avatar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,.55) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+[data-state-view="piece-maker"] [data-state="loading"] .designer-text h3 {
+  height: 16px;
+  width: 120px;
+  background: var(--border);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+}
+[data-state-view="piece-maker"] [data-state="loading"] .designer-text h3::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,.55) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Garment Grid Skeletons */
+[data-state-view="piece-garment"] [data-state="loading"] .garment-item {
+  gap: 15px;
+}
+[data-state-view="piece-garment"] [data-state="loading"] .garment-item > i {
+  color: var(--border);
+}
+[data-state-view="piece-garment"] [data-state="loading"] .garment-item span {
+  display: block;
+  height: 12px;
+  width: 80px;
+  background: var(--border);
+  border-radius: 4px;
+  margin-bottom: 6px;
+  position: relative;
+  overflow: hidden;
+}
+[data-state-view="piece-garment"] [data-state="loading"] .garment-item span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,.55) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Other Works Gallery Skeletons (Fashion Cards) */
+[data-state-view="piece-other"] [data-state="loading"] .fashion-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+[data-state-view="piece-other"] [data-state="loading"] .fashion-image {
+  aspect-ratio: 4 / 5;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+[data-state-view="piece-other"] [data-state="loading"] .fashion-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,.55) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+[data-state-view="piece-other"] [data-state="loading"] .card-information h3 {
+  height: 14px;
+  width: 70%;
+  background: var(--border);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+[data-state-view="piece-other"] [data-state="loading"] .card-information h3::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,.55) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
 
 /* ============================================================
-   RESPONSIVE
-   Header/logo overrides removed — those belong with the header.
-   ============================================================ */
+SKELETONS — Page-specific shapes
+============================================================ */
 
+/* Hero Image Skeleton: 4/5 aspect ratio */
+.skeleton-image-4-5 {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  background: var(--border);
+}
+
+/* Avatar Skeleton: Circular */
+.skeleton-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+/* Follow Button Skeleton */
+.skeleton-btn {
+  width: 100px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+}
+
+/* Icon Skeleton for garment specs */
+.skeleton-icon {
+  width: 23px;
+  height: 23px;
+  border-radius: 4px;
+  background: var(--border);
+  margin-right: 15px;
+}
+
+/* Width utilities for skeletons */
+.skeleton-line.w-30 { width: 30%; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-60 { width: 60%; }
+.skeleton-line.w-85 { width: 85%; }
+.skeleton-line.w-95 { width: 95%; }
+.skeleton-line.w-100 { width: 100%; }
+.skeleton-line.w-20 { width: 20%; }
+
+/* Height utilities for skeletons */
+.skeleton-line.h-12 { height: 12px; }
+.skeleton-line.h-14 { height: 14px; }
+.skeleton-line.h-16 { height: 16px; }
+.skeleton-line.h-20 { height: 20px; }
+.skeleton-line.h-32 { height: 32px; }
+
+/* Margin utilities */
+.mt-2 { margin-top: 8px; }
+
+/* ============================================================
+RESPONSIVE
+============================================================ */
 @media (max-width: 900px) {
   .fashion-gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .fashion-image { height: 230px; }
@@ -271,84 +440,29 @@ body {
   .action-buttons { gap: 22px; }
   .action-buttons > button:not(.btn) { font-size: 19px; }
   .save-pill { padding: 11px 25px; font-size: 13px; }
-
   .design-details { padding: 8px 5% 25px; }
   .design-description h1 { font-size: 24px; }
   .design-description p { font-size: 13px; }
-
   .designer-profile { margin-top: 18px; padding-top: 16px; }
   .designer-info { gap: 11px; }
   .initials-avatar { width: 44px; height: 44px; font-size: 16px; }
   .designer-text h3 { font-size: 13px; }
   .designer-text p { font-size: 11px; }
   .designer-profile .follow-btn { padding: 10px 17px; font-size: 12px; }
-
   .tags { gap: 8px; margin: 18px 0 22px; }
   .tags span { padding: 8px 11px; font-size: 10px; }
-
   .garment-details h2 { font-size: 15px; margin-bottom: 20px; }
   .garment-grid { gap: 10px; }
   .garment-item { flex-direction: column; align-items: flex-start; gap: 9px; }
   .garment-item > i { font-size: 19px; }
   .garment-item span,
   .garment-item p { font-size: 11px; }
-
   .other-works { padding: 25px 4% 30px; }
   .gallery-heading { align-items: center; gap: 8px; }
   .gallery-heading h2 { font-size: 17px; line-height: 1.4; }
   .view-all { padding: 9px 11px; font-size: 11px; gap: 6px; }
-
   .fashion-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 23px 12px; }
   .fashion-image { height: 230px; border-radius: var(--radius-md); }
-}
-
-/* Ensure the hero image container respects the image's natural shape */
-.featured-image {
-  width: 100%;
-  background: var(--background);
-  /* Remove any fixed height that might be cutting off square images */
-  height: auto; 
-  min-height: 300px; /* Ensures it doesn't collapse if image fails */
-}
-
-.featured-image > img {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
-
-/* Fix for the header icon (right side) to be a perfect circle */
-.header-actions .studio-logo,
-.header-actions img,
-.header-actions .profile-icon {
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 50% !important;
-  object-fit: cover;
-  border: 1px solid var(--border);
-}
-
-/* Ensure the designer row aligns properly */
-.designer-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.initials-avatar {
-  width: 52px;
-  height: 52px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--primary);
-  color: var(--white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 19px;
-  font-weight: 500;
-  overflow: hidden; /* Ensures the img inside stays circular */
 }
 
 @media (max-width: 380px) {
