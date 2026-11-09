@@ -1,11 +1,11 @@
 // dashboard.js
-import { ensureAuth } from './authCheck.js';
+// import { ensureAuth } from './authCheck.js';
 import { StateManager } from '../../js/utility/stateManager.js';
 import StoreApi from '../../js/storeApi.js';
 
 // ─── INIT ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  await ensureAuth();
+//  await ensureAuth();
   loadDashboard();
 });
 
@@ -14,12 +14,12 @@ async function loadDashboard() {
 
   try {
     const designer = await loadDesignerProfile();
-    renderWelcome({ designer });
+    const studioId = designer.studio.id
 
     await loadInsights();
-    loadBestSeller();
-    loadStats();
-    loadChart();
+    loadBestSeller(studioId);
+    loadStats(studioId);
+    loadChart(studioId);
 
     Promise.allSettled([
       loadTopDesigners(designer),
@@ -36,8 +36,8 @@ async function loadDashboard() {
 }
 
 async function loadDesignerProfile() {
-  const designer = await StoreApi.getDesignerProfile();
-  console.log(`${designer.shop_name} profile loaded`);
+  const designer = await StoreApi.getMyStudio();
+  
   renderWelcome({ designer });
   return designer;
 }
@@ -47,9 +47,9 @@ async function loadInsights() {
   renderInsights({ insights });
 }
 
-async function loadBestSeller() {
+async function loadBestSeller(studioId) {
   try {
-    const bestSeller = await StoreApi.getBestSellingProduct();
+    const bestSeller = await StoreApi.getBestSellingProduct(studioId);
     if (!bestSeller) {
       renderSectionEmpty('best-seller-section', 'No best seller yet', 'Upload your first product to see your top performer here.', 'box-open');
       return;
@@ -61,9 +61,10 @@ async function loadBestSeller() {
   }
 }
 
-async function loadStats() {
+async function loadStats(studioId) {
   try {
-    const stats = await StoreApi.getDesignerStats();
+    console.log('studioId', studioId)
+    const stats = await StoreApi.getDesignerStats(studioId);
     if (!hasRenderableStats(stats)) {
       renderSectionEmpty('status-cards', 'No stats yet', 'Your growth numbers will appear once your first product is live.', 'chart-line');
       return;
@@ -75,9 +76,9 @@ async function loadStats() {
   }
 }
 
-async function loadChart() {
+async function loadChart(studioId) {
   try {
-    const weeklyActivity = await StoreApi.getWeeklyActivity();
+    const weeklyActivity = await StoreApi.getWeeklyActivity(studioId);
     if (!Array.isArray(weeklyActivity) || !weeklyActivity.length) {
       renderSectionEmpty('chart-area', 'No activity yet', 'Your weekly view trend will show up after your first product gets attention.', 'chart-simple');
       return;
@@ -91,7 +92,7 @@ async function loadChart() {
 
 async function loadTopDesigners(designer) {
   try {
-    const topDesigners = await StoreApi.getTrendingDesigners(designer.category, 4);
+    const topDesigners = await StoreApi.getTrendingDesigners(designer.studio.category, 4);
     if (!Array.isArray(topDesigners) || !topDesigners.length) {
       renderSectionEmpty('designer-cards', 'No designers yet', 'Designers in your category will appear here once activity starts.', 'users');
       return;
@@ -105,7 +106,7 @@ async function loadTopDesigners(designer) {
 
 async function loadTrendingProducts(designer) {
   try {
-    const trendingProducts = await StoreApi.getTrendingProducts(designer.category, 4);
+    const trendingProducts = await StoreApi.getTrendingProducts(designer.studio.category, 4);
     if (!Array.isArray(trendingProducts) || !trendingProducts.length) {
       renderSectionEmpty('trending-products', 'No trending products', 'Trending items in your category will appear here.', 'fire');
       return;
@@ -179,7 +180,7 @@ function renderWelcomeFallback() {
 }
 
 function renderWelcome({ designer }) {
-  if (!designer?.shop_name) {
+  if (!designer?.studio) {
     renderWelcomeFallback();
     return;
   }
@@ -188,7 +189,7 @@ function renderWelcome({ designer }) {
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   
   document.getElementById('welcome-text').innerHTML = `
-    <h1>${greeting}, ${designer.shop_name}</h1>
+    <h1>${greeting}, ${designer.studio.brand_name}</h1>
     <p>Here's how your brand is doing today</p>
   `;
   
@@ -212,7 +213,7 @@ function renderBestSeller({ bestSeller: bs }) {
       <span class="trend-badge"><i class="fas fa-arrow-trend-up"></i> Trending</span>
     </div>
     <div class="best-seller-img">
-      <img src="${bs.cover_image}" alt="${bs.name}" loading="lazy">
+      <img src="${bs.cover_image.url}" alt="${bs.name}" loading="lazy">
     </div>
     <div class="best-seller-meta">
       <h3>${bs.name}</h3>
@@ -289,7 +290,7 @@ function renderInsights({ insights }) {
 }
 
 function renderDesigners({ designer, topDesigners }) {
-  document.getElementById('category-name').textContent = designer.category;
+  document.getElementById('category-name').textContent = designer.studio.category;
 
   if (!Array.isArray(topDesigners) || !topDesigners.length) {
     renderSectionEmpty('designer-cards', 'No designers yet', 'Designers in your category will appear here once activity starts.', 'users');
@@ -297,10 +298,10 @@ function renderDesigners({ designer, topDesigners }) {
   }
   
   document.getElementById('designer-cards').innerHTML = topDesigners.map(d => `
-    <div class="designer-card" data-shop_name="${d.shop_name}">
-      <img src="${d.logo_url}" alt="${d.shop_name}" class="designer-avatar" loading="lazy">
+    <div class="designer-card" data-shop_name="${d.studio.brand_name}">
+      <img src="${d.logo_url}" alt="${d.studio.brand_name}" class="designer-avatar" loading="lazy">
       <div class="designer-info">
-        <h4>@${d.shop_name}</h4>
+        <h4>@${d.studio.brand_name}</h4>
         <p>${d.products} products · ${d.views} views</p>
       </div>
       <button class="follow-btn" data-following="${d.following}">${d.following ? 'Following' : 'Follow'}</button>
@@ -309,7 +310,7 @@ function renderDesigners({ designer, topDesigners }) {
 }
 
 function renderTrending({ designer, trendingProducts }) {
-  document.getElementById('trending-category').textContent = designer.category;
+  document.getElementById('trending-category').textContent = designer.studio.category;
   
   if (!Array.isArray(trendingProducts) || !trendingProducts.length) {
     renderSectionEmpty('trending-products', 'No trending products', 'Trending items in your category will appear here.', 'fire');
@@ -319,7 +320,7 @@ function renderTrending({ designer, trendingProducts }) {
   document.getElementById('trending-products').innerHTML = trendingProducts.map(p => `
     <div class="product-thumb">
       <div class="product-thumb-img">
-        <img src="${p.cover_image}" alt="${p.name}" loading="lazy">
+        <img src="${p.cover_image.url}" alt="${p.name}" loading="lazy">
       </div>
       <div class="product-thumb-info">
         <h4>${p.name}</h4>

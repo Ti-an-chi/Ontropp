@@ -1,4 +1,5 @@
 import API from '../api.js';
+import { showToast } from './toast.js';
 
 const StoreApi = {
   setShopTokens({ accessToken, refreshToken }) {
@@ -69,14 +70,14 @@ const StoreApi = {
       throw new Error('failed to load your data, please try again');
     }
 
-    console.log(`${resp.seller.shop_name} profile loaded`);
-    return resp.seller;
+    console.log('designer', resp.designer);
+    return resp.designer;
   },
   
-  async getBestSellingProduct(count = 1) {
-    const resp = await this._fetch(
-      `/brand/stats/bestselling?count=${count}`
-    );
+  async getBestSellingProduct(studioId, count = 1) {
+    const params = new URLSearchParams({studioId, count});
+    const resp = await this._fetch(`/brand/stats/bestselling?${params}`);
+    
     console.log(`best selling product loaded`);
     if (!resp.success) {
       throw new Error(`failed to get best selling: ${resp.message}`);
@@ -84,8 +85,8 @@ const StoreApi = {
     return resp.data[0];
   },
 
-  async getDesignerStats() {
-    const resp = await this._fetch('/brand/stats');
+  async getDesignerStats(studio_id) {
+    const resp = await this._fetch(`/brand/stats?studio_id=${studio_id}`);
     console.log(`stats loaded for bar chart`);
     if (!resp.success) {
       throw new Error(`failed to get stats: ${resp.message}`);
@@ -95,8 +96,8 @@ const StoreApi = {
     return resp.stats;
   },
 
-  async getWeeklyActivity() {
-    const resp = await this._fetch('/brand/stats/weekly');
+  async getWeeklyActivity(studioId) {
+    const resp = await this._fetch(`/brand/stats/weekly?studioId=${studioId}`);
     if (!resp.success) {
       throw new Error(`failed to get weekly activity: ${resp.message}`);
     }
@@ -193,6 +194,21 @@ const StoreApi = {
 		}
 		return await response.data
 	},
+
+  async getMyStudio() {
+    const resp = await API._fetch('brand/studio');
+
+    console.log(resp.code === 'DESIGNER_UNAUTHENTICATED' );
+    if(resp.code) {
+      showToast({
+        message: 'you are not a designer',
+        actionLabel: 'Open Your Studio',
+        onAction: () => location.href = 'openStudio.html'
+      });
+    };
+
+    return resp.designer;
+  },
 };
 
 export default StoreApi;
