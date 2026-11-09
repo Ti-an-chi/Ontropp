@@ -181,7 +181,7 @@ function debounce(fn, delay) {
 }
 
 function navigateToEdit(productId) {
-  window.location.href = `upload.html?productId=${productId}`;
+  window.location.href = `addPiece.html?productId=${productId}`;
 }
 
 async function confirmDeletion(productId) {

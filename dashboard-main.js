@@ -195,14 +195,14 @@ function setupGlobalEventListeners() {
   if (addProductButton) {
     addProductButton.addEventListener('click', function(e) {
       e.stopPropagation();
-      location.href = 'upload.html';
+      location.href = 'addPiece.html';
     });
   }
 
   if (profileAddProductButton) {
     profileAddProductButton.addEventListener('click', function(e) {
       e.stopPropagation();
-      location.href = 'upload.html';
+      location.href = 'addPiece.html';
     });
   }
 

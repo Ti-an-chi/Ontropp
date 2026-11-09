@@ -293,7 +293,7 @@ function setupActions() {
     ?.addEventListener('click', () => { /* modal later */ });
 
   document.getElementById('exhibition-add-btn')
-    ?.addEventListener('click', () => { window.location.href = 'upload.html'; });
+    ?.addEventListener('click', () => { window.location.href = 'addPiece.html'; });
 
   document.getElementById('manage-exhibition-btn')
     ?.addEventListener('click', () => { window.location.href = 'designerDashboard.html'; });

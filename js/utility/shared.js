@@ -111,7 +111,7 @@ export async function setupSellerProductActions() {
     if (editBtn) {
       e.preventDefault();
       const productId = editBtn.dataset.id;
-      window.location.href = `upload.html?productId=${productId}`
+      window.location.href = `addPiece.html?productId=${productId}`
     }
     
     if (deleteBtn) {
