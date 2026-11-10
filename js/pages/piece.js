@@ -12,7 +12,7 @@ import { createStateView } from '../state.js';
 import { showToast } from '../toast.js';
 import { FashionCard, escapeHtml } from '../cards.js';
 // ✅ 1. IMPORT THE UNIFIED COMPONENT
-import { DesignerFollowButton } from '../reconfig.js'; 
+import { DesignerFollowButton } from '../utility/reconfig.js'; 
 
 const params = new URLSearchParams(location.search);
 const productId = params.get('id') || params.get('productId') || 'bd130930-e09f-4f82-a1e0-09d031cfe6fb';
