@@ -125,15 +125,18 @@ export function RecommendedCard(item) {
    4. Designer card
    ------------------------------------------------------------- */
 
-export function DesignerCard(designer) {
+export function DesignerCard(data) {
+  const designer = data.designer;
+  const studio = data.studio;
+  
   const wrapper = el('div', 'designer-card');
 
   const a = el('a', 'designer-link');
   a.href = `/designer.html?id=${encodeURIComponent(designer.id)}`;
   a.innerHTML = `
     <div class="designer-avatar" style="background-image:url('${designer.avatar_url || ''}')"></div>
-    <div class="designer-name">${escapeHtml(designer.name || '')}</div>
-    <div class="designer-studio">${escapeHtml(designer.studio.brand_name || '')}</div>`;
+    <div class="designer-name">${escapeHtml(designer.username || '')}</div>
+    <div class="designer-studio">${escapeHtml(studio.brand_name || '')}</div>`;
 
   const btn = document.createElement('button');
   btn.type = 'button';
@@ -165,9 +168,9 @@ export function FreshCard(item) {
 
 export function StudioCard(studio) {
   const a = el('a', 'studio-card');
-  a.href = `/publicProfile.html?id=${encodeURIComponent(studio.id)}`;
+  a.href = `/publicProfile.html?id=${encodeURIComponent(studio.designer.id)}`;
   a.innerHTML = `
-    <div class="studio-thumb" style="background-image:url('${studio.avatar_url || ''}')"></div>
+    <div class="studio-thumb" style="background-image:url('${studio.logo_url || ''}')"></div>
     <div class="studio-body">
       <div class="studio-name">${escapeHtml(studio.brand_name || '')}</div>
       <div class="studio-by">${escapeHtml(studio.designer.username || '')} · ${escapeHtml(studio.location || '')}</div>

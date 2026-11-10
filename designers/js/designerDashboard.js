@@ -63,7 +63,6 @@ async function loadBestSeller(studioId) {
 
 async function loadStats(studioId) {
   try {
-    console.log('studioId', studioId)
     const stats = await StoreApi.getDesignerStats(studioId);
     if (!hasRenderableStats(stats)) {
       renderSectionEmpty('status-cards', 'No stats yet', 'Your growth numbers will appear once your first product is live.', 'chart-line');
@@ -213,7 +212,7 @@ function renderBestSeller({ bestSeller: bs }) {
       <span class="trend-badge"><i class="fas fa-arrow-trend-up"></i> Trending</span>
     </div>
     <div class="best-seller-img">
-      <img src="${bs.cover_image.url}" alt="${bs.name}" loading="lazy">
+      <img src="${bs.cover_image?.url}" alt="${bs.name}" loading="lazy">
     </div>
     <div class="best-seller-meta">
       <h3>${bs.name}</h3>
@@ -292,6 +291,7 @@ function renderInsights({ insights }) {
 function renderDesigners({ designer, topDesigners }) {
   document.getElementById('category-name').textContent = designer.studio.category;
 
+  console.log('designers:', topDesigners)
   if (!Array.isArray(topDesigners) || !topDesigners.length) {
     renderSectionEmpty('designer-cards', 'No designers yet', 'Designers in your category will appear here once activity starts.', 'users');
     return;
@@ -299,12 +299,12 @@ function renderDesigners({ designer, topDesigners }) {
   
   document.getElementById('designer-cards').innerHTML = topDesigners.map(d => `
     <div class="designer-card" data-shop_name="${d.studio.brand_name}">
-      <img src="${d.logo_url}" alt="${d.studio.brand_name}" class="designer-avatar" loading="lazy">
+      <img src="${d.studio.logo_url}" alt="${d.studio.brand_name}" class="designer-avatar" loading="lazy">
       <div class="designer-info">
         <h4>@${d.studio.brand_name}</h4>
-        <p>${d.products} products · ${d.views} views</p>
+        <p>${d.studio.products} products · ${d.studio.views} views</p>
       </div>
-      <button class="follow-btn" data-following="${d.following}">${d.following ? 'Following' : 'Follow'}</button>
+      <button class="follow-btn" data-following="${d.studio.isFollowing}">${d.studio.isFollowing ? 'Following' : 'Follow'}</button>
     </div>
   `).join('');
 }
