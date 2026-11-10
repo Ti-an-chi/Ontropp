@@ -1,5 +1,5 @@
 // ========== reconfig.js ==========
-import API from "/api.mock.js";
+import API from "/api.js";
 
 export function updateElement(id, value, property = 'textContent') {
   const el = document.getElementById(id);
@@ -72,104 +72,99 @@ export function showNotification(message, type= 'info', href = null){
 }
 
 // Navigate to designer profile
-export function viewSellerProfile(sellerId) {
-  window.location.href = `/portfolio.html?id=${sellerId}`;
+export function viewSellerProfile(designerId) {
+  window.location.href = `/portfolio.html?id=${designerId}`;
 }
 
-// ============ DESIGNER FOLLOW BUTTON (OOP) ============
 export class DesignerFollowButton {
-  constructor(button, shopId, isFollowing, options = {}) {
+  constructor(button, designerId, isFollowing, options = {}) {
     this.button = button;
-    this.shopId = shopId;
-    this.isFollowing = isFollowing;
+    this.designerId = designerId;
+    this.isFollowing = !!isFollowing; // Ensure boolean
     this.isPending = false;
-
+    
     this.options = {
       followingClass: 'following',
-      onChange: null,           // (isFollowing, response) => {}
-      onFollow: this.defaultFollow.bind(this),
-      onUnfollow: this.defaultUnfollow.bind(this),
+      followText: '<i class="fas fa-check"></i> Following',
+      unfollowText: '<i class="fas fa-user-plus"></i> Follow',
+      onFollow: (id) => API.followDesigner(id),
+      onUnfollow: (id) => API.unfollowDesigner(id),
+      onChange: null, // Callback to update local data models
+      loginRedirect: '/signup.html?mode=signin',
       ...options
     };
-
+    
     this.init();
   }
 
   init() {
     this.updateUI();
-    this.button.addEventListener('click', (e) => this.handleClick(e));
+    this._onClick = this.handleClick.bind(this);
+    this.button.addEventListener('click', this._onClick);
   }
 
   updateUI() {
-    const cls = this.options.followingClass;
-    this.button.classList.toggle(cls, this.isFollowing);
-
-    if (this.isFollowing) {
-      this.button.innerHTML = '<i class="fas fa-check"></i> Following';
-    } else {
-      this.button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-    }
+    this.button.classList.toggle(this.options.followingClass, this.isFollowing);
+    this.button.innerHTML = this.isFollowing ? this.options.followText : this.options.unfollowText;
+    this.button.disabled = this.isPending;
+    this.button.style.opacity = this.isPending ? '0.6' : '1';
   }
 
   async handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
-
     if (this.isPending) return;
 
-    const user = window.UserSession?.getUserSession() || localStorage.getItem('ontrop_token');
-    if (!user) {
-      showNotification('Please sign in to follow designers', 'error', '/signup.html');
+    // 1. Reliable Auth Check
+    if (!API.isAuthenticated()) {
+      const next = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+      window.location.href = `${this.options.loginRedirect}?next=${next}&autoFollow=${this.designerId}`;
       return;
     }
 
     this.isPending = true;
     const willFollow = !this.isFollowing;
 
-    // Optimistic update
+    // 2. Optimistic Update
     this.isFollowing = willFollow;
     this.updateUI();
 
     try {
-      const response = willFollow
-        ? await this.options.onFollow(this.shopId)
-        : await this.options.onUnfollow(this.shopId);
+      // 3. API Call
+      const response = willFollow 
+        ? await this.options.onFollow(this.designerId)
+        : await this.options.onUnfollow(this.designerId);
 
       if (!response || !response.success) {
-        // Revert
-        this.isFollowing = !willFollow;
-        this.updateUI();
-        showNotification(response?.message || 'Failed to update follow status', 'error');
-      } else {
-        const msg = willFollow ? 'You are now following this designer' : 'Unfollowed';
-        showNotification(msg, 'success');
+        throw new Error(response?.message || 'Failed to update follow status');
       }
 
+      // 4. Success: Update local data model
       if (typeof this.options.onChange === 'function') {
         this.options.onChange(this.isFollowing, response);
       }
 
     } catch (err) {
+      // 5. Failure: Silent rollback (no annoying notification)
       this.isFollowing = !willFollow;
       this.updateUI();
-      showNotification(err?.message || 'Something went wrong', 'error');
+      console.warn(`Follow action failed for ${this.designerId}:`, err.message);
     } finally {
       this.isPending = false;
+      this.updateUI(); // Re-enable button
     }
   }
 
-  async defaultFollow(shopId) {
-    return API.followSeller(shopId);
+  // Call this if you ever remove the button from the DOM to prevent memory leaks
+  destroy() {
+    this.button.removeEventListener('click', this._onClick);
   }
 
-  async defaultUnfollow(shopId) {
-    return API.unfollowSeller(shopId);
-  }
-  
-  static create(shopId, isFollowing, options = {}) {
+  static create(designerId, isFollowing, options = {}) {
     const btn = document.createElement('button');
     btn.className = 'follow-btn';
-    new DesignerFollowButton(btn, shopId, isFollowing, options);
+    btn.dataset.designerId = designerId;
+    new DesignerFollowButton(btn, designerId, isFollowing, options);
     return btn;
   }
 }
@@ -203,7 +198,7 @@ export const orderHandler = {
   }
 };
 
-async function togglefollowSeller(sellerId, button) {
+async function togglefollowDesigner(designerId, button) {
   return;
 }
 

@@ -206,7 +206,7 @@ function setupEventListeners() {
   });
   
   // Follow seller
-  // const followBtn = document.getElementById('followSellerBtn');
+  // const followBtn = document.getElementById('followDesignerBtn');
   // followBtn.addEventListener('click', toggleFollowSeller);
   
   // Share
@@ -245,7 +245,7 @@ function orderOnWhatsApp() {
 }
 
 /*function toggleFollowSeller() {
-  const btn = document.getElementById('followSellerBtn');
+  const btn = document.getElementById('followDesignerBtn');
   const isFollowing = btn.classList.contains('following');
   
   if (isFollowing) {

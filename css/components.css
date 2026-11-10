@@ -474,12 +474,6 @@
   color: var(--white);
 }
 
-.add-cart-btn {
-  background: var(--background);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
 /* Favourite Preview (smaller, used in profile) */
 .favourite-preview-item {
   background: var(--white);

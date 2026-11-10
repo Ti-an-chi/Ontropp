@@ -166,7 +166,7 @@ function setupSellerCardListeners() {
 async function handleFollowSeller(sellerId, button) {
   try {
     button.disabled = true;
-    const resp = await API.followSeller(sellerId);
+    const resp = await API.followDesigner(sellerId);
   
     if (resp.success) {
       button.innerHTML = `<i class='fas fa-check'></i> following`;

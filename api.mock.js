@@ -251,7 +251,7 @@ const API = {
     return { following: i < 0 };
   },
 
-  async followSeller(idOrStudioId) {
+  async followDesigner(idOrStudioId) {
     try {
       const { following } = await this.toggleFollowDesigner(_resolveDesignerId(idOrStudioId));
       return { success: true, following, message: 'Following' };
@@ -260,7 +260,7 @@ const API = {
     }
   },
   
-  async unfollowSeller(idOrStudioId) {
+  async unfollowDesigner(idOrStudioId) {
     try {
       const { following } = await this.toggleFollowDesigner(_resolveDesignerId(idOrStudioId));
       return { success: true, following, message: 'Unfollowed' };

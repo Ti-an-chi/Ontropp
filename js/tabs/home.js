@@ -218,17 +218,21 @@ async function loadDesigners() {
     const designers = window.bootstrap?.designers || (await PublicApi.getTrendingDesigners(6));
     if (!designers || designers.length === 0) { sv.empty(); return; }
 
-    console.log('designers', designers)
     const wrap = sv.dataEl.querySelector('.designer-scroll');
     wrap.innerHTML = '';
-    designers.forEach(d => {
-      const card = DesignerCard(d);
-      const btn  = card.querySelector('.designer-follow');
-      new DesignerFollowButton(btn, d.id, !!d.is_following, {
+    
+    designers.forEach(data => {
+      const d = data.designer;
+      const card = DesignerCard(data);
+      const btn = card.querySelector('.designer-follow');
+      
+      // ONE LINE TO RULE THEM ALL
+      new DesignerFollowButton(btn, d.id, !!d.isFollowing, {
         onChange: (isFollowing) => {
-          d.is_following = isFollowing;
-        },
+          d.isFollowing = isFollowing;
+        }
       });
+      
       wrap.appendChild(card);
     });
 
@@ -242,20 +246,6 @@ async function loadDesigners() {
       onAction: loadDesigners,
     });
   }
-}
-
-function handleFollowClick(btn, designer) {
-  if (!isSignedIn) {
-    // preserve intent across the sign-in round trip
-    const next = encodeURIComponent(location.pathname + location.hash);
-    window.location.href = `/login.html?next=${next}&follow=${designer.id}`;
-    return;
-  }
-  // optimistic toggle — wire to API later
-  const following = btn.classList.toggle('following');
-  btn.innerHTML = following
-    ? '<i class="fas fa-check"></i> Following'
-    : '<i class="fas fa-plus"></i> Follow';
 }
 
 /* =========================================================

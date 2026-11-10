@@ -2,11 +2,17 @@
  * piece.js — Piece detail orchestrator.
  * Matches piece.html structure and uses real API + SpecEngine.
  */
+/**
+ * piece.js — Piece detail orchestrator.
+ * Matches piece.html structure and uses real API + SpecEngine.
+ */
 import API from '/api.js';
 import { SpecEngine } from '../lab/specEngine.js';
 import { createStateView } from '../state.js';
 import { showToast } from '../toast.js';
 import { FashionCard, escapeHtml } from '../cards.js';
+// ✅ 1. IMPORT THE UNIFIED COMPONENT
+import { DesignerFollowButton } from '../reconfig.js'; 
 
 const params = new URLSearchParams(location.search);
 const productId = params.get('id') || params.get('productId') || 'bd130930-e09f-4f82-a1e0-09d031cfe6fb';
@@ -14,7 +20,7 @@ const engine = new SpecEngine();
 
 let piece = null;
 let studio = null;
-let designer = null; // The user behind the studio
+let designer = null; 
 
 init();
 
@@ -23,40 +29,44 @@ async function init() {
   const makerSv = createStateView(document.querySelector('[data-state-view="piece-maker"]'));
   const garmentSv = createStateView(document.querySelector('[data-state-view="piece-garment"]'));
   const otherSv = createStateView(document.querySelector('[data-state-view="piece-other"]'));
-
+  
   [heroSv, makerSv, garmentSv, otherSv].forEach(sv => sv?.loading());
 
   try {
-    // REQUEST 1: Get piece + studio + user
     const response = await API.getProductById(productId);
     piece = response.product || response;
     studio = piece.studio || {};
-    designer = studio.user || {}; // Extract the user object
+    designer = studio.user || {}; 
 
-    // UPDATE HEADER LOGO
-    const headerLogo = document.querySelector('.header-actions .studio-logo, .header-actions img, .header-actions .profile-icon');
-    if (headerLogo && studio.logo_url) {
-      headerLogo.src = studio.logo_url;
+    if (document.querySelector('.header-actions .studio-logo, .header-actions img, .header-actions .profile-icon') && studio.logo_url) {
+      document.querySelector('.header-actions .studio-logo, .header-actions img, .header-actions .profile-icon').src = studio.logo_url;
     }
     
     document.title = `${piece.name} · ONTROPP`;
-
+    
     if (heroSv) renderHero(heroSv.dataEl);
     if (makerSv) renderStudio(makerSv.dataEl);
     if (garmentSv) renderSpecifications(garmentSv.dataEl);
     
     [heroSv, makerSv, garmentSv].forEach(sv => sv?.data());
-
+    
     wireSave();
-    wireFollow(document.querySelector('.follow-btn'), studio.id);
+    
+    // ✅ 2. REPLACE wireFollow WITH THE UNIFIED OOP COMPONENT
+    const followBtn = document.querySelector('.follow-btn');
+    if (followBtn && designer.id) {
+      new DesignerFollowButton(followBtn, designer.id, false, {
+        onChange: (isFollowing) => {
+          console.log(`Studio ${designer.id} follow status changed to:`, isFollowing);
+        }
+      });
+    }
 
-    // REQUEST 2: Get other works
     if (otherSv && piece.studio_id) {
       loadOtherWorks(otherSv, piece.studio_id);
     } else {
       otherSv?.empty();
     }
-
   } catch (err) {
     console.error('Failed to load piece:', err);
     [heroSv, makerSv, garmentSv, otherSv].forEach(sv => sv?.empty());
@@ -64,6 +74,7 @@ async function init() {
   }
 }
 
+// ✅ 3. DELETE the old `wireFollow` function entirely. It is no longer needed.
 /* =========================================================
  * HERO — Handles image dimensions and description
  * ========================================================= */
@@ -174,49 +185,17 @@ async function loadOtherWorks(sv, studioId) {
 }
 
 /* =========================================================
- * FOLLOW & SAVE ACTIONS
- * ========================================================= */
-function wireFollow(btn, studioId) {
-  if (!btn || !studioId) return;
-  let following = false;
-  let pending = false;
-
-  const paint = () => {
-    btn.textContent = following ? 'Following' : 'Follow';
-    btn.classList.toggle('following', following);
-  };
-  paint();
-
-  btn.addEventListener('click', async () => {
-    if (pending) return;
-    pending = true;
-    const willFollow = !following;
-    following = willFollow;
-    paint();
-
-    try {
-      if (willFollow) await API.followSeller(studioId);
-      else await API.unfollowSeller(studioId);
-      showToast({ message: willFollow ? 'Following' : 'Unfollowed' });
-    } catch {
-      following = !willFollow;
-      paint();
-      showToast({ message: 'Sign in to follow studios' });
-    } finally {
-      pending = false;
-    }
-  });
-}
-
+   SAVE ACTION 
+========================================================= */
 function wireSave() {
   const btn = document.querySelector('.save-pill');
   if (!btn) return;
-
+  
   btn.addEventListener('click', async () => {
     const prev = btn.textContent;
     btn.disabled = true;
     try {
-      await API.addToSaved(piece.id); 
+      await API.addToSaved(piece.id);
       btn.textContent = 'Saved';
       showToast({ message: 'Saved' });
     } catch {

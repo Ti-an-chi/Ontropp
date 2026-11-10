@@ -80,7 +80,7 @@ export function TrendingSlide(item) {
       <span class="trending-kicker">${escapeHtml(item.kicker || 'Featured piece')}</span>
       <h3 class="trending-title">${escapeHtml(item.name || '')}</h3>
       <div class="trending-by">
-        <i class="fas fa-circle"></i> ${escapeHtml(item.brand_name || '')}
+        <i class="fas fa-circle"></i> ${escapeHtml(item.studio?.brand_name || '')}
       </div>
     </div>`;
   return a;
@@ -132,7 +132,7 @@ export function DesignerCard(data) {
   const wrapper = el('div', 'designer-card');
 
   const a = el('a', 'designer-link');
-  a.href = `/designer.html?id=${encodeURIComponent(designer.id)}`;
+  a.href = `/publicProfile.html?id=${encodeURIComponent(designer.id)}`;
   a.innerHTML = `
     <div class="designer-avatar" style="background-image:url('${designer.avatar_url || ''}')"></div>
     <div class="designer-name">${escapeHtml(designer.username || '')}</div>
@@ -188,8 +188,8 @@ export function PieceCard(item) {
   const a = el('a', 'piece-card');
   a.href = `/piece.html?id=${encodeURIComponent(item.id)}`;
 
-  const title = escapeHtml(item.title || item.name || '');
-  const studio = escapeHtml(item.studio?.brand_name || item.studio_name || item.seller_name || '');
+  const title = escapeHtml(item.name || item.title || '');
+  const studio = escapeHtml(item.studio?.brand_name || '');
   const imgSrc = coverUrl(item) || item.image_url || '';
   const ar = coverAspectRatio(item);
 

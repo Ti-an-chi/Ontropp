@@ -7,9 +7,9 @@ const LocationsTTLMS =  7 * 24 * 60 * 60 * 1000;
 const API = {
   requestCount: 0,
   
-  basURL: 'http://localhost:8787',
+  baseURL: 'http://localhost:8787',
   basedURL: 'https://ontropp-backend.onrender.com/api',
-  baseURL: 'https://ontrop-api.dsub.workers.dev',
+  basURL: 'https://ontrop-api.dsub.workers.dev',
   
 	// Store tokens & userId after login
   setTokens({ accessToken, refreshToken, userId }) {
@@ -196,6 +196,17 @@ const API = {
     });
     if (response.success) {
       this.setTokens(response);
+      // Inside your login success logic (after setting tokens):
+      const urlParams = new URLSearchParams(window.location.search);
+      const autoFollowId = urlParams.get('autoFollow');
+      const nextUrl = urlParams.get('next') || '/';
+      
+      if (autoFollowId) {
+        // Fire and forget: optimistically follow, then redirect
+        API.followDesigner(autoFollowId).catch(() => {}); 
+      }
+      
+      window.location.href = nextUrl;
     }
     return response;
   },
@@ -208,8 +219,22 @@ const API = {
     if (response.success) {
       const {bootstrap, ...tokens} = response;
       this.setTokens(tokens);
+      const urlParams = new URLSearchParams(window.location.search);
+      const autoFollowId = urlParams.get('autoFollow');
+      const nextUrl = urlParams.get('next') || '/';
+      
+      if (autoFollowId) {
+        API.followDesigner(autoFollowId).catch(() => {}); 
+      }
+      
+      window.location.href = nextUrl;
     }
     return response;
+  },
+
+  isAuthenticated(tokenType = 'user') {
+    const keys = this.tokenStorage[tokenType];
+    return !!localStorage.getItem(keys.access);
   },
   
   async logout() {
@@ -483,15 +508,15 @@ async getCategories(type = 'products', count) {
     });
   },
   
-  async followSeller(sellerId) {
-    const response = await this._fetch(`/seller/follow/${sellerId}`, {
+  async followDesigner(designerId) {
+    const response = await this._fetch(`/designer/follow/${designerId}`, {
       method: 'POST',
     });
     return response;
   },
   
-  async unfollowSeller(sellerId) {
-    const response = await this._fetch(`/seller/unfollow/${sellerId}`, {
+  async unfollowDesigner(designerId) {
+    const response = await this._fetch(`/designer/unfollow/${designerId}`, {
       method: 'DELETE',
     });
     return response;
