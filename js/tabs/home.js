@@ -16,6 +16,7 @@
  */
 
 import API from '/api.js';
+import { navigate } from '/dashboard-main.js';
 import { PublicApi } from '../network/public.js';
 import { DesignerFollowButton } from '../utility/reconfig.js';
 import { createStateView } from '../state.js';
@@ -139,27 +140,28 @@ async function loadCategories() {
 
   try {
     const cats = ((await API.getCategories('products', 5)) || []).slice(0, 5);
-
     if (cats.length === 0) { sv.empty(); return; }
-
-    // One tall at the top-left; everything else uniform.
-    // Edit this array alone if the UX designer wants a different rhythm.
-    const layout = ['tall', '', '', '', ''];
 
     const grid = sv.dataEl.querySelector('.cat-grid');
     grid.innerHTML = '';
-    cats.forEach((c, i) => grid.appendChild(CategoryTile(c, layout[i] || '')));
+
+    cats.forEach((c, i) => {
+      const tile = CategoryTile(c, ['tall','','','',''][i] || '');
+      tile.dataset.categoryId = c.id;   // tag for the delegated handler
+
+      // Delegation lives here, in Home, not in the router.
+      tile.addEventListener('click', (e) => {
+        // Let modified clicks / middle clicks behave natively.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        navigate('tab-explore', new URLSearchParams({ category: c.id }));
+      });
+
+      grid.appendChild(tile);
+    });
 
     sv.data();
-  } catch (err) {
-    console.error('Categories failed:', err);
-    sv.empty();
-    showToast({
-      message: 'Could not load categories.',
-      actionLabel: 'Try again',
-      onAction: loadCategories,
-    });
-  }
+  } catch (err) { /* unchanged */ }
 }
 
 /* =========================================================

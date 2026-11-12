@@ -1,19 +1,3 @@
-/**
- * explore.js
- * Explore tab orchestrator.
- *
- * Owns:
- *   - viewer context (signed in/out, followed designers, recent studios)
- *   - active filters (one object, one source of truth)
- *   - the filter bar UI (chips, panel, echo, search input)
- *   - the empty-state resolver (so messages match the filter)
- *
- * Delegates:
- *   - pagination + masonry + sentinel → createWall
- *   - card markup                     → PieceCard
- *   - error UI                        → toast
- */
-
 import API from '/api.js';
 import { showToast } from '../toast.js';
 import { PieceCard } from '../cards.js';
@@ -21,10 +5,7 @@ import { createWall } from '../utility/wall.js';
 
 const PAGE_SIZE = 12;
 
-// We'll keep a default map for fallback, but we'll update this dynamically
-let CATEGORY_LABELS = {
-  all: 'All',
-};
+let CATEGORY_LABELS = { all: 'All' };
 
 let viewer = {
   signedIn: false,
@@ -32,6 +13,7 @@ let viewer = {
   recentlyVisitedStudioIds: new Set(),
 };
 
+// The single source of truth for the wall's state.
 const filters = {
   category: 'all',
   search: '',
@@ -42,98 +24,143 @@ const filters = {
 
 let wall = null;
 let echoEl = null;
+let initialized = false;
 
 /* =========================================================
- BOOT
- ========================================================= */
-export async function initExploreTab() {
-  // 1. Viewer context (once)
+   BOOT — called ONCE by router.loadTab
+   ========================================================= */
+export async function initExploreTab({ params } = {}) {
+  if (initialized) return;
+  initialized = true;
+
   viewer.signedIn = !!localStorage.getItem('ontrop_token');
 
-  // 2. Build the wall
-  const mount = document.getElementById('explore-wall')?.parentElement
-    ? document.getElementById('explore-wall')
-    : null;
-
+  const mount = document.getElementById('explore-wall');
   wall = createWall(mount, {
     renderItem: PieceCard,
-    fetchPage: fetchPage,
+    fetchPage,
     pageSize: PAGE_SIZE,
     skeletonCount: 8,
-    onError: (err, retry) => {
-      showToast({
-        message: 'Could not load pieces.',
-        actionLabel: 'Try again',
-        onAction: retry,
-      });
-    },
+    onError: (err, retry) => showToast({
+      message: 'Could not load pieces.',
+      actionLabel: 'Try again',
+      onAction: retry,
+    }),
   });
   wall.setEmptyStateResolver(emptyStateFor);
   echoEl = document.getElementById('explore-echo');
 
-  // 3. Load Categories & Render Chips
   await loadAndRenderCategories('products');
 
-  // 4. UI wiring
+  // Apply whatever the router brought us in with.
+  applyParamsToFilters(params);
+
   applyViewerContextToUI();
   setupExploreInteractions();
+  syncFilterUI();
 
-  // 5. First load
   await wall.reload();
 }
 
 /* =========================================================
- CATEGORIES & UI RENDERING
- ========================================================= */
+   PARAMS → FILTERS
+   Exported so the router can call it on subsequent navs.
+   ========================================================= */
+export function applyExploreRouteParams(params) {
+  if (!initialized) return;
+
+  const changed = applyParamsToFilters(params);
+  if (!changed) return;
+
+  syncFilterUI();
+  wall.reload();
+}
+
+/**
+ * Writes URLSearchParams into the `filters` object.
+ * Returns true if anything changed.
+ */
+function applyParamsToFilters(params) {
+  if (!params) return false;
+
+  let changed = false;
+
+  const cat = params.get('category');
+  if (cat && cat !== filters.category) {
+    filters.category = cat;
+    changed = true;
+  } else if (!cat && filters.category !== 'all') {
+    // Navigating to a bare #tab-explore should reset category.
+    filters.category = 'all';
+    changed = true;
+  }
+
+  const q = params.get('q');
+  if (q !== null && q !== filters.search) {
+    filters.search = q;
+    changed = true;
+  }
+
+  return changed;
+}
+
+/* =========================================================
+   SYNC FILTERS → UI
+   Called after init and after route-param changes.
+   ========================================================= */
+function syncFilterUI() {
+  // Category chip
+  const bar = document.getElementById('explore-filter-bar');
+  bar?.querySelectorAll('.filters-chip[data-category]').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.category === filters.category);
+  });
+
+  // Search box
+  const searchInput = document.getElementById('explore-search');
+  if (searchInput && searchInput.value !== filters.search) {
+    searchInput.value = filters.search;
+  }
+
+  updateFilterEcho();
+}
+
+/* =========================================================
+   CATEGORIES
+   ========================================================= */
 async function loadAndRenderCategories(type = 'products') {
   const bar = document.getElementById('explore-filter-bar');
   if (!bar) return;
 
   try {
-    // Fetch categories using your existing API method
-    // Note: Ensure API.getCategories exists or use the hardcoded one if API isn't ready
-    const categories = await API.getCategories(type, 10); 
-    
-    // Update our label map for empty states/echo
-    categories.forEach(cat => {
-      CATEGORY_LABELS[cat.id] = cat.name;
-    });
+    const categories = await API.getCategories(type, 10);
 
-    // Clear existing chips except "All" and "Filters" button
-    // We'll rebuild the middle section
-    const allChip = bar.querySelector('[data-category="all"]');
+    categories.forEach(cat => { CATEGORY_LABELS[cat.id] = cat.name; });
+
     const toggleBtn = bar.querySelector('#explore-filter-toggle');
-    
-    // Remove old category chips
+
     Array.from(bar.querySelectorAll('.filters-chip:not([data-category="all"]):not(#explore-filter-toggle)'))
       .forEach(el => el.remove());
 
-    // Create new chips
     categories.forEach(cat => {
       const chip = document.createElement('button');
       chip.className = 'filters-chip';
       chip.dataset.category = cat.id;
       chip.textContent = cat.name;
-      
-      // Insert before the toggle button
       bar.insertBefore(chip, toggleBtn);
     });
-
   } catch (error) {
     console.warn('Failed to load categories, using defaults:', error);
   }
 }
 
 /* =========================================================
- DATA
- ========================================================= */
+   DATA
+   ========================================================= */
 async function fetchPage({ page, pageSize }) {
   return API.getPiecesPaginated(page, pageSize, {
     search: filters.search,
     categories: filters.category,
     followingOnly: filters.following,
-    // recentOnly: filters.recent,
-    // location: filters.location
   });
 }
 
@@ -160,23 +187,12 @@ function emptyStateFor() {
       body: 'Follow studios to see their work here.',
     };
   }
-  if (filters.recent) {
-    return {
-      icon: 'fa-clock-rotate-left',
-      title: 'No recently visited studios',
-      body: 'Studios you visit will appear here.',
-    };
-  }
-  return {
-    icon: 'fa-compass',
-    title: 'Nothing here yet',
-    body: 'Try a different search or category.',
-  };
+  return { icon: 'fa-compass', title: 'Nothing here yet', body: 'Try a different search or category.' };
 }
 
 /* =========================================================
- UI
- ========================================================= */
+   UI
+   ========================================================= */
 function updateFilterEcho() {
   if (!echoEl) return;
   const parts = [];
@@ -190,19 +206,17 @@ function updateFilterEcho() {
 }
 
 function applyViewerContextToUI() {
-  const locationGroup  = document.getElementById('filter-group-location');
-  const followingGroup = document.getElementById('filter-group-following');
-  const recentGroup    = document.getElementById('filter-group-recent');
-  const hint           = document.getElementById('explore-signedout-hint');
   const show = viewer.signedIn;
-  if (locationGroup)  locationGroup.hidden  = !show;
-  if (followingGroup) followingGroup.hidden = !show;
-  if (recentGroup)    recentGroup.hidden    = !show;
-  if (hint)           hint.hidden           = show;
+  ['filter-group-location','filter-group-following','filter-group-recent']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.hidden = !show; });
+  const hint = document.getElementById('explore-signedout-hint');
+  if (hint) hint.hidden = show;
 }
 
+/* =========================================================
+   INTERACTIONS
+   ========================================================= */
 function setupExploreInteractions() {
-  // Search (debounced)
   const searchInput = document.getElementById('explore-search');
   if (searchInput) {
     let t;
@@ -210,31 +224,40 @@ function setupExploreInteractions() {
       clearTimeout(t);
       t = setTimeout(() => {
         filters.search = this.value.trim();
+
+        // Push search into the URL so back/forward works on it too.
+        const params = new URLSearchParams(routerParams());
+        if (filters.search) params.set('q', filters.search);
+        else params.delete('q');
+        history.replaceState({ tabId: 'tab-explore', qs: params.toString() },
+                             '', buildHash('tab-explore', params));
+        router.currentRoute = { tabId: 'tab-explore', params };
+
         updateFilterEcho();
         wall.reload();
       }, 400);
     });
   }
 
-  // Category chips (Delegated event listener for dynamic chips)
+  // Chips — delegated so it works after loadAndRenderCategories.
   const bar = document.getElementById('explore-filter-bar');
-  if (bar) {
-    bar.addEventListener('click', (e) => {
-      const chip = e.target.closest('.filters-chip[data-category]');
-      if (!chip || chip.id === 'explore-filter-toggle') return;
+  bar?.addEventListener('click', (e) => {
+    const chip = e.target.closest('.filters-chip[data-category]');
+    if (!chip || chip.id === 'explore-filter-toggle') return;
 
-      // Update active state
-      bar.querySelectorAll('.filters-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
+    const categoryId = chip.dataset.category;
 
-      // Update filter
-      filters.category = chip.dataset.category;
-      updateFilterEcho();
-      wall.reload();
-    });
-  }
+    // Do the URL navigation. The router will call applyExploreRouteParams,
+    // which updates filters + UI + reloads the wall.
+    const params = new URLSearchParams(routerParams());
+    if (categoryId && categoryId !== 'all') params.set('category', categoryId);
+    else params.delete('category');
 
-  // Filters panel toggle
+    document.dispatchEvent(new CustomEvent('switchTab', { detail: 'tab-explore' })); // ensure on explore
+    navigate('tab-explore', params, { replace: true });  // replace: chip clicks don't spam history
+  });
+
+  // Filters panel
   const toggle = document.getElementById('explore-filter-toggle');
   const panel  = document.getElementById('explore-filter-panel');
   toggle?.addEventListener('click', (e) => {
@@ -243,12 +266,10 @@ function setupExploreInteractions() {
     toggle.classList.toggle('active', open);
   });
 
-  // Individual toggles
   bindToggle('filter-location-toggle',  'location');
   bindToggle('filter-following-toggle', 'following');
   bindToggle('filter-recent-toggle',    'recent');
 
-  // Click-outside closes panel
   document.addEventListener('click', (e) => {
     if (!panel?.classList.contains('open')) return;
     if (e.target.closest('#explore-filter-panel')) return;
@@ -257,7 +278,6 @@ function setupExploreInteractions() {
     toggle?.classList.remove('active');
   });
 
-  // Sign-in link
   document.getElementById('explore-signin-link')?.addEventListener('click', (e) => {
     e.preventDefault();
     window.location.href = 'signup.html';
@@ -274,4 +294,12 @@ function bindToggle(elId, key) {
     updateFilterEcho();
     wall.reload();
   });
+}
+
+/** Snapshot of current non-search filters as a plain object → URLSearchParams */
+function routerParams() {
+  const p = new URLSearchParams();
+  if (filters.category !== 'all') p.set('category', filters.category);
+  // Note: search is handled by the input's own debounce.
+  return p;
 }

@@ -93,7 +93,8 @@ export function TrendingSlide(item) {
 
 export function CategoryTile(cat, layout = '') {
   const a = el('a', `cat-tile ${layout}`.trim());
-  a.href = `/designers.html?category=${encodeURIComponent(cat.id)}`;
+  a.href = `#tab-explore=${encodeURIComponent(cat.id)}`;
+  a.setAttribute('data-category-id', cat.id);   // ← ADD THIS
   a.style.backgroundImage = `url('${cat.image_url || ''}')`;
   a.innerHTML = `<span>${escapeHtml(cat.name)}</span>`;
   return a;
