@@ -38,6 +38,8 @@ async function init() {
     studio = piece.studio || {};
     designer = studio.user || {}; 
 
+    console.log(designer)
+
     if (document.querySelector('.header-actions .studio-logo, .header-actions img, .header-actions .profile-icon') && studio.logo_url) {
       document.querySelector('.header-actions .studio-logo, .header-actions img, .header-actions .profile-icon').src = studio.logo_url;
     }
@@ -53,9 +55,9 @@ async function init() {
     wireSave();
     
     // ✅ 2. REPLACE wireFollow WITH THE UNIFIED OOP COMPONENT
-    const followBtn = document.querySelector('.follow-btn');
+    const followBtn = document.querySelector('#designer-follow-btn');
     if (followBtn && designer.id) {
-      new DesignerFollowButton(followBtn, designer.id, false, {
+      new DesignerFollowButton(followBtn, designer.id, piece.isFollowing, {
         onChange: (isFollowing) => {
           console.log(`Studio ${designer.id} follow status changed to:`, isFollowing);
         }
