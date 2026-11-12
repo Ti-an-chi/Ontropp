@@ -17,9 +17,11 @@
   <link rel="stylesheet" href="./css/tabs/profile.css">
   <script>
     (function () {
-      const validTabs = ['tab-home','tab-explore','tab-saved','tab-profile'];
-      const hash = location.hash.replace('#', '');
-      const target = validTabs.includes(hash) ? hash : 'tab-home';
+      var valid = ['tab-home','tab-explore','tab-saved','tab-profile'];
+      var raw = location.hash.replace(/^#/, '').split('?')[0];
+      var target = valid.indexOf(raw) !== -1 ? raw : 'tab-home';
+  
+      // Paint correct tab on parse, before the body renders below.
       document.documentElement.dataset.initialTab = target;
     })();
   </script>
@@ -92,7 +94,7 @@
 		  <section class="home-section" data-state-view="trending">
 		    <div class="home-section-head">
 		      <h2 class="home-section-title">Trending now</h2>
-		      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">Explore <i class="fas fa-arrow-right"></i></a>
+		      <a href="#tab-explore" class="see-all">Explore <i class="fas fa-arrow-right"></i></a>
 		    </div>
 		
 		    <div class="sv-state" data-state="loading">
@@ -150,7 +152,7 @@
 		      <h2 class="home-section-title" id="home-rec-title">
 		        Editor's Selection <span class="home-section-sub">curated for discovery</span>
 		      </h2>
-		      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">More <i class="fas fa-arrow-right"></i></a>
+		      <a href="#tab-explore" class="see-all">More <i class="fas fa-arrow-right"></i></a>
 		    </div>
 		
 		    <div class="sv-state" data-state="loading">
@@ -177,7 +179,7 @@
 		  <section class="home-section" data-state-view="designers">
 		    <div class="home-section-head">
 		      <h2 class="home-section-title">Designers to watch</h2>
-		      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">See all <i class="fas fa-arrow-right"></i></a>
+		      <a href="/designers" class="see-all">See all <i class="fas fa-arrow-right"></i></a>
 		    </div>
 		
 		    <div class="sv-state" data-state="loading">
@@ -204,7 +206,7 @@
 		  <section class="home-section" data-state-view="fresh">
 		    <div class="home-section-head">
 		      <h2 class="home-section-title">Fresh arrivals</h2>
-		      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">All new <i class="fas fa-arrow-right"></i></a>
+		      <a href="#tab-explore" class="see-all">All new <i class="fas fa-arrow-right"></i></a>
 		    </div>
 		
 		    <div class="sv-state" data-state="loading">
@@ -232,7 +234,7 @@
 		  <section class="home-section" data-state-view="studios">
 		    <div class="home-section-head">
 		      <h2 class="home-section-title">Studios worth visiting</h2>
-		      <a href="#tab-explore" class="see-all" data-switch-tab="tab-explore">See all <i class="fas fa-arrow-right"></i></a>
+          <a href="#tab-explore" class="see-all">See all <i class="fas fa-arrow-right"></i></a>
 		    </div>
 		
 		    <div class="sv-state" data-state="loading">
@@ -515,6 +517,18 @@
     </nav>
   </div>
 <div id="toast-root"></div>
+
+<script>
+  (function () {
+    var target = document.documentElement.dataset.initialTab || 'tab-home';
+    document.querySelectorAll('.tab-content').forEach(function (el) {
+      el.classList.toggle('active', el.id === target);
+    });
+    document.querySelectorAll('.nav-item[data-tab]').forEach(function (el) {
+      el.classList.toggle('active', el.dataset.tab === target);
+    });
+  })();
+</script>
 <script type="module" src="dashboard-main.js"></script>
 </body>
 </html>

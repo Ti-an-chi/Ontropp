@@ -248,6 +248,8 @@ const API = {
   
   async getUserData() {
     const response = await this._fetch('/user/dashboard');
+
+    sessionStorage.setItem('ontrop_user', JSON.stringify(response.data));
     return response.data;
   },
   
