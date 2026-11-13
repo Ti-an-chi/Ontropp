@@ -11,8 +11,7 @@ import { SpecEngine } from '../lab/specEngine.js';
 import { createStateView } from '../state.js';
 import { showToast } from '../toast.js';
 import { FashionCard, escapeHtml } from '../cards.js';
-// ✅ 1. IMPORT THE UNIFIED COMPONENT
-import { DesignerFollowButton } from '../utility/reconfig.js'; 
+import { DesignerFollowButton, SaveButton, LikeButton } from '../utility/reconfig.js';
 
 const params = new URLSearchParams(location.search);
 const productId = params.get('id') || params.get('productId') || 'bd130930-e09f-4f82-a1e0-09d031cfe6fb';
@@ -38,7 +37,7 @@ async function init() {
     studio = piece.studio || {};
     designer = studio.user || {}; 
 
-    console.log(designer)
+    console.log('Piece', response)
 
     if (document.querySelector('.header-actions .studio-logo, .header-actions img, .header-actions .profile-icon') && studio.logo_url) {
       document.querySelector('.header-actions .studio-logo, .header-actions img, .header-actions .profile-icon').src = studio.logo_url;
@@ -52,15 +51,27 @@ async function init() {
     
     [heroSv, makerSv, garmentSv].forEach(sv => sv?.data());
     
-    wireSave();
+    // ✅ Save pill (data-state only)
+    const saveBtn = heroSv.dataEl.querySelector('.save-pill');
+    if (saveBtn) {
+      new SaveButton(saveBtn, piece.id, piece.saved, {
+        onChange: (isSaved) => { piece.saved = isSaved; },
+      });
+    }
     
-    // ✅ 2. REPLACE wireFollow WITH THE UNIFIED OOP COMPONENT
-    const followBtn = document.querySelector('#designer-follow-btn');
+    // ✅ Like button (data-state only)
+    const likeBtn = heroSv.dataEl.querySelector('button[aria-label="Like design"]');
+    if (likeBtn) {
+      new LikeButton(likeBtn, piece.id, piece.liked, {
+        onChange: (isLiked) => { piece.liked = isLiked; },
+      });
+    }
+    
+    // ✅ Follow (unchanged)
+    const followBtn = makerSv.dataEl.querySelector('#designer-follow-btn');
     if (followBtn && designer.id) {
       new DesignerFollowButton(followBtn, designer.id, piece.isFollowing, {
-        onChange: (isFollowing) => {
-          console.log(`Studio ${designer.id} follow status changed to:`, isFollowing);
-        }
+        onChange: (isFollowing) => { piece.isFollowing = isFollowing; },
       });
     }
 
@@ -94,7 +105,7 @@ function renderHero(container) {
 
   container.querySelector('.js-hero-studio').textContent = studio.brand_name || '';
   
-  const collectionName = piece.category || 'Collection';
+  const collectionName = piece.category?.name || 'Collection';
   container.querySelector('.js-hero-collection').textContent = 
     `${piece.name} — ${collectionName}.`;
     
@@ -184,33 +195,4 @@ async function loadOtherWorks(sv, studioId) {
     console.error('Other works failed:', err);
     sv.empty();
   }
-}
-
-/* =========================================================
-   SAVE ACTION 
-========================================================= */
-function wireSave() {
-  const btn = document.querySelector('.save-pill');
-  if (!btn) return;
-  
-  btn.addEventListener('click', async () => {
-    const prev = btn.textContent;
-    btn.disabled = true;
-    try {
-      await API.addToSaved(piece.id);
-      btn.textContent = 'Saved';
-      showToast({ message: 'Saved' });
-    } catch {
-      try {
-        await API.removeFromSaved(piece.id);
-        btn.textContent = 'Save';
-        showToast({ message: 'Removed' });
-      } catch {
-        btn.textContent = prev;
-        showToast({ message: 'Sign in to save pieces' });
-      }
-    } finally {
-      btn.disabled = false;
-    }
-  });
 }

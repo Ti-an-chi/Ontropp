@@ -196,16 +196,18 @@ const API = {
     });
     if (response.success) {
       this.setTokens(response);
-      // Inside your login success logic (after setting tokens):
+  
       const urlParams = new URLSearchParams(window.location.search);
-      const autoFollowId = urlParams.get('autoFollow');
-      const nextUrl = urlParams.get('next') || '/';
-      
-      if (autoFollowId) {
-        // Fire and forget: optimistically follow, then redirect
-        API.followDesigner(autoFollowId).catch(() => {}); 
-      }
-      
+      const autoFollow = urlParams.get('autoFollow');
+      const autoSave   = urlParams.get('autoSave');
+      const autoLike   = urlParams.get('autoLike');
+      const nextUrl    = urlParams.get('next') || '/';
+  
+      // Fire-and-forget: apply pending intent, then redirect regardless of outcome.
+      if (autoFollow) this.followDesigner(autoFollow).catch(() => {});
+      if (autoSave)   this.addToSaved(autoSave).catch(() => {});
+      if (autoLike)   this.likeProduct(autoLike).catch(() => {});
+  
       window.location.href = nextUrl;
     }
     return response;
@@ -459,55 +461,44 @@ async getCategories(type = 'products', count) {
   }, 
   
   // 3. ACTIONS
+  // ---- saved (fixed: was /user/favorites) ----
   async addToSaved(productId) {
-    return this._fetch('/user/favorites', {
+    return this._fetch(`/user/saved`, {
       method: 'POST',
       body: JSON.stringify({ productId })
     });
   },
   
   async removeFromSaved(productId) {
-    return this._fetch(`/user/favorites/${productId}`, {
-      method: 'DELETE'
-    });
+    return this._fetch(`/user/saved/${productId}`, { method: 'DELETE' });
   },
   
   async clearAllSaved() {
-    return this._fetch('/user/favorites', {
-      method: 'DELETE'
-    });
+    return this._fetch('/user/saved', { method: 'DELETE' });
   },
   
-  async addToCart(productId, quantity = 1) {
-    return this._fetch('/cart', {
+  // ---- liked (new) ----
+  async getLiked(page = 1, limit = 20, search = '') {
+    const params = new URLSearchParams({
+      page: page.toString(), limit: limit.toString(), search
+    });
+    const resp = await this._fetch(`/user/liked?${params}`);
+    return resp.data;
+  },
+  
+  async likeProduct(productId) {
+    return this._fetch(`/user/liked`, {
       method: 'POST',
-      body: JSON.stringify({ productId, quantity })
+      body: JSON.stringify({ productId })
     });
   },
   
-  async getCartProducts(page = 1, limit = 20) {
-    const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
-    return this._fetch(`/cart?${params}`);
+  async unlikeProduct(productId) {
+    return this._fetch(`/user/liked/${productId}`, { method: 'DELETE' });
   },
   
-  async updateCartQuantity(productId, quantity) {
-    return this._fetch(`/cart/${productId}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ quantity }
-      )
-    });
-  },
-  
-  async removeFromCart(productId) {
-    return this._fetch(`/cart/${productId}`, {
-      method: 'DELETE'
-    });
-  },
-  
-  async clearCart() {
-    return this._fetch('/cart', {
-      method: 'DELETE'
-    });
+  async clearAllLiked() {
+    return this._fetch('/user/liked', { method: 'DELETE' });
   },
   
   async followDesigner(designerId) {

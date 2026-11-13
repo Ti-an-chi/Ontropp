@@ -59,6 +59,21 @@ Icons are bespoke; Save reuses .btn.btn-primary.
   border-radius: var(--radius-pill);
   padding: 12px 31px;
 }
+.save-pill.saved {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.save-pill.saved:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+  opacity: 1;
+}
+
+/* Liked heart — accent color, no layout change */
+.action-buttons > button.liked i {
+  color: #e53935;
+}
 
 /* ============================================================
 DESCRIPTION

@@ -76,6 +76,193 @@ export function viewSellerProfile(designerId) {
   window.location.href = `/portfolio.html?id=${designerId}`;
 }
 
+/* =========================================================
+ * SaveButton — optimistic toggle for saved/unsaved products
+ * ========================================================= */
+export class SaveButton {
+  constructor(button, productId, isSaved, options = {}) {
+    this.button    = button;
+    this.productId = productId;
+    this.isSaved   = !!isSaved;
+    this.isPending = false;
+
+    this.options = {
+      savedClass:   'saved',
+      savedText:    'Saved',
+      unsavedText:  'Save',
+      onSave:       (id) => API.addToSaved(id),
+      onUnsave:     (id) => API.removeFromSaved(id),
+      onChange:     null,
+      loginRedirect: '/signup.html?mode=signin',
+      ...options,
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.updateUI();
+    this._onClick = this.handleClick.bind(this);
+    this.button.addEventListener('click', this._onClick);
+  }
+
+  updateUI() {
+    this.button.classList.toggle(this.options.savedClass, this.isSaved);
+    this.button.textContent = this.isSaved
+      ? this.options.savedText
+      : this.options.unsavedText;
+    this.button.disabled = this.isPending;
+    this.button.style.opacity = this.isPending ? '0.6' : '1';
+  }
+
+  async handleClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (this.isPending) return;
+
+    if (!API.isAuthenticated()) {
+      const next = encodeURIComponent(
+        window.location.pathname + window.location.search + window.location.hash
+      );
+      window.location.href = `${this.options.loginRedirect}?next=${next}&autoSave=${this.productId}`;
+      return;
+    }
+
+    this.isPending = true;
+    const willSave = !this.isSaved;
+
+    // Optimistic
+    this.isSaved = willSave;
+    this.updateUI();
+
+    try {
+      const response = willSave
+        ? await this.options.onSave(this.productId)
+        : await this.options.onUnsave(this.productId);
+
+      if (!response || !response.success) {
+        throw new Error(response?.message || 'Failed to update save state');
+      }
+
+      if (typeof this.options.onChange === 'function') {
+        this.options.onChange(this.isSaved, response);
+      }
+    } catch (err) {
+      this.isSaved = !willSave;
+      this.updateUI();
+      console.warn(`Save toggle failed for ${this.productId}:`, err.message);
+    } finally {
+      this.isPending = false;
+      this.updateUI();
+    }
+  }
+
+  destroy() {
+    this.button.removeEventListener('click', this._onClick);
+  }
+
+  static create(productId, isSaved, options = {}) {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-primary save-pill';
+    btn.textContent = 'Save';
+    new SaveButton(btn, productId, isSaved, options);
+    return btn;
+  }
+}
+
+/* =========================================================
+ * LikeButton — optimistic toggle for liked/unliked products
+ * ========================================================= */
+export class LikeButton {
+  constructor(button, productId, isLiked, options = {}) {
+    this.button    = button;
+    this.productId = productId;
+    this.isLiked   = !!isLiked;
+    this.isPending = false;
+
+    this.options = {
+      likedClass:   'liked',
+      likedIcon:    'fa-solid fa-heart',
+      unlikedIcon:  'fa-regular fa-heart',
+      onLike:       (id) => API.likeProduct(id),
+      onUnlike:     (id) => API.unlikeProduct(id),
+      onChange:     null,
+      loginRedirect: '/signup.html?mode=signin',
+      ...options,
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.updateUI();
+    this._onClick = this.handleClick.bind(this);
+    this.button.addEventListener('click', this._onClick);
+  }
+
+  updateUI() {
+    this.button.classList.toggle(this.options.likedClass, this.isLiked);
+    const icon = this.isLiked ? this.options.likedIcon : this.options.unlikedIcon;
+    this.button.innerHTML = `<i class="${icon}"></i>`;
+    this.button.setAttribute('aria-label', this.isLiked ? 'Unlike design' : 'Like design');
+    this.button.disabled = this.isPending;
+    this.button.style.opacity = this.isPending ? '0.6' : '1';
+  }
+
+  async handleClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (this.isPending) return;
+
+    if (!API.isAuthenticated()) {
+      const next = encodeURIComponent(
+        window.location.pathname + window.location.search + window.location.hash
+      );
+      window.location.href = `${this.options.loginRedirect}?next=${next}&autoLike=${this.productId}`;
+      return;
+    }
+
+    this.isPending = true;
+    const willLike = !this.isLiked;
+
+    this.isLiked = willLike;
+    this.updateUI();
+
+    try {
+      const response = willLike
+        ? await this.options.onLike(this.productId)
+        : await this.options.onUnlike(this.productId);
+
+      if (!response || !response.success) {
+        throw new Error(response?.message || 'Failed to update like state');
+      }
+
+      if (typeof this.options.onChange === 'function') {
+        this.options.onChange(this.isLiked, response);
+      }
+    } catch (err) {
+      this.isLiked = !willLike;
+      this.updateUI();
+      console.warn(`Like toggle failed for ${this.productId}:`, err.message);
+    } finally {
+      this.isPending = false;
+      this.updateUI();
+    }
+  }
+
+  destroy() {
+    this.button.removeEventListener('click', this._onClick);
+  }
+
+  static create(productId, isLiked, options = {}) {
+    const btn = document.createElement('button');
+    btn.setAttribute('aria-label', 'Like design');
+    btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+    new LikeButton(btn, productId, isLiked, options);
+    return btn;
+  }
+}
+
 export class DesignerFollowButton {
   constructor(button, designerId, isFollowing, options = {}) {
     this.button = button;
