@@ -468,11 +468,15 @@ async getCategories(type = 'products', count) {
       body: JSON.stringify({ productId })
     });
   },
-  
   async removeFromSaved(productId) {
     return this._fetch(`/user/saved/${productId}`, { method: 'DELETE' });
   },
-  
+  async removeManySaved(productIds) {
+    return this._fetch('/user/saved/remove', {
+      method: 'POST',
+      body: JSON.stringify({ productIds }),
+    });
+  },
   async clearAllSaved() {
     return this._fetch('/user/saved', { method: 'DELETE' });
   },
