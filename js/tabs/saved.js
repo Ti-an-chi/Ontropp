@@ -130,7 +130,7 @@ function updateHeader({ total = 0, studios = [], lastAddedAt }) {
 
 function relativeTime(ts) {
   if (!ts) return '';
-  const diff = Date.now() - ts;
+  const diff = Date.now() - new Date(ts).getTime();
   const day = 24 * 60 * 60 * 1000;
   const days = Math.floor(diff / day);
   if (days <= 0) return 'today';
