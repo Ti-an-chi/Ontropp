@@ -263,6 +263,43 @@ const API = {
     const resp = await this._fetch('/user/dash');
     return resp.bootstrap;
   },
+
+  async getProfileDash() {
+    const userId = localStorage.getItem('ontrop_userid');
+    const cached = this._readSavedCache(userId);
+  
+    if (cached) {
+      // Saved is warm. Only following is missing.
+      const following = await this.getFollowedDesigners().catch(() => ({
+        designers: [], studios: [], total: 0,
+      }));
+      return {
+        network: {
+          designers: following.designers || [],
+          studios:   following.studios   || [],
+        },
+        collections: cached.collections || [],
+      };
+    }
+  
+    // Cold path — one request, server does the 2 subqueries.
+    const resp = await this._fetch('/user/profile/dash');
+    const data = resp.data;
+  
+    // Prime saved cache so Saved tab is warm when it opens.
+    // Shape must match what getSaved() writes: { saved, studios, collections, total, lastAddedAt }
+    if (data?.saved) {
+      this._writeSavedCache(userId, data.saved);
+    }
+  
+    return {
+      network: {
+        designers: data?.network?.designers || [],
+        studios:   data?.network?.studios   || [],
+      },
+      collections: data?.collections || data?.saved?.collections || [],
+    };
+  },
   
   async updateProfile(updates) {
     const response = await this._fetch('/user/profile', {
@@ -567,11 +604,14 @@ async getPiecesPaginated(page = 1, limit = 20, filters = {}) {
     return response;
   }, 
   
-  async getFollowedSellers() {
-    const response = await this._fetch(`/sellers/following`);
-    return response.data;
+  async getFollowedDesigners(page = 1, limit = 50) {
+    const params = new URLSearchParams({
+      page: String(page), limit: String(limit),
+    });
+    const resp = await this._fetch(`/designers/following?${params}`);
+    return resp.data;   // { designers, studios, total }
   },
-  
+
   /* ---------------- SELLER ACTIONS --------------- */
   async createProduct(productData) {
     const response = await this._fetch('/products', {

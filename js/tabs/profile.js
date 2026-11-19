@@ -4,9 +4,7 @@
 import API from '../../api.js';
 import { updateElement, changeDisplay, setupTabSwitchers } from '../utility/reconfig.js';
 import { relativeTime, escapeHtml } from '../utility/shared.js';
-import {
-  CollectionCard, TrailItem, NetworkChip, SignalCard, AccountItem,
-} from '../cards.js';
+import { CollectionCard, NetworkChip, AccountItem } from '../cards.js';
 import { createAvatarController } from '../utility/avatar.js';
 
 const state = {
@@ -46,15 +44,11 @@ export async function initProfileTab() {
 
     const dash = await loadProfileDash();
     state.collections = dash.collections || [];
-    state.trail       = dash.trail || [];
     state.network     = dash.network || { designers: [], studios: [] };
-    state.signals     = dash.signals || null;
     state.exhibition  = dash.exhibition || [];
 
     renderCollections();
-    renderTrail();
     renderNetwork();
-    renderSignals();
     renderExhibition();
   } finally {
     isLoading = false;
@@ -121,12 +115,8 @@ function renderRoleSections() {
   const isDesigner = state.isDesigner;
 
   toggle('profile-collections-section', !isDesigner);
-  toggle('profile-trail-section',       !isDesigner);
   toggle('profile-network-section',     !isDesigner);
-  toggle('profile-signals-section',      isDesigner);
   toggle('profile-exhibition-section',   isDesigner);
-
-  renderAccount(isDesigner);
 }
 
 function toggle(id, show) {
@@ -179,22 +169,6 @@ function mountCards(gridId, emptyId, items) {
 }
 
 /* ============================================================
-   TRAIL
-   ============================================================ */
-
-function renderTrail() {
-  const list = document.getElementById('trail-list');
-  if (!list) return;
-
-  if (!state.trail.length) {
-    toggle('profile-trail-section', false);
-    return;
-  }
-  list.innerHTML = '';
-  state.trail.forEach(t => list.appendChild(TrailItem(t, { relativeTime })));
-}
-
-/* ============================================================
    FOLLOWING
    ============================================================ */
 
@@ -205,11 +179,8 @@ function renderNetwork() {
 
   const items = [
     ...state.network.designers.map(d => ({
-      id: d.id, name: d.name, avatar: d.avatar_url, kind: 'designer',
-    })),
-    ...state.network.studios.map(s => ({
-      id: s.id, name: s.name, avatar: s.cover_url, kind: 'studio',
-    })),
+      id: d.id, name: d.name, avatar: d.avatar_url,
+    }))
   ];
 
   if (!items.length) { section.hidden = true; return; }
@@ -217,71 +188,6 @@ function renderNetwork() {
   section.hidden = false;
   strip.innerHTML = '';
   items.forEach(i => strip.appendChild(NetworkChip(i)));
-}
-
-/* ============================================================
-   SIGNALS
-   ============================================================ */
-
-function renderSignals() {
-  const list = document.getElementById('signals-list');
-  if (!list || !state.signals) return;
-
-  const s = state.signals;
-  const signals = [
-    { icon: 'fa-bookmark', value: s.savedThisWeek,      label: 'saves this week' },
-    { icon: 'fa-comment',  value: s.inquiriesThisMonth, label: 'inquiries this month' },
-    { icon: 'fa-star',     text:  s.topCollection,      label: 'top collection' },
-  ];
-
-  list.innerHTML = '';
-  signals.forEach(sig => list.appendChild(SignalCard(sig)));
-}
-
-/* ============================================================
-   ACCOUNT
-   ============================================================ */
-
-function renderAccount(isDesigner) {
-  const list = document.getElementById('account-list');
-  if (!list) return;
-
-  const items = isDesigner
-    ? [
-        { icon: 'fa-pen',             label: 'Edit profile',     action: 'edit' },
-        { icon: 'fa-store',           label: 'Studio settings',  action: 'studio-settings' },
-        { icon: 'fa-cog',             label: 'Account settings', action: 'account-settings' },
-        { icon: 'fa-question-circle', label: 'Help & Support',   action: 'help' },
-        { icon: 'fa-sign-out-alt',    label: 'Log out', action: 'logout', danger: true },
-      ]
-    : [
-        { icon: 'fa-pen',             label: 'Edit profile',     action: 'edit' },
-        { icon: 'fa-palette',         label: 'Open a Studio',    action: 'open-studio' },
-        { icon: 'fa-cog',             label: 'Account settings', action: 'account-settings' },
-        { icon: 'fa-question-circle', label: 'Help & Support',   action: 'help' },
-        { icon: 'fa-sign-out-alt',    label: 'Log out', action: 'logout', danger: true },
-      ];
-
-  list.innerHTML = '';
-  items.forEach(it => list.appendChild(AccountItem(it)));
-
-  // Single delegated handler — survives re-renders.
-  list.onclick = (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (btn) handleAccountAction(btn.dataset.action);
-  };
-}
-
-function handleAccountAction(action) {
-  const routes = {
-    'edit':             () => avatar?.openPicker(),
-    'studio-settings':  () => { window.location.href = 'useraccountsettings.html'; },
-    'account-settings': () => { window.location.href = 'useraccountsettings.html'; },
-    'open-studio':      () => { window.location.href = 'designerDashboard.html'; },
-    'help':             () => { window.location.href = 'help.html'; },
-    'logout':           () => { window.location.href = 'login.html'; },
-  };
-  routes[action]?.();
 }
 
 /* ============================================================

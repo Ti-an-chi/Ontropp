@@ -260,8 +260,9 @@ export function CollectionCard(item) {
   const a = el('a', 'collection-card');
   a.href = item.href || `/collection.html?id=${encodeURIComponent(item.id)}`;
 
+  console.log(item)
   const name  = escapeHtml(item.name || 'Untitled');
-  const cover = item.cover_image || '';
+  const cover = item.cover_url.url || '';
   const count = Number(item.piece_count || 0);
   const countLabel = `${count} ${count === 1 ? 'piece' : 'pieces'}`;
 
@@ -317,7 +318,7 @@ export function TrailItem(item, { relativeTime } = {}) {
 
 export function NetworkChip(item) {
   const a = el('a', 'network-chip');
-  a.href = item.href || `#${item.kind}-${item.id}`;
+  a.href = item.href || `publicProfile.html?id=${item.id}`;
   a.innerHTML = `
     <span class="network-avatar"
           style="background-image:url('${escapeHtml(item.avatar || '')}')"></span>
