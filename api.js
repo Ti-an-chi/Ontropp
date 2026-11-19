@@ -260,7 +260,7 @@ const API = {
   },
   
   async getUserDash() {
-    const resp = await this._fetch('/user/dash');
+    const resp = await this._fetch('/dash/home');
     return resp.bootstrap;
   },
 
@@ -283,7 +283,7 @@ const API = {
     }
   
     // Cold path — one request, server does the 2 subqueries.
-    const resp = await this._fetch('/user/profile/dash');
+    const resp = await this._fetch('/dash/profile');
     const data = resp.data;
   
     // Prime saved cache so Saved tab is warm when it opens.

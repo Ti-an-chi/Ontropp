@@ -389,10 +389,9 @@ function setupLogout() {
 /* =========================================================
    AUTH HELPER
    ========================================================= */
-function readAuth() {
+export function readAuth() {
   try {
     const raw = sessionStorage.getItem('ontrop_user');
-    console.log('raw:',raw)
     return raw ? JSON.parse(raw) : null;
   } catch (e) {
     return null;

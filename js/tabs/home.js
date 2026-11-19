@@ -16,6 +16,7 @@
  */
 
 import API from '/api.js';
+//import { readAuth } from '/dashboard-main.js';
 import { PublicApi } from '../network/public.js';
 import { DesignerFollowButton } from '../utility/reconfig.js';
 import { createStateView } from '../state.js';
@@ -27,6 +28,7 @@ import {
   DesignerCard, FreshCard, StudioCard,
 } from '../cards.js';
 
+let bootstrap = null;
 let userData = null;
 let isSignedIn = false;
 let carousel = null;
@@ -36,15 +38,10 @@ let carousel = null;
    ========================================================= */
 
 export async function initHomeTab() {
-  const bootstrap =
-    window.bootstrap ||
-    JSON.parse(sessionStorage.getItem('bootstrap') || 'null') ||
-    (await API.getUserDash());
+  bootstrap = await API.getUserDash();
 
-  sessionStorage.removeItem('bootstrap');
-  window.bootstrap = bootstrap;
-
-  userData   = bootstrap ? bootstrap.userData : null;
+  console.log(bootstrap);
+  userData = JSON.parse(sessionStorage.getItem('ontrop_user')) ?? null;
   isSignedIn = !!(userData && userData.id);
 
   renderHello();
@@ -144,7 +141,7 @@ async function loadTrending() {
   sv.loading();
 
   try {
-    const items = (window.bootstrap && window.bootstrap.trending)
+    const items = (bootstrap && bootstrap.trending)
       || (await PublicApi.getTrendingPieces(4));
 
     if (!items || items.length === 0) {
@@ -242,10 +239,10 @@ async function loadRecommended() {
   }
 
   try {
-    const bootstrapRec = window.bootstrap ? window.bootstrap.recommended : null;
+    const bootstrapRec = bootstrap ? bootstrap.recommended : null;
     const raw = bootstrapRec || (isSignedIn
       ? await API.getRecommendedProducts(1, 8)
-      : await API.getEditorPicks(8));
+      : await API.getRecommendedProducts(1, 8));//getEditorPicks(8));
 
     const items = (raw && raw.data) || raw || [];
     if (items.length === 0) { sv.empty(); return; }
@@ -277,7 +274,7 @@ async function loadDesigners() {
   sv.loading();
 
   try {
-    const designers = (window.bootstrap && window.bootstrap.designers)
+    const designers = (bootstrap && bootstrap.designers)
       || (await PublicApi.getTrendingDesigners(6));
     if (!designers || designers.length === 0) { sv.empty(); return; }
 
@@ -323,7 +320,7 @@ async function loadFresh() {
   sv.loading();
 
   try {
-    const resp = (window.bootstrap && window.bootstrap.fresh)
+    const resp = (bootstrap && bootstrap.fresh)
       || (await API.getPiecesPaginated(1, 10, { order: 'newest' }));
     const items = resp.pieces;
     if (!items || items.length === 0) { sv.empty(); return; }
@@ -355,7 +352,7 @@ async function loadStudios() {
   sv.loading();
 
   try {
-    const studios = (window.bootstrap && window.bootstrap.studios)
+    const studios = (bootstrap && bootstrap.studios)
       || (await PublicApi.getFeaturedStudios(6));
     if (!studios || studios.length === 0) { sv.empty(); return; }
 

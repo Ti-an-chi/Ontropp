@@ -30,10 +30,7 @@ export async function initProfileTab() {
   isLoading = true;
 
   try {
-    if (!window.bootstrap?.userData) {
-      window.bootstrap = await loadUserData();
-    }
-    state.user = window.bootstrap.userData;
+    state.user = JSON.parse(sessionStorage.getItem('ontrop_user')) ?? null;
     state.isDesigner = state.user.role === 'designer';
 
     setupAvatar();
@@ -53,16 +50,6 @@ export async function initProfileTab() {
     renderExhibition();
   } finally {
     isLoading = false;
-  }
-}
-
-async function loadUserData() {
-  try { return await API.getUserDash(); }
-  catch (err) {
-    console.error('Failed to load user data:', err);
-    return { userData: {
-      username: 'User', email: '', role: 'explorer', avatar_url: '', statement: '',
-    } };
   }
 }
 

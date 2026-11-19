@@ -1,0 +1,30 @@
+/* ===== css/guest.css ===== */
+/* Small overrides for the signed-out landing page (home.html).
+   Everything else reuses CORE.css / components / tabs css. */
+
+.app-container.guest {
+  /* No bottom nav on this page. */
+  padding-bottom: 24px;
+}
+
+.guest-signin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: var(--ink);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s;
+}
+.guest-signin-btn:hover { background: var(--primary); }
+
+/* Search bar sticky offset differs on guest (no bottom nav anyway). */
+.guest .explore-search-bar { top: 58px; }
+.guest .explore-filter-bar { top: 110px; }
+
+/* Give the page a little breathing room above the fold. */
+.guest #tab-home { padding-top: 8px; }
