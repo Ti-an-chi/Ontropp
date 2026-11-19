@@ -6,6 +6,7 @@ import { updateElement, changeDisplay, setupTabSwitchers } from '../utility/reco
 import { relativeTime, escapeHtml } from '../utility/shared.js';
 import { CollectionCard, NetworkChip, AccountItem } from '../cards.js';
 import { createAvatarController } from '../utility/avatar.js';
+import { navigate } from '../nav.js';
 
 const state = {
   user: null,
@@ -151,10 +152,17 @@ function setupAvatar() {
    COLLECTIONS / EXHIBITION
    ============================================================ */
 
-function renderCollections() { mountCards('collections-grid', 'collections-empty', state.collections); }
+function renderCollections() {
+  mountCards('collections-grid', 'collections-empty', state.collections, {
+    onCardClick: (c) => {
+      navigate('tab-saved', new URLSearchParams({ collection: c.name }));
+    },
+  });
+}
+
 function renderExhibition()  { mountCards('exhibition-grid',  'exhibition-empty',  state.exhibition); }
 
-function mountCards(gridId, emptyId, items) {
+function mountCards(gridId, emptyId, items, { onCardClick } = {}) {
   const grid  = document.getElementById(gridId);
   const empty = document.getElementById(emptyId);
   if (!grid || !empty) return;
@@ -165,7 +173,19 @@ function mountCards(gridId, emptyId, items) {
   }
   grid.hidden = false; empty.hidden = true;
   grid.innerHTML = '';
-  items.forEach(c => grid.appendChild(CollectionCard(c)));
+  items.forEach(c => {
+    const card = CollectionCard(c);
+    if (onCardClick) {
+      card.addEventListener('click', (e) => {
+        // Let modifier-clicks fall through to the default link behaviour
+        // (open in new tab, etc.) — the URL still points somewhere sensible.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        onCardClick(c);
+      });
+    }
+    grid.appendChild(card);
+  });
 }
 
 /* ============================================================

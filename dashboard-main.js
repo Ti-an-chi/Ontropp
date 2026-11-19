@@ -1,8 +1,10 @@
 import API from './api.js';
 import { initHomeTab } from './js/tabs/home.js';
 import { initExploreTab, applyExploreRouteParams } from './js/tabs/explore.js';
-import { initSavedTab } from './js/tabs/saved.js';
+import { initSavedTab, applySavedRouteParams } from './js/tabs/saved.js';
 import { initProfileTab } from './js/tabs/profile.js';
+import { setNavigate } from '/js/nav.js';
+setNavigate(navigate);
 
 /* =========================================================
    DEV AUTH SIMULATION
@@ -40,7 +42,11 @@ const TABS = {
     requiresAuth: false,
     applyRouteParams: applyExploreRouteParams,
   },
-  'tab-saved':   { init: initSavedTab,   requiresAuth: true  },
+  'tab-saved':   {
+    init: initSavedTab,
+    requiresAuth: true,
+    applyRouteParams: applySavedRouteParams,
+  },
   'tab-profile': { init: initProfileTab, requiresAuth: true  },
 };
 

@@ -21,7 +21,7 @@ import { DesignerFollowButton } from '../utility/reconfig.js';
 import { createStateView } from '../state.js';
 import { showToast } from '../toast.js';
 import { createCarousel } from '../carousel.js';
-import { navigate } from '/dashboard-main.js';
+import { navigate } from '../nav.js';
 import {
   TrendingSlide, CategoryTile, RecommendedCard,
   DesignerCard, FreshCard, StudioCard,

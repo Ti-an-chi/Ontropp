@@ -221,3 +221,38 @@
   from { transform: translateY(0); }
   to   { transform: translateY(100%); }
 }
+
+/* ---- Collection strip (sits below the studio strip, same scroll pattern) ---- */
+.saved-collection-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 6px 0 2px;
+  margin: 6px -16px 0;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-top: 1px solid var(--border);
+}
+.saved-collection-strip::-webkit-scrollbar { display: none; }
+.saved-collection-strip[hidden] { display: none; }
+
+.saved-collection-chip {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--hash);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.saved-collection-chip:hover { color: var(--text); border-color: var(--hash); }
+.saved-collection-chip.active {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}

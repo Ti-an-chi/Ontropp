@@ -4,14 +4,16 @@
  *
  * Framing: a personal shelf, not a shopping shortlist.
  * No search, no modes, no per-card delete buttons.
- * One sort toggle, one studio strip, long-press to select.
+ * One sort toggle, two independent filter strips (studios + collections),
+ * long-press to select.
  *
  * Owns:
  *   - sort ('newest' | 'oldest')
- *   - active studio filter
+ *   - active studio filter (studioId)
+ *   - active collection filter (collection)
  *   - selection mode + selected ids
  *   - header count + "last added" line
- *   - studio strip
+ *   - studio strip + collection strip
  *
  * Delegates:
  *   - the wall                → createWall (infinite: false)
@@ -27,12 +29,15 @@ import { showToast } from '../toast.js';
 const state = {
   sort: 'newest',
   studioId: null,
+  collection: null,
   selectionMode: false,
   selectedIds: new Set(),
 };
 
 let wall = null;
 let allSaved = [];
+let allStudios = [];
+let allCollections = [];
 let gridEl = null;
 
 /* =========================================================
@@ -70,6 +75,33 @@ export async function initSavedTab() {
 }
 
 /* =========================================================
+   ROUTE PARAMS → FILTERS
+   Called by the router on subsequent navigations.
+   ========================================================= */
+
+export function applySavedRouteParams(params) {
+  if (!params) return;
+
+  const nextStudio = params.get('studio') || null;
+  const nextCollection = params.get('collection') || null;
+
+  if (nextStudio === state.studioId && nextCollection === state.collection) {
+    return;
+  }
+
+  state.studioId = nextStudio;
+  state.collection = nextCollection;
+
+  // If a saved refresh already ran, re-render strips + wall immediately.
+  if (allSaved.length || allStudios.length || allCollections.length) {
+    renderStudioStrip(allStudios);
+    renderCollectionStrip(allCollections);
+    wall.reload();
+  }
+  // If not yet loaded, initSavedTab will honour the state we just set.
+}
+
+/* =========================================================
    DATA
    ========================================================= */
 
@@ -79,12 +111,16 @@ async function refresh() {
     res = await API.getSaved(1, 1000);
   } catch (err) {
     console.error('getSaved failed:', err);
-    res = { saved: [], studios: [], total: 0, lastAddedAt: null };
+    res = { saved: [], studios: [], collections: [], total: 0, lastAddedAt: null };
   }
 
   allSaved = res.saved || [];
+  allStudios = res.studios || [];
+  allCollections = res.collections || [];
+
   updateHeader(res);
-  renderStudioStrip(res.studios || []);
+  renderStudioStrip(allStudios);
+  renderCollectionStrip(allCollections);
 
   await wall.reload();
 }
@@ -94,6 +130,9 @@ async function fetchSavedPage() {
 
   if (state.studioId) {
     items = items.filter(p => p.studio_id === state.studioId);
+  }
+  if (state.collection) {
+    items = items.filter(p => (p.collection || 'uncategorised') === state.collection);
   }
   if (state.sort === 'oldest') {
     items = items.slice().reverse();
@@ -154,7 +193,6 @@ function renderStudioStrip(studios) {
 
   strip.innerHTML = '';
 
-  // "All" pill first
   const allBtn = document.createElement('button');
   allBtn.className = 'saved-studio saved-studio--all' + (state.studioId ? '' : ' active');
   allBtn.dataset.studioId = '';
@@ -164,6 +202,7 @@ function renderStudioStrip(studios) {
   `;
   allBtn.addEventListener('click', () => {
     state.studioId = null;
+    writeUrl();
     renderStudioStrip(studios);
     wall.reload();
   });
@@ -180,6 +219,7 @@ function renderStudioStrip(studios) {
     `;
     btn.addEventListener('click', () => {
       state.studioId = state.studioId === s.id ? null : s.id;
+      writeUrl();
       renderStudioStrip(studios);
       wall.reload();
     });
@@ -187,6 +227,73 @@ function renderStudioStrip(studios) {
   });
 
   strip.hidden = studios.length === 0;
+}
+
+/* =========================================================
+   COLLECTION STRIP
+   ========================================================= */
+
+function renderCollectionStrip(collections) {
+  const wrap = document.getElementById('saved-collection-strip');
+  if (!wrap) return;
+
+  wrap.innerHTML = '';
+
+  // Don't render the strip at all if only "uncategorised" exists
+  // (i.e. user hasn't assigned anything to a collection yet).
+  const named = collections.filter(c => c.name && c.name !== 'uncategorised');
+  if (named.length === 0 && !state.collection) {
+    wrap.hidden = true;
+    return;
+  }
+
+  wrap.hidden = false;
+
+  const allChip = document.createElement('button');
+  allChip.className = 'saved-collection-chip' + (state.collection ? '' : ' active');
+  allChip.textContent = 'All collections';
+  allChip.addEventListener('click', () => {
+    state.collection = null;
+    writeUrl();
+    renderCollectionStrip(collections);
+    wall.reload();
+  });
+  wrap.appendChild(allChip);
+
+  named.forEach(c => {
+    const chip = document.createElement('button');
+    chip.className = 'saved-collection-chip' + (state.collection === c.name ? ' active' : '');
+    chip.textContent = prettyCollectionName(c.name);
+    chip.title = `${c.piece_count} ${c.piece_count === 1 ? 'piece' : 'pieces'}`;
+    chip.addEventListener('click', () => {
+      state.collection = state.collection === c.name ? null : c.name;
+      writeUrl();
+      renderCollectionStrip(collections);
+      wall.reload();
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+function prettyCollectionName(name) {
+  return String(name || '')
+    .replace(/^product_/, '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, ch => ch.toUpperCase());
+}
+
+/* =========================================================
+   URL SYNC
+   ========================================================= */
+
+function writeUrl() {
+  const params = new URLSearchParams();
+  if (state.studioId) params.set('studio', state.studioId);
+  if (state.collection) params.set('collection', state.collection);
+
+  const qs = params.toString();
+  const target = '#tab-saved' + (qs ? '?' + qs : '');
+  history.replaceState({ tabId: 'tab-saved', qs }, '', target);
 }
 
 function escape(s) {
@@ -213,16 +320,15 @@ function setupSortToggle() {
     wall.reload();
   });
 }
+
 /* =========================================================
    SELECTION MODE
    ========================================================= */
 
 function handleLongPress(item, cardEl) {
-  // If already in selection mode, just toggle this card.
   if (!state.selectionMode) {
     state.selectionMode = true;
   }
-  // Always select the long-pressed card.
   if (!state.selectedIds.has(item.id)) {
     state.selectedIds.add(item.id);
     cardEl.classList.add('is-selected');
@@ -234,10 +340,8 @@ function onGridClick(e) {
   const card = e.target.closest('.saved-piece');
   if (!card) return;
 
-  // Not in selection mode: let the <a> navigate.
   if (!state.selectionMode) return;
 
-  // In selection mode: toggle instead of navigate.
   e.preventDefault();
   const id = card.dataset.pieceId;
   if (!id) return;
@@ -294,7 +398,6 @@ async function deleteSelected() {
   );
   if (!ok) return;
 
-  // Optimistic: pull all selected cards out.
   const cards = ids
     .map(id => gridEl.querySelector(`.saved-piece[data-piece-id="${id}"]`))
     .filter(Boolean);
@@ -314,10 +417,12 @@ async function deleteSelected() {
       studios: deriveStudios(allSaved),
       lastAddedAt: null,
     });
-    renderStudioStrip(deriveStudios(allSaved));
+    allStudios = deriveStudios(allSaved);
+    allCollections = deriveCollections(allSaved);
+    renderStudioStrip(allStudios);
+    renderCollectionStrip(allCollections);
   } catch (err) {
     console.error('removeManySaved failed:', err);
-    // Restore
     snapshots.forEach(({ el, parent, next }) => {
       if (next && next.parentElement === parent) parent.insertBefore(el, next);
       else parent.appendChild(el);
@@ -346,11 +451,40 @@ function deriveStudios(pieces) {
   return [...map.values()];
 }
 
+function deriveCollections(pieces) {
+  const map = new Map();
+  for (const p of pieces) {
+    const key = p.collection || 'uncategorised';
+    if (!map.has(key)) {
+      map.set(key, { name: key, cover_url: null, piece_count: 0 });
+    }
+    const c = map.get(key);
+    c.piece_count += 1;
+    if (!c.cover_url) c.cover_url = p.cover_image || p.images?.[0] || null;
+  }
+  return [...map.values()].sort((a, b) => b.piece_count - a.piece_count);
+}
+
 /* =========================================================
    EMPTY
    ========================================================= */
 
 function emptyStateFor() {
+  if (state.collection && state.studioId) {
+    return {
+      icon: 'fa-filter',
+      title: `Nothing matches this combination`,
+      body: 'Try clearing one of the filters.',
+    };
+  }
+  if (state.collection) {
+    return {
+      icon: 'fa-layer-group',
+      title: `Nothing saved in "${prettyCollectionName(state.collection)}"`,
+      body: 'Add pieces from Explore to build this collection.',
+      cta: { label: 'Explore pieces', href: '#tab-explore' },
+    };
+  }
   if (state.studioId) {
     return {
       icon: 'fa-store',
