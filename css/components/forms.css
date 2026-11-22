@@ -60,9 +60,12 @@ select.form-control {
 }
 .form-help i { color: var(--hash); }
 
-/* Upload areas */
+/* In forms.css — replace the existing .image-upload-section block */
 .image-upload-section,
 .logo-upload-section {
+  display: block;              /* ← THE FIX: labels are inline by default */
+  width: 100%;
+  box-sizing: border-box;
   border: 2px dashed var(--border);
   border-radius: var(--radius-lg);
   padding: 32px 24px;
